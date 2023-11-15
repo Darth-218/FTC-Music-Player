@@ -1,8 +1,8 @@
 # FirstTimeCompile CSCI102 (Introduction to Programming) Course project
 
-Main idea (pending approval): **Music Player** (à la Spotify), potentially using YouTube's api.
+Main idea (~~pending approval~~ APPROVED!): **Music Player** (à la Spotify), potentially using YouTube's api.
 
-Alternative ideas in case our main idea gets rejected (ordered):
+Alternative ideas ~~in case our main idea gets rejected~~ for us to make on our own in the future if we so choose:
 
 1. Go game.
 2. Database Management System[^1].
