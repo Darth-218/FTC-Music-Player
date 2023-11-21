@@ -1,9 +1,10 @@
 """
-Defines a User class to contain data such as:
-    * username                
-    * list of playlists       
-    * liked/favourited songs  
-    * list of followed artists
+Defines a User class to contain data such as:   
+
+    * username   
+    * list of playlists   
+    * liked/favourited songs   
+    * list of followed artists   
 """
 
 from playlist import Playlist
@@ -15,10 +16,12 @@ class User():
     """
     A User class to model the data for a user of the application.
 
-    username  -- Personal identifier
-    playlists -- List of playlists/albums the user has saved
-    loved     -- Special playlist of the user’s favourite songs.
-    followed  -- List of all the artists that the user has followed.
+    ```
+    username  -- Personal identifier   
+    playlists -- List of playlists/albums the user has saved   
+    loved     -- Special playlist of the user’s favourite songs.   
+    followed  -- List of all the artists that the user has followed.   
+    ```
     """
 
     username : str

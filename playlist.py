@@ -2,7 +2,7 @@
 Defines a Playlist class.
 """
 
-from song import Song
+from song     import Song
 import lib
 
 class Playlist():
@@ -10,8 +10,10 @@ class Playlist():
     Playlist class to be used in the interface between the back- and
     front-ends.
 
+    ```
     songs    -- List of songs in the playlist.
     add_song -- Adds a song to the list of songs.
+    ```
     """
 
     name : str
