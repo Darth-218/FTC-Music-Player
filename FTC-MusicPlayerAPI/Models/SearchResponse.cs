@@ -1,0 +1,9 @@
+﻿namespace FTC_MusicPlayerAPI.Models
+{
+    public class SearchResponse
+    {
+        public required List<Artist> Artists { get; set; }
+        public required List<Album> Albums { get; set; }
+        public required List<Song> Songs { get; set; }
+    }
+}
