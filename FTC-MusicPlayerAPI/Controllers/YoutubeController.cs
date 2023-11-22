@@ -14,10 +14,17 @@ namespace FTC_MusicPlayerAPI.Controllers
             _youtubeService = youtubeService;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("")]
-        public async Task<SearchResponse> Search(SearchRequest request)
+        public async Task<SearchResponse> Search(string query)
         {
+            SearchRequest request = new() 
+            {
+                Query = query,
+                ArtistsCount = 1,
+                AlbumsCount = 1,
+                SongsCount = 20 
+            };
             return await _youtubeService.Search(request);
         }
     }
