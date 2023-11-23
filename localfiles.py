@@ -41,6 +41,7 @@ def getfile(listbox):
                     flist.append(os.path.join(fname))
         print(flist, '\n')
 
+        # Inserts all songs in the chosen directory into the listbox
         for song in flist:
 
             listbox.insert(tk.END, song)
@@ -56,6 +57,7 @@ def getselected(event, listbox):
 
         selectedfile = listbox.get(selectedindex[0])
 
+        # Sets the test label to the selected file from the listbox
         pathstring.set(selectedfile)
         print(selectedfile)
 
