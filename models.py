@@ -11,6 +11,7 @@ the C# backend to be used by the Python frontend:
 """
 
 import lib
+from abc import ABC, abstractmethod
 
 
 class Content:
@@ -21,17 +22,43 @@ class Content:
 
     name: str
     artist = None
+    _path: str
 
 
-class Song(Content):
+class Song(Content, ABC):
     """
     Models a single Song that can be a part of zero or more Albums or
     Playlists, as well as followed by zero or more Users.
     """
 
-    def __init__(self, name: str, artist):
+    def __init__(self, name: str, artist, path: str):
         self.name = name
         self.artist = artist
+        self._path = path
+
+    @abstractmethod
+    def play(self):
+        lib.TODO("Song.play()")
+
+
+class OSong(Song):
+    """
+    A song stored online.
+    """
+
+    def play(self):
+        "Uses URL path."
+        lib.TODO("OSong.play()")
+
+
+class LSong(Song):
+    """
+    A song stored locally.
+    """
+
+    def play(self):
+        "Uses local path."
+        lib.TODO("LSong.play()")
 
 
 class Album(Content):
@@ -46,10 +73,11 @@ class Album(Content):
 
     songs: list[Song]
 
-    def __init__(self, name: str, artist, songs: list[Song]):
+    def __init__(self, name: str, artist, songs: list[Song], path: str):
         self.name = name
         self.artist = artist
         self.songs = songs
+        self._path = path
 
 
 class Playlist(Album):
@@ -63,9 +91,10 @@ class Playlist(Album):
     * add_song() -- Adds a Song to the list of Songs.   
     """
 
-    def __init__(self, name: str, songs: list[Song] = []):
+    def __init__(self, name: str, path: str, songs: list[Song] = []):
         self.name = name
         self.songs = songs
+        self._path = path
 
     def add_song(self, song: Song):
         self.songs.append(song)
@@ -77,12 +106,15 @@ class Artist:
     name: str
     albums: list[Album]
     songs: list[Song]
+    id: str
 
     def __init__(self,
                  name: str,
+                 id: str = "FTC",
                  albums: list[Album] = [],
                  songs: list[Song] = []):
         self.name = name
+        self.id = id
         self.albums = albums
         self.songs = songs
 
@@ -98,26 +130,28 @@ class User:
     """
 
     username: str
+    token: str
     playlists: list[Playlist]
     favourites: Playlist
     followed_artists: list[Artist]
     followed_albums: list[Album]
 
-    def __init__(self, handle):
+    def __init__(self, username: str, token: str):
         """
         Initialise a User instance with no playlists, no
         liked/favourited songs and no followed artists.
         """
 
-        self.username = handle
+        self.username = username
+        self.token = token
         self.playlists = []
-        self.favourites = Playlist("Favourites")
+        self.favourites = Playlist("Favourites", "./playlists/favourites")
         self.followed_artists = []
         self.followed_albums = []
 
-    def change_username(self, new_handle: str):
+    def change_username(self, new_username: str):
         lib.TODO("User.change_username()")
-        self.username = new_handle
+        self.username = new_username
 
     def like_song(self, song: Song):
         lib.TODO("User.like_song()")
@@ -133,17 +167,17 @@ class User:
 
     def create_playlist(self, name: str):
         lib.TODO("User.create_playlist()")
-        playlist = Playlist(name)
+        playlist = Playlist(name, f"./playlists/{name}")
         self.playlists.append(playlist)
 
 
 if __name__ == "__main__":
     # Testing code:
-    me = User("alchemistsGestalt")
+    me = User("alchemistsGestalt", "34pgjtlojtnsj598ih/nhdtsprh54plej")
     mono = Artist("Mono Inc.")
-    heile_segen = Song("Heile, heile Segen", mono)
-    teile = Song("Ich teile dich nicht", mono)
-    nimmer = Album("Nimmermehr", mono, [heile_segen, teile])
+    heile_segen = OSong("Heile, heile Segen", mono, "")
+    teile = OSong("Ich teile dich nicht", mono, "")
+    nimmer = Album("Nimmermehr", mono, [heile_segen, teile], "")
     # These three calls to append (instead of having an Artist method deal
     # with them) should never happen, this is just here to set up the example.
     mono.songs.append(heile_segen)
@@ -153,9 +187,11 @@ if __name__ == "__main__":
     me.like_song(teile)
     me.follow_artist(mono)
     me.follow_album(nimmer)
+    heile_segen.play()
+    print(me.favourites._path)
     for song in me.favourites.songs:
-        print(song.name)
+        print(song.name, song._path)
     for artist in me.followed_artists:
-        print(artist.name)
+        print(artist.name, artist.id)
     for album in me.followed_albums:
-        print(album.name)
+        print(album.name, album._path)
