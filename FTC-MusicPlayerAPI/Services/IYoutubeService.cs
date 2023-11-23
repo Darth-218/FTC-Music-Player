@@ -6,11 +6,11 @@ namespace FTC_MusicPlayerAPI.Services
     {
         public Task<SearchResponse> Search(SearchRequest request);
 
-        public string GetSongUrl(string songId);
+        public Task<AudioUrlResponse> GetSongUrl(string songId);
 
-        public IEnumerable<Song> GetAlbumSongs(string albumId);
+        public Task<AlbumSongsResponse> GetAlbumSongs(string albumId);
 
-        public IEnumerable<Album> GetArtistAlbums(string artistId);
+        public Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId);
 
         public IEnumerable<Song> GetArtistSongs(string artistId);
     }

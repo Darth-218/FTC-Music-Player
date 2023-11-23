@@ -26,6 +26,10 @@ namespace FTC_MusicPlayerAPI.Services
 
                     await foreach (var rawArtist in rawArtists)
                     {
+                        if (counter == request.ArtistsCount)
+                        {
+                            break;
+                        }
                         counter++;
                         response.Artists.Add(new Artist()
                         {
@@ -33,11 +37,6 @@ namespace FTC_MusicPlayerAPI.Services
                             Name = rawArtist.Title,
                             CoverArt = rawArtist.Thumbnails.GetWithHighestResolution().Url,
                         });
-
-                        if (counter == request.ArtistsCount)
-                        {
-                            break;
-                        }
                     }
                 });
 
@@ -48,6 +47,10 @@ namespace FTC_MusicPlayerAPI.Services
 
                     await foreach (var rawAlbum in rawAlbums)
                     {
+                        if (counter == request.AlbumsCount)
+                        {
+                            break;
+                        }
                         counter++;
                         response.Albums.Add(new Album()
                         {
@@ -56,11 +59,6 @@ namespace FTC_MusicPlayerAPI.Services
                             Name = rawAlbum.Title,
                             CoverArt = rawAlbum.Thumbnails.GetWithHighestResolution().Url,
                         });
-
-                        if (counter == request.AlbumsCount)
-                        {
-                            break;
-                        }
                     }
                 });
 
@@ -71,6 +69,10 @@ namespace FTC_MusicPlayerAPI.Services
                     int counter = 0;
                     await foreach (var rawSong in rawSongs)
                     {
+                        if (counter == request.SongsCount)
+                        {
+                            break;
+                        }
                         counter++;
                         response.Songs.Add(new Song()
                         {
@@ -81,11 +83,6 @@ namespace FTC_MusicPlayerAPI.Services
                             Duration = rawSong.Duration,
                             Url = rawSong.Url
                         });
-
-                        if (counter == request.SongsCount)
-                        {
-                            break;
-                        }
                     }
                 });
 
@@ -98,19 +95,65 @@ namespace FTC_MusicPlayerAPI.Services
             }
         }
 
-        public string GetSongUrl(string songId)
+        public async Task<AudioUrlResponse> GetSongUrl(string songId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var video = await client.Videos.GetAsync(songId);
+                var streamsManifest = await client.Videos.Streams.GetManifestAsync(video.Id);
+
+                var audioStreams = streamsManifest.GetAudioOnlyStreams();
+                var bestAudioStream = audioStreams.FirstOrDefault();
+
+                AudioUrlResponse response = new() { HasError = false, Error = "", Url = bestAudioStream!.Url };
+
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<Song> GetAlbumSongs(string albumId)
+        public async Task<AlbumSongsResponse> GetAlbumSongs(string albumId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var contents = client.Playlists.GetVideosAsync(albumId);
+                List<Song> songs = new List<Song>();
+
+                await foreach (var song in contents)
+                {
+                    songs.Add(new() 
+                    {
+                        Id = song.Id,
+                        ArtistId = song.Author.ChannelId.ToString(),
+                        Name = song.Title,
+                        CoverArt = song.Thumbnails.GetWithHighestResolution().Url,
+                        Duration = song.Duration,
+                        Url = song.Url,
+                    });
+                }
+
+                AlbumSongsResponse response = new() { AlbumSongs = songs, Error = "", HasError = false };
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<Album> GetArtistAlbums(string artistId)
+        public async Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //var contents = client.Channels.Get
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public IEnumerable<Song> GetArtistSongs(string artistId)
