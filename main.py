@@ -1,3 +1,4 @@
+#!/usr/bin/env /usr/bin/python3
 import tkinter
 import customtkinter
 from PIL import Image
@@ -40,7 +41,8 @@ link = customtkinter.CTkEntry(frame_2,
                               font=("Systemia",15),
                               fg_color="gray10",
                               border_color="white",
-                              border_width=0.5,
+                              # border_width=0.5,
+                              border_width=1,
                               text_color="grey",
                               corner_radius=50)
 link.place(relx=0.05, rely=0.02)     
