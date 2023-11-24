@@ -12,6 +12,6 @@ namespace FTC_MusicPlayerAPI.Services
 
         public Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId);
 
-        public IEnumerable<Song> GetArtistSongs(string artistId);
+        public Task<ArtistSongsResponse> GetArtistSongs(string artistId);
     }
 }

@@ -65,5 +65,19 @@ namespace FTC_MusicPlayerAPI.Controllers
                 return new() { AlbumSongs = new(), HasError = true, Error = ex.Message };
             }
         }
+
+        [HttpGet]
+        [Route("/Youtube/GetArtistSongs")]
+        public async Task<ArtistSongsResponse> GetArtistAlbums(string id)
+        {
+            try
+            {
+                return await _youtubeService.GetArtistSongs(id);
+            }
+            catch (Exception ex)
+            {
+                return new() { Songs = new(), HasError = true, Error = ex.Message };
+            }
+        }
     }
 }

@@ -144,21 +144,38 @@ namespace FTC_MusicPlayerAPI.Services
             }
         }
 
-        public async Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId)
+        public Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ArtistSongsResponse> GetArtistSongs(string artistId)
         {
             try
             {
-                //var contents = client.Channels.Get
+                var contents = client.Channels.GetUploadsAsync(artistId);
+                List<Song> songs = new List<Song>();
+
+                await foreach (var song in contents)
+                {
+                    songs.Add(new()
+                    {
+                        Id = song.Id,
+                        ArtistId = song.Author.ChannelId.ToString(),
+                        Name = song.Title,
+                        CoverArt = song.Thumbnails.GetWithHighestResolution().Url,
+                        Duration = song.Duration,
+                        Url = song.Url,
+                    });
+                }
+
+                ArtistSongsResponse response = new() { Songs = songs, Error = "", HasError = false };
+                return response;
             }
             catch (Exception)
             {
                 throw;
             }
-        }
-
-        public IEnumerable<Song> GetArtistSongs(string artistId)
-        {
-            throw new NotImplementedException();
         }
     }
 }
