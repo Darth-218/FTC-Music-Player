@@ -6,7 +6,7 @@ Testing how to select a main music folder and a song to play
 
 # To find files and directories
 import os
-# To make a window with widgets
+# To make windows and widgets
 import tkinter as tk
 from tkinter import filedialog, Listbox, Tk, StringVar, Button, Label, EW
 
@@ -14,7 +14,7 @@ from tkinter import filedialog, Listbox, Tk, StringVar, Button, Label, EW
 
 root = Tk()
 root.title("FTC - Music Player")
-root.geometry("500x400")
+#root.geometry("500x400")
 
 # Functions
 
@@ -69,18 +69,26 @@ def getselected(event, listbox):
 # Function used to create queue
 def addtoqu(listbox):
 
+    global qu
+
     qu = []
 
+    # Gets selected file
     if selectedfile:
 
+        # Adds selected file to queue
         qu.append(selectedfile)
 
         for song in qu:
 
+            # Adds selected file to the queue listbox
             listbox.insert(tk.END, song)
 
 
+# A function to clear the queue
 def quclear(listbox):
+
+    qu.clear()
 
     listbox.delete(0, tk.END)
 
@@ -100,13 +108,14 @@ musiclist.bind("<Double-Button-1>", lambda event: getselected(event, musiclist))
 pathfinder = Button(root, text="Select Music folder", command=lambda: getfile(musiclist))
 
 #Queue listbox that tests the addtoqu Function
-qulist = Listbox(root, width=55, height=25)
+qulist = Listbox(root, width=55)
 
 #Test button that adds songs to queue
 qubutton = Button(root, text="Add to Queue", command=lambda: addtoqu(qulist))
 
 #Test button that clears the queue
 clearqu = Button(root, text="Clear Queue", command=lambda: quclear(qulist))
+
 
 pathlabel.grid(row=0, columnspan=2, sticky=EW)
 musiclist.grid(row=1, columnspan=2, sticky=EW)
