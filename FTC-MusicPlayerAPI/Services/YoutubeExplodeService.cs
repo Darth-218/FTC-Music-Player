@@ -2,6 +2,8 @@
 using System.Diagnostics.Metrics;
 using YoutubeExplode;
 using YoutubeExplode.Common;
+using System.Text.RegularExpressions;
+using YoutubeExplode.Playlists;
 
 namespace FTC_MusicPlayerAPI.Services
 {
@@ -144,9 +146,84 @@ namespace FTC_MusicPlayerAPI.Services
             }
         }
 
-        public Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId)
+        public async Task<ArtistAlbumsResponse> GetArtistAlbums(string artistId)
         {
-            throw new NotImplementedException();
+            List<Album> albums = new();
+            Console.WriteLine("Getting Playlists...");
+            List<string> ids;
+            try
+            {
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync($"https://www.youtube.com/channel/{artistId}/playlists");
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                ids = GetChannelPlaylistsIds(artistId.ToString(), responseBody);
+
+                Console.WriteLine($"ids.length = {ids.Count}");
+
+                PlaylistClient playlistClient = new(new HttpClient());
+
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    var playlist = await playlistClient.GetAsync(ids[i]);
+                    Album album = new()
+                    {
+                        Id = playlist.Id.ToString(),
+                        ArtistId = playlist.Author!.ChannelId.ToString(),
+                        Name = playlist.Title,
+                        CoverArt = playlist.Thumbnails[playlist.Thumbnails.Count - 1].Url,
+                    };
+
+                    albums.Add(album);
+                }
+
+                ArtistAlbumsResponse albumsResponse = new() 
+                {
+                    ArtistAlbums = albums,
+                    HasError = false,
+                    Error = ""
+                };
+
+                return albumsResponse;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private static List<string> GetChannelPlaylistsIds(string channelId, string response)
+        {
+            List<string> ids = new List<string>();
+            Regex exp = new Regex("playlistId\":\"(.*?)\"");
+            MatchCollection matches = exp.Matches(response);
+
+            foreach (Match match in matches)
+            {
+                if (!ids.Contains(match.Groups[1].Value))
+                {
+                    ids.Add(match.Groups[1].Value);
+                }
+            }
+
+            return ids;
+        }
+
+        public static List<string> GetChannelPlaylistsThumbnails(string channelId, string response)
+        {
+            List<string> thumbnails = new List<string>();
+            Regex exp = new Regex("thumbnails\":\\[{\"url\":\"(.*?)\"");
+            MatchCollection matches = exp.Matches(response);
+
+            foreach (Match match in matches)
+            {
+                if (!thumbnails.Contains(match.Groups[1].Value) && match.Groups[1].Value.Contains("hqdefault"))
+                {
+                    thumbnails.Add(match.Groups[1].Value);
+                }
+            }
+
+            return thumbnails;
         }
 
         public async Task<ArtistSongsResponse> GetArtistSongs(string artistId)

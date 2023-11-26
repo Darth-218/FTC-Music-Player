@@ -187,6 +187,6 @@ if __name__ == "__main__":
     asgard = Artist("Old Gods of Asgard")
     control = Song("Take Contol",
                    asgard,
-                   "/mnt/c/users/zeinh/Desktop/D/songs/Old Gods of Asgard - Take Control (Lyric Video).mp3",
-                   timedelta(minutes=7, seconds=57))
+                   "https://rr2---sn-hpa7znzr.googlevideo.com/videoplayback?expire=1701013521&ei=sRNjZYfyOZ286dsP18edsAM&ip=41.33.235.98&id=o-AG_nX7L9YL3uqo6GFsKzpKugwRCu15V6zdK68U3Lb0gS&itag=139&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&mh=TF&mm=31%2C29&mn=sn-hpa7znzr%2Csn-hgn7rnee&ms=au%2Crdu&mv=m&mvi=2&pl=24&initcwndbps=163750&vprv=1&mime=audio%2Fmp4&gir=yes&clen=1430102&dur=234.335&lmt=1663977939377942&mt=1700991652&fvip=3&keepalive=yes&fexp=24007246&c=ANDROID_TESTSUITE&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=ANLwegAwRQIhANzPKsbvVxAhSlPF2vdrNLhlZmupVIjN57hzYB7VHAOzAiAcFeVsnKTst971e7hmhViUX4SgWeXlFl6mcXC9OHvpuA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AM8Gb2swRgIhAJr7rPIMM8Q7ql2sucDEphMjxo61Ab8gWi6I_Y4gPCkxAiEA1qCIf9v2-sZui-aZ3XkW-Xwwq-N-Rt6MaaGOzVSaEAs%3D",
+                   timedelta(minutes=3, seconds=19))
     control.play()
