@@ -1,3 +1,4 @@
+#!/usr/bin/env /usr/bin/python3
 """
 Defines several classes modelling data that will be received from
 the C# backend to be used by the Python frontend:
@@ -11,7 +12,9 @@ the C# backend to be used by the Python frontend:
 """
 
 import lib
-from abc import ABC, abstractmethod
+import time
+from datetime import timedelta
+import vlc
 
 
 class Content:
@@ -25,40 +28,25 @@ class Content:
     _path: str
 
 
-class Song(Content, ABC):
+class Song(Content):
     """
     Models a single Song that can be a part of zero or more Albums or
     Playlists, as well as followed by zero or more Users.
     """
 
-    def __init__(self, name: str, artist, path: str):
+    duration: timedelta
+
+    def __init__(self, name: str, artist, path: str, duration: timedelta):
         self.name = name
         self.artist = artist
+        self.duration = duration
         self._path = path
 
-    @abstractmethod
     def play(self):
+        player = vlc.MediaPlayer(self._path)
+        player.play()
         lib.TODO("Song.play()")
-
-
-class OSong(Song):
-    """
-    A song stored online.
-    """
-
-    def play(self):
-        "Uses URL path."
-        lib.TODO("OSong.play()")
-
-
-class LSong(Song):
-    """
-    A song stored locally.
-    """
-
-    def play(self):
-        "Uses local path."
-        lib.TODO("LSong.play()")
+        time.sleep(self.duration.total_seconds())
 
 
 class Album(Content):
@@ -173,25 +161,32 @@ class User:
 
 if __name__ == "__main__":
     # Testing code:
+    # me = User("alchemistsGestalt", "34pgjtlojtnsj598ih/nhdtsprh54plej")
+    # mono = Artist("Mono Inc.")
+    # heile_segen = Song("Heile, heile Segen", mono, "")
+    # teile = Song("Ich teile dich nicht", mono, "")
+    # nimmer = Album("Nimmermehr", mono, [heile_segen, teile], "")
+    # # These three calls to append (instead of having an Artist method deal
+    # # with them) should never happen, this is just here to set up the example.
+    # mono.songs.append(heile_segen)
+    # mono.songs.append(teile)
+    # mono.albums.append(nimmer)
+    # me.like_song(heile_segen)
+    # me.like_song(teile)
+    # me.follow_artist(mono)
+    # me.follow_album(nimmer)
+    # heile_segen.play()
+    # print(me.favourites._path)
+    # for song in me.favourites.songs:
+    #     print(song.name, song._path)
+    # for artist in me.followed_artists:
+    #     print(artist.name, artist.id)
+    # for album in me.followed_albums:
+    #     print(album.name, album._path)
     me = User("alchemistsGestalt", "34pgjtlojtnsj598ih/nhdtsprh54plej")
-    mono = Artist("Mono Inc.")
-    heile_segen = OSong("Heile, heile Segen", mono, "")
-    teile = OSong("Ich teile dich nicht", mono, "")
-    nimmer = Album("Nimmermehr", mono, [heile_segen, teile], "")
-    # These three calls to append (instead of having an Artist method deal
-    # with them) should never happen, this is just here to set up the example.
-    mono.songs.append(heile_segen)
-    mono.songs.append(teile)
-    mono.albums.append(nimmer)
-    me.like_song(heile_segen)
-    me.like_song(teile)
-    me.follow_artist(mono)
-    me.follow_album(nimmer)
-    heile_segen.play()
-    print(me.favourites._path)
-    for song in me.favourites.songs:
-        print(song.name, song._path)
-    for artist in me.followed_artists:
-        print(artist.name, artist.id)
-    for album in me.followed_albums:
-        print(album.name, album._path)
+    asgard = Artist("Old Gods of Asgard")
+    control = Song("Take Contol",
+                   asgard,
+                   "/mnt/c/users/zeinh/Desktop/D/songs/Old Gods of Asgard - Take Control (Lyric Video).mp3",
+                   timedelta(minutes=7, seconds=57))
+    control.play()
