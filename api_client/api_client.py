@@ -1,3 +1,8 @@
+"""
+api_client doc str
+"""
+
+
 from enum import Enum
 import requests
 
@@ -6,15 +11,15 @@ serverIp = "10.2.157.102:5239" #Please update this to the IP Address of the serv
 
 #API Controller Options
 class ApiControllers(Enum):
-    Youtube: str = "/Youtube"
+    Youtube = "/Youtube"
 
 #API Request Options
 class ApiRequests(Enum):
-    Search: str = "/Search"
-    AudioUrl: str = "/GetAudioUrl"
-    AlbumSongs: str = "/GetAlbumSongs"
-    ArtistAlbums: str = "/GetArtistAlbums"
-    ArtistSongs: str = "/GetArtistSongs"
+    Search       = "/Search"
+    AudioUrl     = "/GetAudioUrl"
+    AlbumSongs   = "/GetAlbumSongs"
+    ArtistAlbums = "/GetArtistAlbums"
+    ArtistSongs  = "/GetArtistSongs"
     
 
 #Sends a request to the server and returns the response (is json format).

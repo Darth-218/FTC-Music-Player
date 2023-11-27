@@ -1,9 +1,8 @@
 import sys
-sys.path.append("../FTC-Music-Player/api_client")
-
+sys.path.append("./api_client")
+import api_client
 
 import requests
-import api_client
 import json
 import Youtube.models as yt_models
 
