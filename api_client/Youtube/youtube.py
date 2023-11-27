@@ -1,3 +1,8 @@
+"""
+This file builds the requests to the API server via the api_client and parses the responses into the models defined in models.py.
+"""
+
+
 import sys
 sys.path.append("./api_client")
 import api_client
@@ -6,9 +11,16 @@ import requests
 import json
 import Youtube.models as yt_models
 
-#Invokes a Search Request via api_client.
-#Returns a SearchResponse object containing the results of the search request.
+
 def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
+    """
+    Invokes a Search Request via api_client.
+    
+    Takes in a SearchRequest object.
+    
+    Returns a SearchResponse object containing the results of the search request.
+    """
+    
     #Creates the params string for the api_client.
     params = "?query=" + request.query + "&artCount=" + str(request.artist_count) + "&albCount=" + str(request.album_count) + "&sonCount=" + str(request.song_count)
 
@@ -39,9 +51,16 @@ def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
     #Return the SearchResponse object.
     return searchResponse
 
-#Invokes a GetSongUrl Request via api_client.
-#Returns a GetSongUrlRespose containing the url of the song.
+
 def getSongUrl(song_id: str) -> yt_models.GetSongUrlResponse:
+    """
+    Invokes a GetSongUrl Request via api_client.
+    
+    Takes in a song_id as a string.
+    
+    Returns a GetSongUrlRespose containing the url of the song.
+    """
+    
     #Creates the params string for the api_client.
     params = "?id=" + song_id
 
@@ -69,9 +88,16 @@ def getSongUrl(song_id: str) -> yt_models.GetSongUrlResponse:
     #Return the GetSongUrlResponse object.
     return getSongUrlResponse
 
-#Invokes a GetAlbumSongs Request via api_client.
-#Returns a GetAlbumSongsResponse containing the songs of the album.
+
 def getAlbumSongs(album_id: str) -> yt_models.GetAlbumSongsResponse:
+    """
+    Invokes a GetAlbumSongs Request via api_client.
+    
+    Takes in a album_id as a string.
+    
+    Returns a GetAlbumSongsResponse containing the songs of the album.
+    """
+    
     #Creates the params string for the api_client.
     params = "?id=" + album_id
 
@@ -100,9 +126,16 @@ def getAlbumSongs(album_id: str) -> yt_models.GetAlbumSongsResponse:
     #Return the GetAlbumSongsResponse object.
     return getAlbumSongsResponse
 
-#Invokes a GetArtistAlbums Request via api_client.
-#Returns a GetArtistAlbumsResponse containing the albums of the artist.
+
 def getArtistAlbums(artist_id: str) -> yt_models.GetArtistAlbumsResponse:
+    """
+    Invokes a GetArtistAlbums Request via api_client.
+    
+    Takes in a artist_id as a string.
+    
+    Returns a GetArtistAlbumsResponse containing the albums of the artist.
+    """
+    
     #Creates the params string for the api_client.
     params = "?id=" + artist_id
 
@@ -131,9 +164,16 @@ def getArtistAlbums(artist_id: str) -> yt_models.GetArtistAlbumsResponse:
     #Return the GetArtistAlbumsResponse object.
     return getArtistAlbumsResponse
 
-#Invokes a GetArtistSongs Request via api_client.
-#Returns a GetArtistSongsResponse containing the songs of the artist.
+
 def getArtistSongs(artist_id: str) -> yt_models.GetArtistSongsResponse:
+    """
+    Invokes a GetArtistSongs Request via api_client.
+    
+    Takes in a artist_id as a string.
+    
+    Returns a GetArtistSongsResponse containing the songs of the artist.
+    """
+    
     #Creates the params string for the api_client.
     params = "?id=" + artist_id
 
