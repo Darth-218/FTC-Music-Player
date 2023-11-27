@@ -43,9 +43,12 @@ class Song(Content):
         self._path = path
 
     def play(self):
+        """
+        Start playing the current song from `_path`
+        """
+        lib.logger("Song/play", f"Now playing {self.name}")
         player = vlc.MediaPlayer(self._path)
         player.play()
-        lib.TODO("Song.play()")
         time.sleep(self.duration.total_seconds())
 
 
@@ -85,6 +88,7 @@ class Playlist(Album):
         self._path = path
 
     def add_song(self, song: Song):
+        lib.logger("Playlist/add", f"Adding {song.name} to {self.name}")
         self.songs.append(song)
         lib.TODO("Playlist.add_song()")
 

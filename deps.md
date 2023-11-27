@@ -26,6 +26,12 @@ pip install packaging
 pip install Pillow
 ```
 
+* Requests
+
+```sh
+pip install requests
+```
+
 ## Dependencies for generating the documentation:
 
 * Pdoc
