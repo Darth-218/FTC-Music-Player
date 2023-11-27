@@ -2,7 +2,7 @@ from enum import Enum
 import requests
 
 #Server IP Address
-serverIp = "192.168.1.109:5239" #Please update this to the IP Address of the server.
+serverIp = "10.2.157.102:5239" #Please update this to the IP Address of the server.
 
 #API Controller Options
 class ApiControllers(Enum):
