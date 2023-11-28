@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>FTC-Music-Player API documentation</title>
+<title>FTC-Music-Player.api_client.Youtube.example API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,44 +19,90 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Namespace <code>FTC-Music-Player</code></h1>
+<h1 class="title">Module <code>FTC-Music-Player.api_client.Youtube.example</code></h1>
 </header>
 <section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env /usr/bin/python3
+import sys
+sys.path.append(&#34;./api_client/Youtube&#34;)
+import youtube
+import models
+
+# Example usage of the Youtube API.
+
+if __name__ == &#34;__main__&#34;:
+  #Get the search query from the user.
+  query = input(&#34;Enter the search query: &#34;)
+
+  #Create a SearchRequest object.
+  request = models.SearchRequest(query, 5, 5, 10) #The numbers represent the number of artists, albums, and songs to return respectively.
+
+  # *Get the search results from the API.*
+  search_response = youtube.search(request) #This returns a SearchResponse object.
+  if not search_response.has_error: #Check if there is no error.
+    #Print the search results.
+    print(&#34;Artists:&#34;)
+    for artist in search_response.artists:
+      print(artist.name)
+
+    print(&#34;\nAlbums:&#34;)
+    for album in search_response.albums:
+      print(album.name)
+
+    print(&#34;\nSongs:&#34;)
+    for song in search_response.songs:
+      print(song.name)
+
+    # *Get the direct url of the first song.*
+    audio_response = youtube.getSongUrl(search_response.songs[0].id) #This returns a GetAudioUrlResponse object.
+
+    if not audio_response.has_error: #Check if there is no error.
+      #Print the direct url of the song.
+      print(&#34;\nDirect Url: &#34; + audio_response.url)
+    else: #If there is an error, print the error.         
+      print(&#34;\nError: &#34; + audio_response.error)
+
+    # *Get the albums of the first artist.*
+    artist_albums_response = youtube.getArtistAlbums(search_response.artists[0].id)
+
+    if not artist_albums_response.has_error: #Check if there is no error.
+      #Print the albums of the artist.
+      print(&#34;\nAlbums of the first Artist:&#34;)
+      for album in artist_albums_response.albums:
+        print(album.name)
+    else: #If there is an error, print the error.
+      print(&#34;\nError: &#34; + artist_albums_response.error)
+
+    # *Get the songs of the first album.*
+    album_songs_response = youtube.getAlbumSongs(search_response.albums[0].id)
+
+    if not album_songs_response.has_error: #Check if there is no error.
+      #Print the songs of the album.
+      print(&#34;\nSongs of the first Album:&#34;)
+      for song in album_songs_response.songs:
+        print(song.name)
+    else: #If there is an error, print the error.
+      print(&#34;\nError: &#34; + album_songs_response.error)
+
+    # *Get the songs of the first artist.*
+    artist_songs_response = youtube.getArtistSongs(search_response.artists[0].id)
+
+    if not artist_songs_response.has_error: #Check if there is no error.
+      #Print the songs of the artist.
+      print(&#34;\nSongs of the first Artist:&#34;)
+      for song in artist_songs_response.songs:
+        print(song.name)
+    else: #If there is an error, print the error.
+      print(&#34;\nError: &#34; + artist_songs_response.error)
+  else: #If there is an error, print the error.
+    print(&#34;Error: &#34; + search_response.error)</code></pre>
+</details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="FTC-Music-Player.Home page" href="Home page.html">FTC-Music-Player.Home page</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.Test Files" href="Test Files/index.html">FTC-Music-Player.Test Files</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.api_client" href="api_client/index.html">FTC-Music-Player.api_client</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.data_models" href="data_models.html">FTC-Music-Player.data_models</a></code></dt>
-<dd>
-<div class="desc"><p>Defines several classes modelling data that will be received from
-the C# backend to be used by the Python frontend: …</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.lib" href="lib.html">FTC-Music-Player.lib</a></code></dt>
-<dd>
-<div class="desc"><p>Definitions of some generally useful functions to use throughout the
-project.</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.localfiles" href="localfiles.html">FTC-Music-Player.localfiles</a></code></dt>
-<dd>
-<div class="desc"><p>Testing how to select a main music folder and a song to play</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.search_models" href="search_models.html">FTC-Music-Player.search_models</a></code></dt>
-<dd>
-<div class="desc"><p>Classes for data sent to and from the C# back-end.</p></div>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -71,15 +117,9 @@ project.</p></div>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="FTC-Music-Player.Home page" href="Home page.html">FTC-Music-Player.Home page</a></code></li>
-<li><code><a title="FTC-Music-Player.Test Files" href="Test Files/index.html">FTC-Music-Player.Test Files</a></code></li>
-<li><code><a title="FTC-Music-Player.api_client" href="api_client/index.html">FTC-Music-Player.api_client</a></code></li>
-<li><code><a title="FTC-Music-Player.data_models" href="data_models.html">FTC-Music-Player.data_models</a></code></li>
-<li><code><a title="FTC-Music-Player.lib" href="lib.html">FTC-Music-Player.lib</a></code></li>
-<li><code><a title="FTC-Music-Player.localfiles" href="localfiles.html">FTC-Music-Player.localfiles</a></code></li>
-<li><code><a title="FTC-Music-Player.search_models" href="search_models.html">FTC-Music-Player.search_models</a></code></li>
+<li><code><a title="FTC-Music-Player.api_client.Youtube" href="index.html">FTC-Music-Player.api_client.Youtube</a></code></li>
 </ul>
 </li>
 </ul>

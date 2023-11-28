@@ -1,12 +1,13 @@
 """
-MODEhalrd
+Classes for data sent to and from the C# back-end.
 """
 
 from data_models import *
+import lib
 
 class SearchResults():
     """
-    SearchResults
+    Class to model data sent back by the C# back-end.
     """
 
     artists: list[Artist]
@@ -24,13 +25,13 @@ class SearchResults():
 
 class SearchRequest():
     """
-    SearchRequst
+    Class modelling data to be sent to the C# back-end.
     """
 
-    query: str
+    query       : str
     artist_count: int
-    album_count: int
-    song_count: int
+    album_count : int
+    song_count  : int
 
     def __init__(self, query, artist_count, album_count, song_count):
         self.query        = query

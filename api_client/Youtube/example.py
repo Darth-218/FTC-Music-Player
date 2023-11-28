@@ -1,4 +1,6 @@
 #!/usr/bin/env /usr/bin/python3
+import sys
+sys.path.append("./api_client/Youtube")
 import youtube
 import models
 

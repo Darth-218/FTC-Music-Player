@@ -21,6 +21,10 @@ class Content:
     """
     Class modelling any form of Content made my an Artist, inherited
     by several other classes.
+
+    * artist -- Channel that uploaded this content.
+    * _path -- Either a local path to the file or a URL generated
+    from the C# back-end.   
     """
 
     name: str
@@ -32,6 +36,11 @@ class Song(Content):
     """
     Models a single Song that can be a part of zero or more Albums or
     Playlists, as well as followed by zero or more Users.
+
+    * name -- Song's name.   
+    * artist -- Creator of the song (channel that uploaded it).   
+    * _path -- Either a local path to the song file or a URL generated
+    from the C# back-end.   
     """
 
     duration: timedelta
@@ -60,6 +69,7 @@ class Album(Content):
     * name       -- Name of the Album.   
     * arist      -- Name of the Artist that made the Album.   
     * songs      -- List of Songs in the Album.   
+    * _path      -- URL of the playlist on YT.   
     """
 
     songs: list[Song]
@@ -79,6 +89,8 @@ class Playlist(Album):
     * name       -- Name of the Playlist.   
     * arist      -- Name of the Artist that made the Playlist.   
     * songs      -- List of Songs in the Playlist.   
+    * _path      -- Local path to the playlist folder (of the form
+    "./playlist/<name>").   
     * add_song() -- Adds a Song to the list of Songs.   
     """
 
@@ -94,6 +106,15 @@ class Playlist(Album):
 
 
 class Artist:
+    """
+    An Artist class to model the data for an artist (in our case, a YouTube
+    channel).
+
+    * name -- Name of the artist.   
+    * albums -- Albums (playlists) made by the artist.
+    * songs -- Songs (uploads).
+    * id -- Unique identifier.
+    """
 
     name: str
     albums: list[Album]
@@ -115,10 +136,13 @@ class User:
     """
     A User class to model the data for a user of the application.
 
-    * username  -- Personal identifier   
-    * playlists -- List of playlists/albums the user has saved   
-    * favourites     -- Special playlist of the user’s favourite songs.   
-    * followed  -- List of all the artists that the user has followed.   
+    * username         -- Personal identifier   
+    * token            -- Unique identifier made by concatenating the
+    user's username with their password and computing their SHA256.   
+    * playlists        -- List of playlists/albums the user has saved.   
+    * favourites       -- Special playlist of the user’s favourite songs.   
+    * followed_artists -- List of all the artists that the user has followed.   
+    * followed_albums  -- List of all the albums that the user has followed.   
     """
 
     username: str
@@ -129,11 +153,6 @@ class User:
     followed_albums: list[Album]
 
     def __init__(self, username: str, token: str):
-        """
-        Initialise a User instance with no playlists, no
-        liked/favourited songs and no followed artists.
-        """
-
         self.username = username
         self.token = token
         self.playlists = []
@@ -147,19 +166,26 @@ class User:
 
     def like_song(self, song: Song):
         lib.TODO("User.like_song()")
+        lib.logger("User/like_song", f"User {self.username} liked {song.name}")
         self.favourites.add_song(song)
 
     def follow_artist(self, artist: Artist):
         lib.TODO("User.follow_artist()")
+        lib.logger("User/follow_artist",
+                   f"User {self.username} followed {artist.name}.")
         self.followed_artists.append(artist)
 
     def follow_album(self, album: Album):
         lib.TODO("User.follow_album()")
+        lib.logger("User/follow_album",
+                   f"User {self.username} followed {album.name}.")
         self.followed_albums.append(album)
 
     def create_playlist(self, name: str):
         lib.TODO("User.create_playlist()")
         playlist = Playlist(name, f"./playlists/{name}")
+        lib.logger("User/create_playlist",
+                   f"User {self.username} created playlist {name}.")
         self.playlists.append(playlist)
 
 

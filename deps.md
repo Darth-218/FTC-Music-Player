@@ -32,6 +32,12 @@ pip install Pillow
 pip install requests
 ```
 
+* CTkListbox
+
+```sh
+pip install CTkListbox
+```
+
 ## Dependencies for generating the documentation:
 
 * Pdoc

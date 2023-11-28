@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>FTC-Music-Player API documentation</title>
+<title>FTC-Music-Player.Home page API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,48 +19,125 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Namespace <code>FTC-Music-Player</code></h1>
+<h1 class="title">Module <code>FTC-Music-Player.Home page</code></h1>
 </header>
 <section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import customtkinter
+from CTkListbox import *
+
+
+customtkinter.set_appearance_mode(&#34;light&#34;)
+customtkinter.set_default_color_theme(&#34;blue&#34;)
+
+
+# app frame
+app = customtkinter.CTk()
+app.geometry(&#34;1440x900&#34;)
+app.title(&#34;Music player&#34;)
+
+
+# Frames
+side_frame = customtkinter.CTkFrame(app, width=300, height=900, fg_color=&#39;yellow&#39;)
+side_frame.grid(row=0, rowspan=3, column=0)
+
+search_bar_frame = customtkinter.CTkFrame(app, width=1140, height=45, fg_color=&#34;cyan&#34;)
+search_bar_frame.grid(row=0, column=1, columnspan=2)
+
+link = customtkinter.CTkEntry(search_bar_frame, width=300, height=40, font=(&#34;Systemia&#34;,15), fg_color=&#34;gray10&#34;, border_color=&#34;white&#34;, border_width=0.5, text_color=&#34;grey&#34;, corner_radius=50)
+link.place(relx=0.37, rely=0.02)
+
+main_frame = customtkinter.CTkFrame(app, width=1140, height=360 , fg_color=&#39;blue&#39;)
+main_frame.grid(row=1, columnspan=2, column=1)
+
+player_frame = customtkinter.CTkFrame(app, width=400, height= 500, fg_color=&#39;purple&#39;)
+player_frame.grid(row=2, column=2)
+
+# List box command
+def show_value(selected_option):
+    print(selected_option)
+
+listbox = CTkListbox(app, width=700, height=480, command=show_value, text_color=&#39;black&#39; )
+listbox.grid(row=2, column=1)
+
+listbox.insert(0, &#34;Option 0&#34;)
+listbox.insert(1, &#34;Option 1&#34;)
+listbox.insert(2, &#34;Option 2&#34;)
+listbox.insert(3, &#34;Option 3&#34;)
+listbox.insert(4, &#34;Option 4&#34;)
+listbox.insert(5, &#34;Option 5&#34;)
+listbox.insert(6, &#34;Option 6&#34;)
+listbox.insert(7, &#34;Option 7&#34;)
+listbox.insert(&#34;END&#34;, &#34;Option 8&#34;)
+
+
+# Dissapearing text in entry
+def temp_text(e):
+    link.delete(0, &#34;end&#34;)
+
+link.insert(0, &#34;What do you want to listen to?&#34;)
+link.bind(&#34;&lt;FocusIn&gt;&#34;, temp_text)
+
+# Button functions
+
+    
+
+# Button
+Home_btn = customtkinter.CTkButton(side_frame, width=30, height=15, border_color=&#39;Yellow&#39;, text=&#39;Home&#39;, text_color=&#39;black&#39;, fg_color=&#39;yellow&#39;, font=(&#34;Systemia&#34;,15))
+Home_btn.place(relx=0.4, rely=0.1)
+
+Browse_btn = customtkinter.CTkButton(side_frame, width=30, height=15, border_color=&#39;Yellow&#39;, text=&#39;Browse&#39;, text_color=&#39;black&#39;, fg_color=&#39;yellow&#39;, font=(&#34;Systemia&#34;,15))
+Browse_btn.place(relx=0.39, rely=0.2)
+
+Album_btn = customtkinter.CTkButton(side_frame, width=30, height=15, border_color=&#39;Yellow&#39;, text=&#39;Album&#39;, text_color=&#39;black&#39;, fg_color=&#39;yellow&#39;, font=(&#34;Systemia&#34;,15))
+Album_btn.place(relx=0.39, rely=0.3)
+
+Artists_btn = customtkinter.CTkButton(side_frame, width=30, height=15, border_color=&#39;Yellow&#39;, text=&#39;Artists&#39;, text_color=&#39;black&#39;, fg_color=&#39;yellow&#39;, font=(&#34;Systemia&#34;,15))
+Artists_btn.place(relx=0.39, rely=0.4)
+
+Videos_btn = customtkinter.CTkButton(side_frame, width=30, height=15, border_color=&#39;Yellow&#39;, text=&#39;Videos&#39;, text_color=&#39;black&#39;, fg_color=&#39;yellow&#39;, font=(&#34;Systemia&#34;,15))
+Videos_btn.place(relx=0.39, rely=0.5)
+
+app.mainloop()</code></pre>
+</details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="FTC-Music-Player.Home page" href="Home page.html">FTC-Music-Player.Home page</a></code></dt>
+<dt id="FTC-Music-Player.Home page.show_value"><code class="name flex">
+<span>def <span class="ident">show_value</span></span>(<span>selected_option)</span>
+</code></dt>
 <dd>
 <div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_value(selected_option):
+    print(selected_option)</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="FTC-Music-Player.Test Files" href="Test Files/index.html">FTC-Music-Player.Test Files</a></code></dt>
+<dt id="FTC-Music-Player.Home page.temp_text"><code class="name flex">
+<span>def <span class="ident">temp_text</span></span>(<span>e)</span>
+</code></dt>
 <dd>
 <div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.api_client" href="api_client/index.html">FTC-Music-Player.api_client</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.data_models" href="data_models.html">FTC-Music-Player.data_models</a></code></dt>
-<dd>
-<div class="desc"><p>Defines several classes modelling data that will be received from
-the C# backend to be used by the Python frontend: …</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.lib" href="lib.html">FTC-Music-Player.lib</a></code></dt>
-<dd>
-<div class="desc"><p>Definitions of some generally useful functions to use throughout the
-project.</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.localfiles" href="localfiles.html">FTC-Music-Player.localfiles</a></code></dt>
-<dd>
-<div class="desc"><p>Testing how to select a main music folder and a song to play</p></div>
-</dd>
-<dt><code class="name"><a title="FTC-Music-Player.search_models" href="search_models.html">FTC-Music-Player.search_models</a></code></dt>
-<dd>
-<div class="desc"><p>Classes for data sent to and from the C# back-end.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def temp_text(e):
+    link.delete(0, &#34;end&#34;)</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -71,15 +148,15 @@ project.</p></div>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="FTC-Music-Player.Home page" href="Home page.html">FTC-Music-Player.Home page</a></code></li>
-<li><code><a title="FTC-Music-Player.Test Files" href="Test Files/index.html">FTC-Music-Player.Test Files</a></code></li>
-<li><code><a title="FTC-Music-Player.api_client" href="api_client/index.html">FTC-Music-Player.api_client</a></code></li>
-<li><code><a title="FTC-Music-Player.data_models" href="data_models.html">FTC-Music-Player.data_models</a></code></li>
-<li><code><a title="FTC-Music-Player.lib" href="lib.html">FTC-Music-Player.lib</a></code></li>
-<li><code><a title="FTC-Music-Player.localfiles" href="localfiles.html">FTC-Music-Player.localfiles</a></code></li>
-<li><code><a title="FTC-Music-Player.search_models" href="search_models.html">FTC-Music-Player.search_models</a></code></li>
+<li><code><a title="FTC-Music-Player" href="index.html">FTC-Music-Player</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="FTC-Music-Player.Home page.show_value" href="#FTC-Music-Player.Home page.show_value">show_value</a></code></li>
+<li><code><a title="FTC-Music-Player.Home page.temp_text" href="#FTC-Music-Player.Home page.temp_text">temp_text</a></code></li>
 </ul>
 </li>
 </ul>

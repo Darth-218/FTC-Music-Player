@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>FTC-Music-Player.lib API documentation</title>
-<meta name="description" content="Definitions of some generally useful functions to use throughout the
-project." />
+<title>FTC-Music-Player.search_models API documentation</title>
+<meta name="description" content="Classes for data sent to and from the C# back-end." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -20,50 +19,54 @@ project." />
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>FTC-Music-Player.lib</code></h1>
+<h1 class="title">Module <code>FTC-Music-Player.search_models</code></h1>
 </header>
 <section id="section-intro">
-<p>Definitions of some generally useful functions to use throughout the
-project.</p>
+<p>Classes for data sent to and from the C# back-end.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#!/usr/bin/env /usr/bin/python3
-&#34;&#34;&#34;
-Definitions of some generally useful functions to use throughout the
-project.
+<pre><code class="python">&#34;&#34;&#34;
+Classes for data sent to and from the C# back-end.
 &#34;&#34;&#34;
 
-import colorama as c
+from data_models import *
+import lib
 
-def TODO(s: str):
-    print(c.Fore.YELLOW + &#34;&gt;&gt;=UNIMPLEMENTED{. %s .}=&lt;&lt;&#34; %(s),
-          c.Style.RESET_ALL)
-
-def logger(name: str, s: str):
+class SearchResults():
     &#34;&#34;&#34;
-    General logging function for use by the library.
-
-    - `name`: Name of the calling module/function.   
-    - `s`   : Displayed log.
+    Class to model data sent back by the C# back-end.
     &#34;&#34;&#34;
-    print(c.Fore.GREEN + &#34;#[LOG{. %s .}]=||&#34; %(name), s, c.Style.RESET_ALL)
 
-def err(name: str, e: str):
+    artists: list[Artist]
+    albums : list[Album ]
+    songs  : list[Song  ]
+
+    def __init__(self,
+                 artists: list[Artist],
+                 albums: list[Album],
+                 songs: list[Song]):
+        self.artists = artists
+        self.albums  = albums
+        self.songs   = songs
+
+
+class SearchRequest():
     &#34;&#34;&#34;
-    General function for logging errors.
-
-    - `name`: Name of the calling module/function.   
-    - `s`   : Displayed log.
+    Class modelling data to be sent to the C# back-end.
     &#34;&#34;&#34;
-    print(c.Fore.RED + &#34;#[ERROR{. %s .}]=!=|&#34; %(name), e, c.Style.RESET_ALL)
 
-if __name__ == &#34;__main__&#34;:
-    TODO(&#34;lib/testing&#34;)
-    logger(&#34;lib&#34;, &#34;Hello, world!&#34;)
-    err(&#34;lib&#34;, &#34;418 - I am a Teapot.&#34;)
-    logger(&#34;lib&#34;, &#34;Nevermind I figured it out.&#34;)</code></pre>
+    query       : str
+    artist_count: int
+    album_count : int
+    song_count  : int
+
+    def __init__(self, query, artist_count, album_count, song_count):
+        self.query        = query
+        self.artist_count = artist_count
+        self.album_count  = album_count
+        self.song_count   = song_count</code></pre>
 </details>
 </section>
 <section>
@@ -71,75 +74,100 @@ if __name__ == &#34;__main__&#34;:
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-functions">Functions</h2>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="FTC-Music-Player.lib.TODO"><code class="name flex">
-<span>def <span class="ident">TODO</span></span>(<span>s: str)</span>
+<dt id="FTC-Music-Player.search_models.SearchRequest"><code class="flex name class">
+<span>class <span class="ident">SearchRequest</span></span>
+<span>(</span><span>query, artist_count, album_count, song_count)</span>
 </code></dt>
+<dd>
+<div class="desc"><p>Class modelling data to be sent to the C# back-end.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SearchRequest():
+    &#34;&#34;&#34;
+    Class modelling data to be sent to the C# back-end.
+    &#34;&#34;&#34;
+
+    query       : str
+    artist_count: int
+    album_count : int
+    song_count  : int
+
+    def __init__(self, query, artist_count, album_count, song_count):
+        self.query        = query
+        self.artist_count = artist_count
+        self.album_count  = album_count
+        self.song_count   = song_count</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.search_models.SearchRequest.album_count"><code class="name">var <span class="ident">album_count</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def TODO(s: str):
-    print(c.Fore.YELLOW + &#34;&gt;&gt;=UNIMPLEMENTED{. %s .}=&lt;&lt;&#34; %(s),
-          c.Style.RESET_ALL)</code></pre>
-</details>
 </dd>
-<dt id="FTC-Music-Player.lib.err"><code class="name flex">
-<span>def <span class="ident">err</span></span>(<span>name: str, e: str)</span>
-</code></dt>
+<dt id="FTC-Music-Player.search_models.SearchRequest.artist_count"><code class="name">var <span class="ident">artist_count</span> : int</code></dt>
 <dd>
-<div class="desc"><p>General function for logging errors.</p>
-<ul>
-<li><code>name</code>: Name of the calling module/function.
-</li>
-<li><code>s</code>
-: Displayed log.</li>
-</ul></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def err(name: str, e: str):
-    &#34;&#34;&#34;
-    General function for logging errors.
-
-    - `name`: Name of the calling module/function.   
-    - `s`   : Displayed log.
-    &#34;&#34;&#34;
-    print(c.Fore.RED + &#34;#[ERROR{. %s .}]=!=|&#34; %(name), e, c.Style.RESET_ALL)</code></pre>
-</details>
+<div class="desc"></div>
 </dd>
-<dt id="FTC-Music-Player.lib.logger"><code class="name flex">
-<span>def <span class="ident">logger</span></span>(<span>name: str, s: str)</span>
-</code></dt>
+<dt id="FTC-Music-Player.search_models.SearchRequest.query"><code class="name">var <span class="ident">query</span> : str</code></dt>
 <dd>
-<div class="desc"><p>General logging function for use by the library.</p>
-<ul>
-<li><code>name</code>: Name of the calling module/function.
-</li>
-<li><code>s</code>
-: Displayed log.</li>
-</ul></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def logger(name: str, s: str):
-    &#34;&#34;&#34;
-    General logging function for use by the library.
-
-    - `name`: Name of the calling module/function.   
-    - `s`   : Displayed log.
-    &#34;&#34;&#34;
-    print(c.Fore.GREEN + &#34;#[LOG{. %s .}]=||&#34; %(name), s, c.Style.RESET_ALL)</code></pre>
-</details>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.search_models.SearchRequest.song_count"><code class="name">var <span class="ident">song_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
-</section>
-<section>
+</dd>
+<dt id="FTC-Music-Player.search_models.SearchResults"><code class="flex name class">
+<span>class <span class="ident">SearchResults</span></span>
+<span>(</span><span>artists: list[data_models.Artist], albums: list[data_models.Album], songs: list[data_models.Song])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to model data sent back by the C# back-end.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SearchResults():
+    &#34;&#34;&#34;
+    Class to model data sent back by the C# back-end.
+    &#34;&#34;&#34;
+
+    artists: list[Artist]
+    albums : list[Album ]
+    songs  : list[Song  ]
+
+    def __init__(self,
+                 artists: list[Artist],
+                 albums: list[Album],
+                 songs: list[Song]):
+        self.artists = artists
+        self.albums  = albums
+        self.songs   = songs</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.search_models.SearchResults.albums"><code class="name">var <span class="ident">albums</span> : list[data_models.Album]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.search_models.SearchResults.artists"><code class="name">var <span class="ident">artists</span> : list[data_models.Artist]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.search_models.SearchResults.songs"><code class="name">var <span class="ident">songs</span> : list[data_models.Song]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -153,11 +181,25 @@ if __name__ == &#34;__main__&#34;:
 <li><code><a title="FTC-Music-Player" href="index.html">FTC-Music-Player</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-functions">Functions</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="FTC-Music-Player.search_models.SearchRequest" href="#FTC-Music-Player.search_models.SearchRequest">SearchRequest</a></code></h4>
 <ul class="">
-<li><code><a title="FTC-Music-Player.lib.TODO" href="#FTC-Music-Player.lib.TODO">TODO</a></code></li>
-<li><code><a title="FTC-Music-Player.lib.err" href="#FTC-Music-Player.lib.err">err</a></code></li>
-<li><code><a title="FTC-Music-Player.lib.logger" href="#FTC-Music-Player.lib.logger">logger</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchRequest.album_count" href="#FTC-Music-Player.search_models.SearchRequest.album_count">album_count</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchRequest.artist_count" href="#FTC-Music-Player.search_models.SearchRequest.artist_count">artist_count</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchRequest.query" href="#FTC-Music-Player.search_models.SearchRequest.query">query</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchRequest.song_count" href="#FTC-Music-Player.search_models.SearchRequest.song_count">song_count</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.search_models.SearchResults" href="#FTC-Music-Player.search_models.SearchResults">SearchResults</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.search_models.SearchResults.albums" href="#FTC-Music-Player.search_models.SearchResults.albums">albums</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchResults.artists" href="#FTC-Music-Player.search_models.SearchResults.artists">artists</a></code></li>
+<li><code><a title="FTC-Music-Player.search_models.SearchResults.songs" href="#FTC-Music-Player.search_models.SearchResults.songs">songs</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
