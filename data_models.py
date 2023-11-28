@@ -12,9 +12,7 @@ the C# backend to be used by the Python frontend:
 """
 
 import lib
-import time
 from datetime import timedelta
-import vlc
 
 
 class Content:
@@ -50,16 +48,6 @@ class Song(Content):
         self.artist = artist
         self.duration = duration
         self._path = path
-
-    def play(self):
-        """
-        Start playing the current song from `_path`
-        """
-        lib.logger("Song/play", f"Now playing {self.name}")
-        player = vlc.MediaPlayer(self._path)
-        player.play()
-        time.sleep(self.duration.total_seconds())
-
 
 class Album(Content):
     """
