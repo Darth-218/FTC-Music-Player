@@ -4,9 +4,20 @@ Definitions of some generally useful functions to use throughout the
 project.
 """
 
+from datetime import timedelta
 import colorama as c
 
+def calc_pos(duration: timedelta, time: timedelta):
+    dursecs  = duration.total_seconds()
+    timesecs = time.total_seconds()
+    return timesecs / dursecs
+
 def TODO(s: str):
+    """
+    Mark a function or method as unimplemented.
+
+    * `s` -- name.
+    """
     print(c.Fore.YELLOW + ">>=UNIMPLEMENTED{. %s .}=<<" %(s),
           c.Style.RESET_ALL)
 
