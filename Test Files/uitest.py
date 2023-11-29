@@ -28,5 +28,6 @@ class Home(customtkinter.CTk):
     def button_click(self):
         print('Button clicked')
 
+
 app = Home()
 app.mainloop()
