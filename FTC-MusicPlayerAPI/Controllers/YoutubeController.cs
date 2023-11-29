@@ -19,6 +19,7 @@ namespace FTC_MusicPlayerAPI.Controllers
         [Route("/Youtube/Search")]
         public async Task<SearchResponse> Search(string query, int artCount, int albCount, int sonCount)
         {
+            
             SearchRequest request = new()
             {
                 Query = query,
