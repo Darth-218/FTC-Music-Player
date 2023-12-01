@@ -1,7 +1,7 @@
 import tkinter
 import customtkinter 
 from CTkListbox import *
-from PIL import *
+from PIL import Image
 
 
 
