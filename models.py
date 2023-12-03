@@ -4,9 +4,9 @@ with the API.
 """
 
 from data_models import *
-import time
+from player_handlers import *
+from typing import Callable
 import vlc
-
 
 class Queue():
     """
@@ -47,6 +47,7 @@ class Player():
     """
 
     queue: Queue
+    handlers: dict[HandlerType, Callable[[], None]]
 
     def play(self):
         """
@@ -88,9 +89,9 @@ class VlcMediaPlayer(Player):
 
     player: vlc.MediaPlayer
 
-    def __init__(self, queue):
-        self.queue = queue
+    def __init__(self, handlers):
         self.player = vlc.MediaPlayer(queue.current._path)
+        self.handlers = handlers
 
     def play(self):
         current = self.queue.current
@@ -114,3 +115,13 @@ class VlcMediaPlayer(Player):
 
     def seekpos(self, pos):
         self.player.set_position(pos)
+
+    def _change_song(self, queue: Queue):
+        self.player.stop()
+        self.queue = queue
+        self.play()
+        self.handlers[HandlerType.on_source_changed]()
+
+    def _add_handler(self, handler: Callable[[], None], type: HandlerType):
+        self.handlers[type] = handler
+
