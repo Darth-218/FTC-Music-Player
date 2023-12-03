@@ -23,6 +23,7 @@ class Player(customtkinter.CTk):
         self.profile_card.grid_rowconfigure(3, weight=1)
         self.profile_card.grid(row=0, column=0, sticky='nsew', padx=20, pady=5)
 
+<<<<<<< Updated upstream
         self.song_image = customtkinter.CTkLabel(
             self.profile_card,
             text='',
@@ -30,6 +31,9 @@ class Player(customtkinter.CTk):
                 dark_image=Image.open('././Assets/Images/songTest.jpg'),
                 size=(200, 200)),
             corner_radius=50)
+=======
+        self.song_image = customtkinter.CTkLabel(self.profile_card,text='', image=customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/songTest.jpg'), size=(200,200)), corner_radius=50)
+>>>>>>> Stashed changes
         self.song_image.grid(row=0, column=0, sticky='nsew', padx=20, pady=5)
 
         # self.song_name = customtkinter.CTkLabel(self.profile_card, text=selected_song.name, font=('Systemia', 20))
@@ -74,6 +78,7 @@ class Player(customtkinter.CTk):
         size = 50
         radius = 25
 
+<<<<<<< Updated upstream
         self.shuffle = customtkinter.CTkButton(
             self.controls,
             text='',
@@ -129,6 +134,21 @@ class Player(customtkinter.CTk):
             width=size-20,
             height=size-20,
             fg_color="transparent")
+=======
+        self.shuffle = customtkinter.CTkButton(self.controls, text='', image= customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/shuffle.png')), command=self.button_click, corner_radius=radius, width=size-20, height=size-20, fg_color="transparent")
+        self.shuffle.grid(row=0, column=0, padx=5, pady=10)
+
+        self.previous = customtkinter.CTkButton(self.controls, text='', image= customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/skip_previous.png')), command=self.button_click, corner_radius=radius, width=size-10, height=size-10, fg_color="transparent")
+        self.previous.grid(row=0, column=1, padx=5, pady=5)
+
+        self.play_pause = customtkinter.CTkButton(self.controls, text='', image= customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/play_arrow.png')), command=self.button_click, corner_radius=radius, width=size, height=size, fg_color="white")
+        self.play_pause.grid(row=0, column=2, padx=5, pady=10)
+
+        self.next = customtkinter.CTkButton(self.controls, text='', image= customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/skip_next.png')), command=self.button_click, corner_radius=radius, width=size-10, height=size-10, fg_color="transparent")
+        self.next.grid(row=0, column=3, padx=5, pady=5)
+
+        self.repeat = customtkinter.CTkButton(self.controls, text='', image= customtkinter.CTkImage(dark_image=Image.open('../Assets/Images/repeat.png')), command=self.button_click, corner_radius=radius, width=size-20, height=size-20, fg_color="transparent")
+>>>>>>> Stashed changes
         self.repeat.grid(row=0, column=4, padx=5, pady=10)
 
     def button_click(self):
