@@ -1,3 +1,3 @@
 from models import *
 
-player = Player()
+player = VlcMediaPlayer([])

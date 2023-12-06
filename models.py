@@ -13,12 +13,12 @@ class Queue():
     Class representing a queue of songs.
     """
 
-    song_list: list[Song]
-    current: Song
-    curr_index: int
-    elapsed: timedelta
-    position: float
-    duration: timedelta
+    song_list: list[Song] = []
+    current: Song = Song(name="Test Song", artist="Test Artist", duration=timedelta(minutes=8, seconds=15), path="test path")
+    curr_index: int = 0
+    elapsed: timedelta = timedelta(0)
+    position: float = 0
+    duration: timedelta = timedelta(0)
 
     def __init__(self):
         lib.TODO("Queue/init")
@@ -48,6 +48,10 @@ class Player():
 
     queue: Queue
     handlers: dict[HandlerType, Callable[[], None]]
+
+    def __init__(self):
+        self.queue = Queue()
+        self.handlers = {}
 
     def play(self):
         """
@@ -90,13 +94,14 @@ class VlcMediaPlayer(Player):
     player: vlc.MediaPlayer
 
     def __init__(self, handlers):
-        self.player = vlc.MediaPlayer(queue.current._path)
+        super().__init__()
+        self.player = vlc.MediaPlayer(self.queue.current._path)
         self.handlers = handlers
 
     def play(self):
         current = self.queue.current
         lib.logger("VlcMediaPlayer/play",
-                   f"Now playing {current.name}.")
+            f"Now playing {current.name}.")
         self.player.play()
 
     def next(self):
