@@ -12,12 +12,12 @@ class SidePane(customtkinter.CTkFrame):
         self.grid_rowconfigure(6, weight=8)
         self.grid_columnconfigure(0, weight=1)
 
-        self.profileBtn = customtkinter.CTkButton(self, text="Profile")
-        self.homeBtn = customtkinter.CTkButton(self, text="Home")
-        self.browseBtn = customtkinter.CTkButton(self, text="Browse")
-        self.albumBtn = customtkinter.CTkButton(self, text="Album")
-        self.artistsBtn = customtkinter.CTkButton(self, text="Artists")
-        self.videosBtn = customtkinter.CTkButton(self, text="Videos")
+        self.profileBtn = customtkinter.CTkButton(self, text="Profile", fg_color='transparent', hover_color='grey34')
+        self.homeBtn = customtkinter.CTkButton(self, text="Home", fg_color='transparent', hover_color='grey34')
+        self.browseBtn = customtkinter.CTkButton(self, text="Browse", fg_color='transparent', hover_color='grey34')
+        self.albumBtn = customtkinter.CTkButton(self, text="Album", fg_color='transparent', hover_color='grey34')
+        self.artistsBtn = customtkinter.CTkButton(self, text="Artists", fg_color='transparent', hover_color='grey34')
+        self.videosBtn = customtkinter.CTkButton(self, text="Videos", fg_color='transparent', hover_color='grey34')
 
         xpadding = 10
         ypadding = 10

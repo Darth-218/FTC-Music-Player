@@ -4,6 +4,7 @@ from CTkListbox import *
 from PIL import *
 from tkinter import ttk
 from tkinter import messagebox
+from PIL import Image
 
 
 # apperance
@@ -35,14 +36,14 @@ player_frame = customtkinter.CTkFrame(app, width=400, height= 500, fg_color='whi
 player_frame.grid(row=2, column=2)
 
 # Icons
-img_home = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/home (1).png'), size=(20,20))
-img_browse = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/find.png'), size=(20,20))
-img_album = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/gallery.png'), size=(20,20))
-img_artists = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/artist.png'), size=(20,20))
-img_videos = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/video.png'), size=(20,20))
-img_profile = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/user.png'), size=(80,80))
-img_notification = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/bell.png'), size=(20,20))
-img_settings = customtkinter.CTkImage(dark_image=Image.open(r'c:/Users/alisa/Downloads/setting.png'), size=(20,20))
+img_home = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\home.png'), size=(20,20))
+img_browse = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\find.png'), size=(20,20))
+img_album = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\gallery.png'), size=(20,20))
+img_artists = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\artist.png'), size=(20,20))
+img_videos = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\video.png'), size=(20,20))
+img_profile = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\user.png'), size=(80,80))
+img_notification = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\bell.png'), size=(20,20))
+img_settings = customtkinter.CTkImage(dark_image=Image.open(r'./Assets\Images\setting.png'), size=(20,20))
 
 
 # List box command

@@ -1,3 +1,5 @@
+import sys
+sys.path.append("./")
 import customtkinter
 
 class TopBar(customtkinter.CTkFrame):
@@ -11,8 +13,8 @@ class TopBar(customtkinter.CTkFrame):
         self.searchBar = customtkinter.CTkEntry(self, placeholder_text="What do you want to listen to?", corner_radius=50)
         self.searchBar.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
 
-        self.notificationBtn = customtkinter.CTkButton(self, text="Notification")
+        self.notificationBtn = customtkinter.CTkButton(self, text="Notification", image="./Assets/Images/bell.png", fg_color='transparent', hover_color='grey34')
         self.notificationBtn.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)
 
-        self.settingsBtn = customtkinter.CTkButton(self, text="Settings")
+        self.settingsBtn = customtkinter.CTkButton(self, text="Settings", image="./Assets/Images/setting.png", fg_color='transparent', hover_color='grey34')
         self.settingsBtn.grid(row=0, column=2, sticky='nsew', padx=10, pady=10)
