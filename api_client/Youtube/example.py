@@ -1,8 +1,8 @@
 #!/usr/bin/env /usr/bin/python3
 import sys
-sys.path.append("./api_client/Youtube")
+sys.path.append("./")
 import youtube
-import models
+import api_models
 
 # Example usage of the Youtube API.
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
   query = input("Enter the search query: ")
 
   #Create a SearchRequest object.
-  request = models.SearchRequest(query, 5, 5, 10) #The numbers represent the number of artists, albums, and songs to return respectively.
+  request = api_models.SearchRequest(query, 5, 5, 10) #The numbers represent the number of artists, albums, and songs to return respectively.
 
   # *Get the search results from the API.*
   search_response = youtube.search(request) #This returns a SearchResponse object.

@@ -4,12 +4,12 @@ This file builds the requests to the API server via the api_client and parses th
 
 
 import sys
-sys.path.append("./api_client")
-import api_client
+sys.path.append("./")
 
+import api_client.api_client as api_client
 import requests
 import json
-import Youtube.models as yt_models
+import api_models as yt_models
 
 
 def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:

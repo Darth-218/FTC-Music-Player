@@ -1,4 +1,5 @@
 import customtkinter
+from PIL import Image
 
 class SidePane(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -13,11 +14,31 @@ class SidePane(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
         self.profileBtn = customtkinter.CTkButton(self, text="Profile", fg_color='transparent', hover_color='grey34')
-        self.homeBtn = customtkinter.CTkButton(self, text="Home", fg_color='transparent', hover_color='grey34')
-        self.browseBtn = customtkinter.CTkButton(self, text="Browse", fg_color='transparent', hover_color='grey34')
-        self.albumBtn = customtkinter.CTkButton(self, text="Album", fg_color='transparent', hover_color='grey34')
-        self.artistsBtn = customtkinter.CTkButton(self, text="Artists", fg_color='transparent', hover_color='grey34')
-        self.videosBtn = customtkinter.CTkButton(self, text="Videos", fg_color='transparent', hover_color='grey34')
+        self.homeBtn = customtkinter.CTkButton(self,
+                                                text="Home",
+                                                fg_color='transparent',
+                                                hover_color='grey34',
+                                                image=customtkinter.CTkImage(dark_image=Image.open('./Assets/Images/home.png'), size=(20,20)))
+        self.browseBtn = customtkinter.CTkButton(self,
+                                                text="Browse",
+                                                fg_color='transparent',
+                                                hover_color='grey34',
+                                                image=customtkinter.CTkImage(dark_image=Image.open('./Assets/Images/find.png'), size=(20,20)))
+        self.albumBtn = customtkinter.CTkButton(self,
+                                                text="Albums",
+                                                fg_color='transparent',
+                                                hover_color='grey34',
+                                                image=customtkinter.CTkImage(dark_image=Image.open('./Assets/Images/gallery.png'), size=(20,20)))
+        self.artistsBtn = customtkinter.CTkButton(self,
+                                                text="Artists",
+                                                fg_color='transparent',
+                                                hover_color='grey34',
+                                                image=customtkinter.CTkImage(dark_image=Image.open('./Assets/Images/artist.png'), size=(20,20)))
+        self.videosBtn = customtkinter.CTkButton(self,
+                                                text="Videos",
+                                                fg_color='transparent', 
+                                                hover_color='grey34',
+                                                image=customtkinter.CTkImage(dark_image=Image.open('./Assets/Images/video.png'), size=(20,20)))
 
         xpadding = 10
         ypadding = 10
