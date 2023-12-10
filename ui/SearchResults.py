@@ -1,9 +1,13 @@
+import sys
+sys.path.append('./')
 import customtkinter
 import CTkListbox
 import api_client.Youtube.youtube as yt
 import api_client.Youtube.api_models as yt_models
 import threading
 import time
+import ArtistWidget
+from PIL import Image
 
 class SearchResultsFrame(customtkinter.CTk):
     # def __init__(self, master, **kwargs):
@@ -23,11 +27,18 @@ class SearchResultsFrame(customtkinter.CTk):
         searchResponse = yt.search(searchRequest)
         allResults = searchResponse.artists + searchResponse.albums + searchResponse.songs
 
-        self.search_results = CTkListbox.CTkListbox(self, hover_color='grey34', border_color='grey34', corner_radius=10)
+        self.search_results = customtkinter.CTkScrollableFrame(self, border_color='grey34', corner_radius=10)
         self.search_results.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
 
-        for i in len(allResults):
-            self.search_results.insert(i, allResults[i].title)
+        for i, result in enumerate(searchResponse.artists):
+            self.search_results.grid_rowconfigure(i, weight=0)
+            self.resultWidget = customtkinter.CTkButton(text=result.name, 
+                                                        image=customtkinter.CTkImage(dark_image=Image.open(result.cover_art),
+                                                                                        size=(100,100)), 
+                                                        fg_color='transparent', 
+                                                        hover_color='grey34')
+            self.resultWidget.grid(row=i, column=0, sticky='nsew', padx=10, pady=10)
+            
 
         self.search_results.bind('<<ListboxSelect>>', self.on_select)
 
