@@ -5,7 +5,8 @@ with the API.
 
 from data_models import *
 from player_handlers import *
-from typing import Callable
+from enum import Enum, auto
+from typing import Callable, Any
 import vlc
 
 class Queue():
@@ -14,7 +15,11 @@ class Queue():
     """
 
     song_list: list[Song] = []
-    current: Song = Song(name="Test Song", artist="Test Artist", duration=timedelta(minutes=8, seconds=15), path="test path")
+    current: Song
+    # = Song(name="Test Song",
+    #        artist="Test Artist",
+    #        duration=timedelta(minutes=8, seconds=15),
+    #        path="test path")
     curr_index: int = 0
     elapsed: timedelta = timedelta(0)
     position: float = 0
@@ -48,6 +53,7 @@ class Player():
 
     queue: Queue
     handlers: dict[HandlerType, Callable[[], None]]
+    player: Any | None
 
     def __init__(self):
         self.queue = Queue()
@@ -130,3 +136,9 @@ class VlcMediaPlayer(Player):
     def _add_handler(self, handler: Callable[[], None], type: HandlerType):
         self.handlers[type] = handler
 
+
+class PlayerState(Enum):
+    playing     = auto()
+    paused      = auto()
+    finished    = auto()
+    not_started = auto()
