@@ -34,6 +34,7 @@ def main(page: ft.Page):
             height=950,
     )
 
+    pick_file = ft.FilePicker()
 
     theme_btn = ft.IconButton(icon='nightlight_outlined', icon_size=30)
     label = ft.Text('Dark Theme')
