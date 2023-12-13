@@ -5,7 +5,7 @@ class AlbumWidget(ft.TextButton):
     def __init__(self, album: yt_models.OnlineAlbum):
         super().__init__(content=ft.Container(content=ft.Row(
                     [
-                        ft.Image(src=album.cover_art, width=200, height=200, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Image(src=album.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
                         ft.Text(album.name)
                     ],
                 ),

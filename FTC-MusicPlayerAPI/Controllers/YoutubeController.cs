@@ -2,6 +2,7 @@
 using FTC_MusicPlayerAPI.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FTC_MusicPlayerAPI.Controllers
 {
@@ -92,6 +93,21 @@ namespace FTC_MusicPlayerAPI.Controllers
             catch (Exception ex)
             {
                 return new() { Songs = new(), HasError = true, Error = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        [Route("/Youtube/GetArtist")]
+        public async Task<string> GetArtist()
+        {
+            try
+            {
+                return await _youtubeService.GetArtistSubscriberCount("");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return "";
             }
         }
     }

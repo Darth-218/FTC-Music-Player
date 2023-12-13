@@ -3154,11 +3154,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\NU\\CSCI102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\FTC-MusicPlayerAPI.csproj",
+      "projectUniqueName": "C:\\Projects\\NU\\CSCI 102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\FTC-MusicPlayerAPI.csproj",
       "projectName": "FTC-MusicPlayerAPI",
-      "projectPath": "C:\\Projects\\NU\\CSCI102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\FTC-MusicPlayerAPI.csproj",
+      "projectPath": "C:\\Projects\\NU\\CSCI 102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\FTC-MusicPlayerAPI.csproj",
       "packagesPath": "C:\\Users\\Ahmed\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\NU\\CSCI102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\obj\\",
+      "outputPath": "C:\\Projects\\NU\\CSCI 102\\FTC-Music-Player\\FTC-MusicPlayerAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

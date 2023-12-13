@@ -28,6 +28,8 @@ namespace FTC_MusicPlayerAPI.Services
 
                     await foreach (var rawArtist in rawArtists)
                     {
+                        var cha = await client.Channels.GetAsync(rawArtist.Id);
+
                         if (counter == request.ArtistsCount)
                         {
                             break;
@@ -64,11 +66,11 @@ namespace FTC_MusicPlayerAPI.Services
                     }
                 });
 
-                var rawSongs = client.Search.GetVideosAsync(request.Query);
 
                 Task songsTask = Task.Run(async () =>
                 {
                     int counter = 0;
+                    var rawSongs = client.Search.GetVideosAsync(request.Query);
                     await foreach (var rawSong in rawSongs)
                     {
                         if (counter == request.SongsCount)
@@ -126,7 +128,7 @@ namespace FTC_MusicPlayerAPI.Services
 
                 await foreach (var song in contents)
                 {
-                    songs.Add(new() 
+                    songs.Add(new()
                     {
                         Id = song.Id,
                         ArtistId = song.Author.ChannelId.ToString(),
@@ -177,7 +179,7 @@ namespace FTC_MusicPlayerAPI.Services
                     albums.Add(album);
                 }
 
-                ArtistAlbumsResponse albumsResponse = new() 
+                ArtistAlbumsResponse albumsResponse = new()
                 {
                     ArtistAlbums = albums,
                     HasError = false,
@@ -253,6 +255,35 @@ namespace FTC_MusicPlayerAPI.Services
             {
                 throw;
             }
+        }
+
+        //public void GetArtistInformation(string id)
+        //{
+
+        //}
+
+        public async Task<string> GetArtistSubscriberCount(string youtubeResponse)
+        {
+            return await Task.Run(async () =>
+            {
+                HttpClient client = new HttpClient();
+                HttpResponseMessage res = await client.GetAsync("https://www.youtube.com/channel/UClQPk2WbC23z3eogxPbbOjw");
+                youtubeResponse = await res.Content.ReadAsStringAsync();
+
+                //Regex regex = new($"\"subscriberCountText\":\\s*{{\\s*\"simpleText\":\\s*\"(.*?)\"");
+                string pattern = @"""simpleText"":\s*""([^""]+)""";
+
+                Match match = Regex.Match(youtubeResponse, pattern);
+                
+                if (match.Success)
+                {
+                    return match.Groups[1].Value;
+                }
+                else
+                {
+                    return "0";
+                }
+            });
         }
     }
 }
