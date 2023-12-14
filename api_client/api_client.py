@@ -24,11 +24,11 @@ class ApiRequests(Enum):
     AlbumSongs   = "/GetAlbumSongs"
     ArtistAlbums = "/GetArtistAlbums"
     ArtistSongs  = "/GetArtistSongs"
+    Suggestions  = "/GetSuggestions"
     
 
 #Sends a request to the server and returns the response (in json format).
 #Takes in the controller, request, and params as strings.
 def sendApiRequest(controller: str, request: str, params: str) -> str:
-    response = requests.get("http://" + serverIp + controller + request + params)
-    # print(response.text)
+    response = requests.get("https://" + serverIp + controller + request + params)
     return response.text

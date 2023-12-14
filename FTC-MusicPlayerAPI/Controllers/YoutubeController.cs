@@ -20,7 +20,7 @@ namespace FTC_MusicPlayerAPI.Controllers
         [Route("/Youtube/Search")]
         public async Task<SearchResponse> Search(string query, int artCount, int albCount, int sonCount)
         {
-            
+
             SearchRequest request = new()
             {
                 Query = query,
@@ -78,7 +78,7 @@ namespace FTC_MusicPlayerAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new() {  ArtistAlbums = new(), HasError=true, Error = ex.Message };
+                return new() { ArtistAlbums = new(), HasError = true, Error = ex.Message };
             }
         }
 
@@ -108,6 +108,27 @@ namespace FTC_MusicPlayerAPI.Controllers
             {
                 Debug.WriteLine(ex.Message);
                 return "";
+            }
+        }
+
+        [HttpGet]
+        [Route("/Youtube/GetSuggestions")]
+        public async Task<SuggestionsRespose> GetSuggestions(int artCount, int albCount, int sonCount)
+        {
+            try
+            {
+                SuggestionsRequest request = new()
+                {
+                    ArtistsCount = artCount,
+                    AlbumsCount = albCount,
+                    SongsCount = sonCount,
+                    Intrests = new()
+                };
+                return await _youtubeService.GetSuggestions(request);
+            }
+            catch (Exception ex)
+            {
+                return new() { Albums = new(), Artists = new(), Songs = new(), HasError = true, Error = ex.Message };
             }
         }
     }

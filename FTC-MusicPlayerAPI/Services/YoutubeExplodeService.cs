@@ -4,6 +4,7 @@ using YoutubeExplode;
 using YoutubeExplode.Common;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Playlists;
+using System.Diagnostics;
 
 namespace FTC_MusicPlayerAPI.Services
 {
@@ -155,7 +156,7 @@ namespace FTC_MusicPlayerAPI.Services
             List<string> ids;
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = new();
                 HttpResponseMessage response = await client.GetAsync($"https://www.youtube.com/channel/{artistId}/playlists");
                 string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -197,7 +198,7 @@ namespace FTC_MusicPlayerAPI.Services
         private static List<string> GetChannelPlaylistsIds(string channelId, string response)
         {
             List<string> ids = new List<string>();
-            Regex exp = new Regex("playlistId\":\"(.*?)\"");
+            Regex exp = new("playlistId\":\"(.*?)\"");
             MatchCollection matches = exp.Matches(response);
 
             foreach (Match match in matches)
@@ -257,32 +258,84 @@ namespace FTC_MusicPlayerAPI.Services
             }
         }
 
-        //public void GetArtistInformation(string id)
-        //{
+        public async Task<SuggestionsRespose> GetSuggestions(SuggestionsRequest suggestionsRequest)
+        {
+            Debug.WriteLine("GetSuggestionsStarted...");
+            suggestionsRequest.Intrests = new()
+            {
+                new() { Name = "jacob's piano", Priority = 10 },
+                new() { Name = "piano", Priority = 2 },
+                new() { Name = "cello", Priority = 6 },
+                new() { Name = "piano guys", Priority = 8 },
+                new() { Name = "guitar", Priority = 3 },
+                new() { Name = "violin", Priority = 5 },
+                new() { Name = "viola", Priority = 1 },
+            };
 
-        //}
+            suggestionsRequest.Intrests.Sort((x, y) => y.Priority.CompareTo(x.Priority));
+
+            List<Artist> artists = new();
+            List<Album> albums = new();
+            List<Song> songs = new();
+
+            Debug.WriteLine("Finished initializing...");
+
+            try
+            {
+                List<Task> tasks = new();
+                foreach (Interest interest in suggestionsRequest.Intrests.Take(3))
+                {
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        SearchRequest request = new()
+                        {
+                            Query = interest.Name,
+                            ArtistsCount = suggestionsRequest.ArtistsCount,
+                            AlbumsCount = suggestionsRequest.AlbumsCount,
+                            SongsCount = suggestionsRequest.SongsCount
+                        };
+
+                        SearchResponse response = await Search(request);
+                        artists.AddRange(response.Artists);
+                        albums.AddRange(response.Albums);
+                        songs.AddRange(response.Songs);
+                    }));
+                }
+
+                Debug.WriteLine("Created Tasks...");
+
+                await Task.WhenAll(tasks);
+
+                Debug.WriteLine("Tasks Completed...");
+
+                return new SuggestionsRespose()
+                {
+                    Artists = artists,
+                    Albums = albums,
+                    Songs = songs,
+                    HasError = false,
+                    Error = ""
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         public async Task<string> GetArtistSubscriberCount(string youtubeResponse)
         {
             return await Task.Run(async () =>
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = new();
+                client.DefaultRequestHeaders.Add("Accept-Language", "en-US");
                 HttpResponseMessage res = await client.GetAsync("https://www.youtube.com/channel/UClQPk2WbC23z3eogxPbbOjw");
                 youtubeResponse = await res.Content.ReadAsStringAsync();
 
-                //Regex regex = new($"\"subscriberCountText\":\\s*{{\\s*\"simpleText\":\\s*\"(.*?)\"");
-                string pattern = @"""simpleText"":\s*""([^""]+)""";
-
-                Match match = Regex.Match(youtubeResponse, pattern);
-                
-                if (match.Success)
-                {
-                    return match.Groups[1].Value;
-                }
-                else
-                {
-                    return "0";
-                }
+                Regex regex = new("\"subscriberCountText\":\\s*{\\s*\"accessibility\":\\s*{\\s*\"accessibilityData\":\\s*{\\s*\"label\":\\s*\".*?\"\\s*}\\s*},\\s*\"simpleText\":\\s*\"(.*?)\"");
+                MatchCollection matches = regex.Matches(youtubeResponse);
+                Debug.WriteLine($"matches.Count = {matches.Count}");
+                return matches[0].Groups[1].Value;
             });
         }
     }

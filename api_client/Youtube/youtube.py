@@ -11,7 +11,6 @@ import requests
 import json
 import api_client.Youtube.api_models as yt_models
 
-
 def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
     """
     Invokes a Search Request via api_client.
@@ -202,9 +201,49 @@ def getArtistSongs(artist_id: str) -> yt_models.GetArtistSongsResponse:
     #Return the GetArtistSongsResponse object.
     return getArtistSongsResponse
 
+def getSuggestions(request: yt_models.GetSuggestionsRequest) -> yt_models.GetSuggestionsResponse:
+    """
+    Invokes a GetSuggestions Request via api_client.
+    
+    Takes in a GetSuggestionsRequest object.
+    
+    Returns a GetSuggestionsResponse containing the suggestions.
+    """
+    
+    #Creates the params string for the api_client.
+    params = "?artCount=" + str(request.artist_count) + "&albCount=" + str(request.album_count) + "&sonCount=" + str(request.song_count)
+
+    try:
+        #gets the response (in json format) from the api_client.
+        response = api_client.sendApiRequest(api_client.ApiControllers.Youtube.value, api_client.ApiRequests.Suggestions.value, params)
+    except requests.exceptions.ConnectionError:
+        #If there is a connection error, return a GetSuggestionsResponse with has_error set to True and error set to "Connection Error".
+        return yt_models.GetSuggestionsResponse(True, "Connection Error", [], [], [])
+    
+    try:
+        #Parses the json response into a dictionary.
+        parsed_data = json.loads(response)
+    except json.decoder.JSONDecodeError:
+        #If there is a JSON Decode Error, return a GetSuggestionsResponse with has_error set to True and error set to "JSON Decode Error".
+        return yt_models.GetSuggestionsResponse(True, "JSON Decode Error", [], [], [])
+    
+    try:
+        #Creates the GetSuggestionsResponse object from the parsed data.
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["songs"]]
+        albums = [yt_models.OnlineAlbum(album["id"], album["artistId"], album["name"], album["coverArt"], []) for album in parsed_data["albums"]]
+        artists = [yt_models.OnlineArtist(artist["id"], artist["name"], artist["coverArt"], [], []) for artist in parsed_data["artists"]]
+        getSuggestionsResponse = yt_models.GetSuggestionsResponse(parsed_data["hasError"], parsed_data["error"], artists, albums, songs)
+    except KeyError:
+        #If there is a KeyError, return a GetSuggestionsResponse with has_error set to True and error set to "Key Error".
+        return yt_models.GetSuggestionsResponse(True, "Key Error", [], [], [])
+
+    print(getSuggestionsResponse.artists[0].name)    
+    #Return the GetSuggestionsResponse object.
+    return getSuggestionsResponse
+
 if __name__ == "__main__":
-    request = yt_models.SearchRequest("eminem", 5, 5, 5)
-    search_results = search(request)
+    request = yt_models.GetSuggestionsRequest(5, 5, 5)
+    search_results = getSuggestions(request)
     print(search_results.artists)
     print(search_results.albums)
     print(search_results.songs)

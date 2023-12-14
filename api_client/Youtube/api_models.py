@@ -122,3 +122,29 @@ class GetArtistSongsResponse:
         self.has_error = has_error
         self.error = error
         self.songs = songs
+
+#Represents a GetSuggestions Request to the API.
+class GetSuggestionsRequest:
+    artist_count: int
+    album_count: int
+    song_count: int
+
+    def __init__(self, artist_count, album_count, song_count):
+        self.artist_count = artist_count
+        self.album_count  = album_count
+        self.song_count   = song_count
+
+#Represents a GetSuggestions response from the API.
+class GetSuggestionsResponse:
+    has_error: bool
+    error: str
+    artists: list[OnlineArtist]
+    albums: list[OnlineAlbum]
+    songs: list[OnlineSong]
+
+    def __init__(self, has_error: bool, error: str, artists: list[OnlineArtist], albums: list[OnlineAlbum], songs: list[OnlineSong]):
+        self.has_error = has_error
+        self.error = error
+        self.artists = artists
+        self.albums = albums
+        self.songs = songs

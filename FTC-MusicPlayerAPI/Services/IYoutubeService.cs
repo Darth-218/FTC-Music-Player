@@ -15,5 +15,7 @@ namespace FTC_MusicPlayerAPI.Services
         public Task<ArtistSongsResponse> GetArtistSongs(string artistId);
 
         public Task<string> GetArtistSubscriberCount(string youtubeResponse);
+
+        public Task<SuggestionsRespose> GetSuggestions(SuggestionsRequest suggestionsRequest);
     }
 }
