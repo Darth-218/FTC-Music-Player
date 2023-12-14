@@ -1,9 +1,13 @@
+#!/usr/bin/python
+"""
+Defines a `Local` class that ...
+"""
 # Imports
+import lib
 # os to find files and directories
 import os
 # curses to create the UI
 import flet as ft
-
 
 flist = []
 pathlist = []
@@ -12,10 +16,24 @@ qu = []
 
 
 class Local:
+    """
+    This class does things.
+
+    - `flist` -- ...   
+    - `pathlist` -- ...   
+    """
+
+    # TODO: make __init__
 
     # Functions
     # Function to get the main music folder's path
-    def getfolder(self, listbox: ft.ListView, selected):
+    def getfolder(self, listbox: ft.ListView, selected: str) -> str | None:
+        """
+        Get a folder selected by the user from a file dialog.
+
+        - `listbox` -- Where the results will be displayed.   
+        - `selected` -- Selected folder to be displayed.
+        """
 
         global flist, pathlist
 
@@ -25,29 +43,31 @@ class Local:
 
         selected_folder = selected
 
-        # At the moment of getting the directory path
-        if selected_folder:
+        if not selected_folder:
+            lib.TODO("Local/getfolder: Handle error")
+            return None
 
-            # Obtaining files to show on window from the path variable
-            for path, subdir, files in os.walk(selected_folder):
+        # Obtaining files to show on window from the path variable
+        for path, _subdir, files in os.walk(selected_folder):
 
-                paths.append(path.split("/")[-1])
+            paths.append(path.split("/")[-1])
 
-                for fname in files:
+            for fname in files:
 
-                    if fname.endswith(".mp3"):
+                if fname.endswith(".mp3"):
 
-                        # Adds all files with ".mp3" extension and their paths to the respective lists"
-                        flist.append(os.path.join(fname.rstrip(".mp3")))
-                        pathlist.append(os.path.join(path, fname))
+                    # Adds all files with ".mp3" extension and their paths to the respective lists"
+                    flist.append(os.path.join(fname.rstrip(".mp3")))
+                    pathlist.append(os.path.join(path, fname))
 
-                for i in flist:
+            for i in flist:
 
-                    listbox.controls.append(ft.TextButton(f"{i}"))
+                listbox.controls.append(ft.TextButton(f"{i}"))
 
-                    listbox.update()
+                listbox.update()
 
-            print(paths, flist, pathlist)
+        # print(paths, flist, pathlist)
+        lib.logger("Local/getfolder", f"{paths},\n{flist},\n{pathlist}")
 
         return selected_folder
 
@@ -55,14 +75,15 @@ class Local:
 
         folder_name = (e.path if e.path else "Cancelled")
 
-        print(folder_name)
+        # print(folder_name)
+        lib.logger("Local/pick_files_result", folder_name)
 
         Local.getfolder(self, listv, folder_name)
 
         return folder_name
 
     # Function used to get the name of the selected file in the listbox "musiclist"
-    def getselected(self, event, listbox):
+    def getselected(self, _event, listbox):
 
         global selectedfile
 
@@ -105,12 +126,18 @@ def main(page: ft.Page):
 
     listv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
 
-    pick_files_dialog = ft.FilePicker(on_result=lambda e: Localclass.pick_files_result(e))
+    pick_files_dialog = ft.FilePicker(
+        on_result=Localclass.pick_files_result
+    )
 
     page.overlay.append(pick_files_dialog)
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    picker = ft.ElevatedButton("Pick Directory", icon=ft.icons.UPLOAD_FILE_ROUNDED, on_click=lambda _: pick_files_dialog.get_directory_path())
+    picker = ft.ElevatedButton(
+        "Pick Directory",
+        icon=ft.icons.UPLOAD_FILE_ROUNDED,
+        on_click=lambda _: pick_files_dialog.get_directory_path()
+    )
 
     page.add(ft.Column([picker, listv]))
 
