@@ -13,4 +13,21 @@ class ArtistWidget(ft.TextButton):
             ),
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
         )
-        
+
+
+class SquareArtistWidget(ft.TextButton):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=artist.cover_art, width=150, height=150, border_radius=75, fit=ft.ImageFit.COVER),
+                        ft.Text(artist.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE)
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+        )
