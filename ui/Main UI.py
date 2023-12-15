@@ -1,6 +1,16 @@
+import sys
+sys.path.append('./')
 import flet as ft
+import api_client.Youtube.youtube as yt
+import api_client.Youtube.api_models as yt_models
+import Suggestions
+
 
 def main(page: ft.Page):
+
+    request = yt_models.GetSuggestionsRequest(3,3,5)
+    suggestions = yt.getSuggestions(request=request)
+    results_widget = Suggestions.SuggestionsWidget(suggestions)
 
     rail = ft.NavigationRail(
         selected_index=0,
@@ -28,10 +38,8 @@ def main(page: ft.Page):
             [
                 rail,
                 ft.VerticalDivider(width=10),
-                ft.Column([ ft.Text("Main Frame!")], alignment=ft.MainAxisAlignment.START, expand=True),
-            ],
-            width=400,
-            height=950,
+                ft.Column([results_widget], alignment=ft.MainAxisAlignment.END, expand=True),
+            ],  height=1200
     )
 
     pick_file = ft.FilePicker()

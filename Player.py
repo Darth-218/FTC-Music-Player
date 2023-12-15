@@ -70,12 +70,12 @@ def main(page: ft.Page):
     
     volume_down_btn = ft.IconButton(icon='volume_down', icon_size=40, on_click=volume_down)
 
-    row = ft.Row(controls=[previuos_btn,play_btn,next_btn,volume_down_btn,volume_up_btn],
+    row3 = ft.Row(controls=[previuos_btn,play_btn,next_btn,volume_down_btn,volume_up_btn],
                  alignment=ft.MainAxisAlignment.CENTER)
     
     
 
-    page.add(row)
+    page.add(row3)
 
 
 
