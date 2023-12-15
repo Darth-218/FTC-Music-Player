@@ -8,7 +8,6 @@ import data_models
 class OnlineSong(data_models.Song):
     id: str
     artist_id: str
-    cover_art: str
 
     def __init__(self, id: str, artist_id: str, name: str, url: str, cover_art: str, duration: timedelta):
         self.id = id

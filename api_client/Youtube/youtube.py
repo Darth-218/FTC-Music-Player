@@ -237,7 +237,6 @@ def getSuggestions(request: yt_models.GetSuggestionsRequest) -> yt_models.GetSug
         #If there is a KeyError, return a GetSuggestionsResponse with has_error set to True and error set to "Key Error".
         return yt_models.GetSuggestionsResponse(True, "Key Error", [], [], [])
 
-    print(getSuggestionsResponse.artists[0].name)    
     #Return the GetSuggestionsResponse object.
     return getSuggestionsResponse
 

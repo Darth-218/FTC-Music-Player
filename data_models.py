@@ -43,11 +43,12 @@ class Song(Content):
 
     duration: timedelta
 
-    def __init__(self, name: str, artist, path: str, duration: timedelta):
+    def __init__(self, name: str, artist, path: str, duration: timedelta, cover_art: str = ''):
         self.name = name
         self.artist = artist
         self.duration = duration
         self._path = path
+        self.cover_art = cover_art
 
 class Album(Content):
     """

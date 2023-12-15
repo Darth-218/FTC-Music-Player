@@ -18,7 +18,7 @@ class SuggestionsWidget(ft.ListView):
         if len(self.suggestions.songs) > 0:
             self.controls.append(ft.Container(content=ft.Text('Try listening to', font_family='lilitaone', size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
             for song in self.suggestions.songs:
-                songs.append(SongWidget.SquareSongWidget(song=song))
+                songs.append(SongWidget.SquareSongWidget(song=song, songList=self.suggestions.songs))
         self.controls.append(ft.Container(content=songs, bgcolor='#ffffff5', padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
 
         if len(self.suggestions.albums) > 0:
