@@ -2,28 +2,20 @@ import sys
 sys.path.append('./')
 import flet as ft
 import api_client.Youtube.youtube as yt
-import api_client.Youtube.api_models as yt_models
-import Suggestions
-import flet_audio_player as fap
-
-player: fap.FletAudioPlayer
+import SearchBar
 
 def main(page: ft.Page):
-    global player
-    player = fap.FletAudioPlayer()
-    page.overlay.append(player.player)
-    page.update()
     page.fonts = {
         "lilitaone": "./Assets/Fonts/LilitaOne-Regular.ttf"
     }
 
     page.add(ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True))
-    request = yt_models.GetSuggestionsRequest(3, 3, 5)
+    request = Suggestions.yt_models.GetSuggestionsRequest(3, 3, 5)
     suggestions = yt.getSuggestions(request=request)
     results_widget = Suggestions.SuggestionsWidget(suggestions)
     page.remove(page.controls[0])
 
-    rail = ft.Container(content=ft.NavigationRail(expand=True, width=300,
+    rail = ft.Container(content=ft.NavigationRail(expand=True, width=250,
         selected_index=0,
         group_alignment= - 0.95,
         destinations=[
@@ -51,7 +43,7 @@ def main(page: ft.Page):
                 rail,
                 ft.VerticalDivider(width=10),
                 ft.Column([results_widget], alignment=ft.MainAxisAlignment.END, expand=True),
-            ],  
+            ],
             expand=True,
     )
 
@@ -67,6 +59,4 @@ def main(page: ft.Page):
 
 
 
-    page.add(row)
-
-ft.app(main)
+    page.add(SearchBar.Search_bar_widget(), row)

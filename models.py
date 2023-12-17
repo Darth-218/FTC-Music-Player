@@ -30,7 +30,12 @@ class Queue():
             song_list: list[Song] = [],
             curr_index: int = 0,
             ):
-        if song_list: self.current = song_list[curr_index]
+        self.current = song_list[curr_index] if song_list else Song(
+            "No Song Selected",
+            Artist("FTC"),
+            "./none",
+            timedelta(seconds=0)
+            )
         self.song_list = song_list
 
 
@@ -42,14 +47,22 @@ class Queue():
     def next(self):
         if self.curr_index == len(self.song_list) - 1:
             self._reset()
+            return
         self.curr_index += 1
         self._reset()
 
     def prev(self):
         if self.curr_index == 0:
             self._reset()
+            return
         self.curr_index -= 1
         self._reset()
+
+    def add_song(self, song: Song):
+        self.song_list.append(song)
+    
+    def play_next(self, song: Song):
+        self.song_list.insert(self.curr_index + 1, song)
 
 class Player():
     """
@@ -60,9 +73,9 @@ class Player():
     handlers: dict[HandlerType, Callable[[], None]]
     player: Any | None
 
-    def __init__(self):
-        self.queue = Queue()
-        self.handlers = {}
+    def __init__(self, handlers, queue):
+        self.queue = queue
+        self.handlers = handlers
 
     def play(self):
         """
@@ -98,6 +111,14 @@ class Player():
 
     def stop(self):
         self.player.stop() if self.player else lib.passive()
+    
+    def pause(self):
+        self.player.pause() if self.player else lib.passive()
+        
+    def change_queue(self, queue: Queue):
+        self.queue = queue
+    def add_to_queu(self, song: Song):
+        self.queu.add_song()
 
 
 class VlcMediaPlayer(Player):
@@ -108,15 +129,14 @@ class VlcMediaPlayer(Player):
     player: vlc.MediaPlayer
 
     def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
-        super().__init__()
+        super().__init__(handlers, queue)
         self.player = vlc.MediaPlayer(self.queue.current._path)
-        self.handlers = handlers
-        self.queue = queue
 
     def play(self):
         current = self.queue.current
+        self.player = vlc.MediaPlayer(current._path)
         lib.logger("VlcMediaPlayer/play",
-            f"Now playing {current.name}.")
+            f"Now playing {current.name}.\nFrom {current._path}.")
         self.player.play()
 
     def next(self):

@@ -1,11 +1,13 @@
 import sys
 sys.path.append('./')
-import api_client.Youtube.youtube as yt
-import api_client.Youtube.api_models as yt_models
+# import api_client.Youtube.youtube as yt
+# import api_client.Youtube.api_models as yt_models
 import flet as ft
-import SearchResults
-import Suggestions
-from queue import Queue
+# import SearchResults
+# import Suggestions
+# from queue import Queue
+import SearchBar
+
 
 def main(page: ft.Page):
     page.fonts = {
@@ -17,12 +19,14 @@ def main(page: ft.Page):
     # searchResultsWidget = SearchResults.SearchResults(results=results)
     # page.add(searchResultsWidget)
 
-    page.add(ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True))
-    request = yt_models.GetSuggestionsRequest(artist_count=3, album_count=3, song_count=5)
-    results = yt.getSuggestions(request=request)
-    page.remove(page.controls[0])
-    suggestions = Suggestions.SuggestionsWidget(results=results)
-    page.add(suggestions)
+    # page.add(ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True))
+    # request = yt_models.GetSuggestionsRequest(artist_count=3, album_count=3, song_count=5)
+    # results = yt.getSuggestions(request=request)
+    # page.remove(page.controls[0])
+    # suggestions = Suggestions.SuggestionsWidget(results=results)
+    # page.add(suggestions)
+    
+    page.add(SearchBar.Search_bar_widget())
 
     page.update()
 
