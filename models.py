@@ -25,8 +25,14 @@ class Queue():
     position: float = 0
     duration: timedelta = timedelta(0)
 
-    def __init__(self):
-        lib.TODO("Queue/init")
+    def __init__(
+            self,
+            song_list: list[Song] = [],
+            curr_index: int = 0,
+            ):
+        if song_list: self.current = song_list[curr_index]
+        self.song_list = song_list
+
 
     def _reset(self):
         self.position = 0
@@ -44,7 +50,6 @@ class Queue():
             self._reset()
         self.curr_index -= 1
         self._reset()
-
 
 class Player():
     """
@@ -91,6 +96,9 @@ class Player():
         """
         raise NotImplementedError
 
+    def stop(self):
+        self.player.stop() if self.player else lib.passive()
+
 
 class VlcMediaPlayer(Player):
     """
@@ -99,10 +107,11 @@ class VlcMediaPlayer(Player):
 
     player: vlc.MediaPlayer
 
-    def __init__(self, handlers):
+    def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
         super().__init__()
         self.player = vlc.MediaPlayer(self.queue.current._path)
         self.handlers = handlers
+        self.queue = queue
 
     def play(self):
         current = self.queue.current
@@ -131,7 +140,7 @@ class VlcMediaPlayer(Player):
         self.player.stop()
         self.queue = queue
         self.play()
-        self.handlers[HandlerType.on_source_changed]()
+        self.handlers.get(HandlerType.on_source_changed, lib.passive)
 
     def _add_handler(self, handler: Callable[[], None], type: HandlerType):
         self.handlers[type] = handler

@@ -39,6 +39,8 @@ def err(name: str, e: str):
     """
     print(c.Fore.RED + "#[ERROR{. %s .}]=!=|" %(name), e, c.Style.RESET_ALL)
 
+def passive(): pass
+
 if __name__ == "__main__":
     TODO("lib/testing")
     logger("lib", "Hello, world!")
