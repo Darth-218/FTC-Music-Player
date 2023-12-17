@@ -4,6 +4,7 @@ import api_client.Youtube.youtube as yt
 import data_models as dm
 import models
 import lib
+import config
 
 class Home(ft.Container):
     def __init__(self, player: models.Player):
@@ -45,7 +46,7 @@ class Home(ft.Container):
             case 0:
                 self.tabView.controls[1] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
                 self.update()
-                request = yt_models.GetSuggestionsRequest(3, 3, 5)
+                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
                 suggestions = yt.getSuggestions(request=request)
                 results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
                 self.tabView.controls[1] = results_widget
@@ -220,10 +221,10 @@ class HorizontalListView(ft.Row):
         self.listView.controls.append(item)
 
     def scrollLeft(self, e):
-        self.listView.scroll_to(delta=-170, duration=1000)
+        self.listView.scroll_to(delta=-510, duration=500)
 
     def scrollRight(self, e):
-        self.listView.scroll_to(delta=170, duration=1000)
+        self.listView.scroll_to(delta=510, duration=500)
 
 class Search_bar_widget(ft.TextField):
     def __init__(self):
@@ -232,3 +233,10 @@ class Search_bar_widget(ft.TextField):
         self.bgcolor='FFFFFF2'
         self.hint_text = 'What do you want to listen to?'
         self.height = 50
+
+class SearchResults(ft.ListView):
+    def __init__(self, results: yt_models.SearchResponse):
+        super().__init__(expand=1, divider_thickness=2, spacing=10)
+        [super().controls.append(ArtistWidget.ArtistWidget(artist=artist)) for artist in results.artists]
+        [super().controls.append(AlbumWidget.AlbumWidget(album=album)) for album in results.albums]
+        [super().controls.append(SongWidget.SongWidget(song=song)) for song in results.songs]
