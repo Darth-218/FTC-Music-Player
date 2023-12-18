@@ -209,6 +209,29 @@ class SuggestionsWidget(ft.ListView):
                 artists.append(SquareArtistWidget(artist=artist))
         self.controls.append(ft.Container(content=artists, bgcolor='#ffffff5', padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
         
+
+class Player_widget(ft.Container):
+    def __init__(self):
+        super().__init__()
+        self.bgcolor='#ffffff2'
+        self.border_radius = 20
+        self.alignment = ft.alignment.center
+        self.padding = ft.Padding(0, 0, 0, 10)
+
+
+        self.content = ft.Column(controls=[
+            ft.Slider(),
+            ft.Row(controls=[
+                ft.IconButton(icon=ft.icons.SHUFFLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_PREVIOUS, icon_size=40),
+                ft.IconButton(icon=ft.icons.PLAY_CIRCLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_NEXT, icon_size=40),
+                ft.IconButton(icon=ft.icons.REPEAT, icon_size=40),
+            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.alignment.center, expand=True),
+            
+        ],)
+
+
 class HorizontalListView(ft.Row):
     listView: ft.ListView
     def __init__(self):
