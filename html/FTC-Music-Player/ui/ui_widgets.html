@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>FTC-Music-Player.ui.ui_widgets API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>FTC-Music-Player.ui.ui_widgets</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import flet as ft
+import api_client.Youtube.api_models as yt_models
+import api_client.Youtube.youtube as yt
+import data_models as dm
+import models
+import lib
+import config
+
+class Home(ft.Container):
+    def __init__(self, player: models.Player, page:ft.Page):
+        self.player = player
+        page.on_keyboard_event = self.onKeyboardEvent
+        super().__init__()
+        self.expand = True
+        self.tabContent = ft.Container(content=ft.Text(&#39;Index did not change!&#39;), expand=True)
+        self.tabViewContents = [
+            ft.Container(
+                width=250,
+                content=ft.NavigationRail(
+                    width=250, 
+                    selected_index = 0,
+                    destinations=[
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.HOME_OUTLINED, size=35), 
+                                                    selected_icon_content=ft.Icon(ft.icons.HOME_ROUNDED, size=35),
+                                                    label=&#34;Home&#34;),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.SEARCH_OUTLINED, size=35), 
+                                                    selected_icon_content=ft.Icon(ft.icons.SEARCH, size=35),
+                                                    label=&#34;Search&#34;),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.FIND_IN_PAGE_OUTLINED, size=35),
+                                                    selected_icon_content=ft.Icon(ft.icons.FIND_IN_PAGE_ROUNDED, size=35),
+                                                    label=&#34;Browse&#34;,),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.SETTINGS_OUTLINED, size=35),
+                                                    selected_icon_content=ft.Icon(ft.icons.SETTINGS, size=35),
+                                                    label=&#34;Settings&#34;,)
+                    ],
+                    on_change=lambda e: self.onContentChange(e.control.selected_index)
+                ),
+            ),
+            ft.VerticalDivider(color=&#39;#ffffff2&#39;),
+            self.tabContent,
+        ]
+        
+        self.tabView = ft.Row(controls=self.tabViewContents, expand=True)
+        self.content = self.tabView
+
+    def onKeyboardEvent(self, e: ft.KeyboardEvent):
+        if e.key == &#39;Enter&#39;:
+            query = self.tabView.controls[2].controls[0].value
+            self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+            self.update()
+            request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
+            response = yt.search(request=request)
+            results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
+            self.tabView.controls[2] = results_widget
+            self.update()
+
+    def onContentChange(self, selectedItem: int):
+        match selectedItem:
+            case 0:
+                self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+                self.update()
+                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
+                suggestions = yt.getSuggestions(request=request)
+                results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
+                self.tabView.controls[2] = results_widget
+            case 1:
+                self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)         
+            case 2:
+                self.tabView.controls[2] = ft.Text(&#39;Browse&#39;)
+            case 3:
+                self.tabView.controls[2] = ft.Text(&#39;Settings&#39;)
+        self.update()
+
+class ArtistWidget(ft.TextButton):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=artist.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(artist.name)
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+        )
+
+class SquareArtistWidget(ft.TextButton):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=artist.cover_art, width=150, height=150, border_radius=75, fit=ft.ImageFit.COVER),
+                        ft.Text(artist.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE)
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+        )
+        
+
+class AlbumWidget(ft.TextButton):
+    def __init__(self, album: yt_models.OnlineAlbum):
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=album.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(album.name)
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+        )
+
+class SquareAlbumWidget(ft.TextButton):
+    def __init__(self, album: yt_models.OnlineAlbum):
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=album.cover_art, width=150, height=150, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(album.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE)
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+        )
+
+class SongWidget(ft.TextButton):
+    def __init__(self, song: dm.Song, songList: list[dm.Song], player: models.Player):
+        self.songList: list[dm.Song] = songList
+        self.song: yt_models.OnlineSong = song
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=song.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Column(controls=[
+                            ft.Text(song.name),
+                            ft.Text(song.duration),
+                            ]
+                        ),
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            on_click=lambda e: self.onSongClicked(e, player=player)
+        )
+        
+    def onSongClicked(self, e, player: models.Player):
+        if type(self.song) is yt_models.OnlineSong:
+            lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+            response = yt.getSongUrl(self.song.id)
+            if not response.has_error:
+                self.song._path = response.url
+        queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+        player.stop()
+        player.change_queue(queue=queue)
+        player.play()
+
+class SquareSongWidget(ft.TextButton):
+    def __init__(self, song: yt_models.OnlineSong, songList: list[dm.Song], player:models.Player):
+        self.song: yt_models.OnlineSong = song
+        self.songList: list[dm.Song] = songList
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=song.cover_art, width=150, height=150, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Column(controls=[
+                            ft.Text(song.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE),
+                            ft.Text(song.duration),
+                            ]
+                        ),
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+            on_click=lambda e: self.onSongClicked(e, player=player),
+        )
+
+    def onSongClicked(self, e, player: models.Player):
+        if type(self.song) is yt_models.OnlineSong:
+            lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+            response = yt.getSongUrl(self.song.id)
+            if not response.has_error:
+                self.song._path = response.url
+        queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+        player.stop()
+        player.change_queue(queue=queue)
+        player.play()
+
+class SuggestionsWidget(ft.ListView):
+    suggestions: yt_models.GetSuggestionsResponse
+    def __init__(self, results: yt_models.GetSuggestionsResponse, player: models.Player):
+        self.player = player
+        self.suggestions = results
+        super().__init__(expand=1)
+
+        artists = HorizontalListView()
+        albums = HorizontalListView()
+        songs = HorizontalListView()
+        
+        if len(self.suggestions.songs) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Try listening to&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for song in self.suggestions.songs:
+                songs.append(SquareSongWidget(song=song, songList=self.suggestions.songs, player=self.player))
+        self.controls.append(ft.Container(content=songs, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
+
+        if len(self.suggestions.albums) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Made for you&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for album in self.suggestions.albums:
+                albums.append(SquareAlbumWidget(album=album))
+        self.controls.append(ft.Container(content=albums, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
+
+        if len(self.suggestions.artists) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Artists you might like&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for artist in self.suggestions.artists:
+                artists.append(SquareArtistWidget(artist=artist))
+        self.controls.append(ft.Container(content=artists, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
+        
+
+class Player_widget(ft.Container):
+    def __init__(self):
+        super().__init__()
+        self.bgcolor=&#39;#ffffff2&#39;
+        self.border_radius = 20
+        self.alignment = ft.alignment.center
+        self.padding = ft.Padding(0, 0, 0, 10)
+
+
+        self.content = ft.Column(controls=[
+            ft.Slider(),
+            ft.Row(controls=[
+                ft.IconButton(icon=ft.icons.SHUFFLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_PREVIOUS, icon_size=40),
+                ft.IconButton(icon=ft.icons.PLAY_CIRCLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_NEXT, icon_size=40),
+                ft.IconButton(icon=ft.icons.REPEAT, icon_size=40),
+            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.alignment.center, expand=True),
+            
+        ],)
+
+
+class HorizontalListView(ft.Row):
+    listView: ft.ListView
+    def __init__(self):
+        self.listView = ft.ListView(horizontal=True, expand=1, height=250)
+        scrollToLeft = ft.IconButton(icon=ft.icons.ARROW_LEFT, icon_size=30, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),), width=50, height=50, on_click=self.scrollLeft)
+        scrollToRight = ft.IconButton(icon=ft.icons.ARROW_RIGHT, icon_size=30, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),), width=50, height=50, on_click=self.scrollRight)
+        super().__init__(controls=[scrollToLeft, self.listView, scrollToRight])
+
+    def append(self, item: ft.Control):
+        self.listView.controls.append(item)
+
+    def scrollLeft(self, e):
+        self.listView.scroll_to(delta=-510, duration=500)
+
+    def scrollRight(self, e):
+        self.listView.scroll_to(delta=510, duration=500)
+
+class Search_bar_widget(ft.TextField):
+    def __init__(self):
+        super().__init__()
+        self.border_radius=20
+        self.bgcolor=&#39;FFFFFF2&#39;
+        self.hint_text = &#39;What do you want to listen to?&#39;
+        self.height = 50
+
+class SearchResults(ft.ListView):
+    def __init__(self, results: yt_models.SearchResponse, player: models.Player):
+        super().__init__(expand=1, divider_thickness=2, spacing=10)
+        artistsWidgets = HorizontalListView()
+        albumsWidgets = []
+        songsWidgets = []
+        [artistsWidgets.append(SquareArtistWidget(artist=artist)) for artist in results.artists]
+        [self.controls.append(AlbumWidget(album=album)) for album in results.albums]
+        [self.controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
+        self.controls.append(artistsWidgets)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.AlbumWidget"><code class="flex name class">
+<span>class <span class="ident">AlbumWidget</span></span>
+<span>(</span><span>album: api_client.Youtube.api_models.OnlineAlbum)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AlbumWidget(ft.TextButton):
+    def __init__(self, album: yt_models.OnlineAlbum):
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=album.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(album.name)
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.ArtistWidget"><code class="flex name class">
+<span>class <span class="ident">ArtistWidget</span></span>
+<span>(</span><span>artist: api_client.Youtube.api_models.OnlineArtist)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArtistWidget(ft.TextButton):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=artist.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(artist.name)
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.Home"><code class="flex name class">
+<span>class <span class="ident">Home</span></span>
+<span>(</span><span>player: models.Player, page: flet_core.page.Page)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Container allows to decorate a control with background color and border and position it with padding, margin and alignment.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Container&quot;
+
+    c1 = ft.Container(
+        content=ft.Text(&quot;Container with background&quot;),
+        bgcolor=ft.colors.AMBER_100,
+        padding=5,
+    )
+    page.add(c1)
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/container">https://flet.dev/docs/controls/container</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Home(ft.Container):
+    def __init__(self, player: models.Player, page:ft.Page):
+        self.player = player
+        page.on_keyboard_event = self.onKeyboardEvent
+        super().__init__()
+        self.expand = True
+        self.tabContent = ft.Container(content=ft.Text(&#39;Index did not change!&#39;), expand=True)
+        self.tabViewContents = [
+            ft.Container(
+                width=250,
+                content=ft.NavigationRail(
+                    width=250, 
+                    selected_index = 0,
+                    destinations=[
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.HOME_OUTLINED, size=35), 
+                                                    selected_icon_content=ft.Icon(ft.icons.HOME_ROUNDED, size=35),
+                                                    label=&#34;Home&#34;),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.SEARCH_OUTLINED, size=35), 
+                                                    selected_icon_content=ft.Icon(ft.icons.SEARCH, size=35),
+                                                    label=&#34;Search&#34;),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.FIND_IN_PAGE_OUTLINED, size=35),
+                                                    selected_icon_content=ft.Icon(ft.icons.FIND_IN_PAGE_ROUNDED, size=35),
+                                                    label=&#34;Browse&#34;,),
+                        ft.NavigationRailDestination(icon_content=ft.Icon(ft.icons.SETTINGS_OUTLINED, size=35),
+                                                    selected_icon_content=ft.Icon(ft.icons.SETTINGS, size=35),
+                                                    label=&#34;Settings&#34;,)
+                    ],
+                    on_change=lambda e: self.onContentChange(e.control.selected_index)
+                ),
+            ),
+            ft.VerticalDivider(color=&#39;#ffffff2&#39;),
+            self.tabContent,
+        ]
+        
+        self.tabView = ft.Row(controls=self.tabViewContents, expand=True)
+        self.content = self.tabView
+
+    def onKeyboardEvent(self, e: ft.KeyboardEvent):
+        if e.key == &#39;Enter&#39;:
+            query = self.tabView.controls[2].controls[0].value
+            self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+            self.update()
+            request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
+            response = yt.search(request=request)
+            results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
+            self.tabView.controls[2] = results_widget
+            self.update()
+
+    def onContentChange(self, selectedItem: int):
+        match selectedItem:
+            case 0:
+                self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+                self.update()
+                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
+                suggestions = yt.getSuggestions(request=request)
+                results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
+                self.tabView.controls[2] = results_widget
+            case 1:
+                self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)         
+            case 2:
+                self.tabView.controls[2] = ft.Text(&#39;Browse&#39;)
+            case 3:
+                self.tabView.controls[2] = ft.Text(&#39;Settings&#39;)
+        self.update()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.container.Container</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.Home.onContentChange"><code class="name flex">
+<span>def <span class="ident">onContentChange</span></span>(<span>self, selectedItem: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def onContentChange(self, selectedItem: int):
+    match selectedItem:
+        case 0:
+            self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+            self.update()
+            request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
+            suggestions = yt.getSuggestions(request=request)
+            results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
+            self.tabView.controls[2] = results_widget
+        case 1:
+            self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)         
+        case 2:
+            self.tabView.controls[2] = ft.Text(&#39;Browse&#39;)
+        case 3:
+            self.tabView.controls[2] = ft.Text(&#39;Settings&#39;)
+    self.update()</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.Home.onKeyboardEvent"><code class="name flex">
+<span>def <span class="ident">onKeyboardEvent</span></span>(<span>self, e: flet_core.page.KeyboardEvent)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def onKeyboardEvent(self, e: ft.KeyboardEvent):
+    if e.key == &#39;Enter&#39;:
+        query = self.tabView.controls[2].controls[0].value
+        self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+        self.update()
+        request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
+        response = yt.search(request=request)
+        results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
+        self.tabView.controls[2] = results_widget
+        self.update()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.HorizontalListView"><code class="flex name class">
+<span>class <span class="ident">HorizontalListView</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A control that displays its children in a horizontal array.</p>
+<p>To cause a child control to expand and fill the available horizontal space, set its <code>expand</code> property.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+
+def main(page: ft.Page):
+    page.title = &quot;Row example&quot;
+
+    page.add(
+        ft.Row(
+            controls=[
+                ft.Container(
+                    expand=1,
+                    content=ft.Text(&quot;Container 1&quot;),
+                    bgcolor=ft.colors.GREEN_100,
+                ),
+                ft.Container(
+                    expand=2, content=ft.Text(&quot;Container 2&quot;), bgcolor=ft.colors.RED_100
+                ),
+            ],
+        ),
+    ),
+
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/row">https://flet.dev/docs/controls/row</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HorizontalListView(ft.Row):
+    listView: ft.ListView
+    def __init__(self):
+        self.listView = ft.ListView(horizontal=True, expand=1, height=250)
+        scrollToLeft = ft.IconButton(icon=ft.icons.ARROW_LEFT, icon_size=30, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),), width=50, height=50, on_click=self.scrollLeft)
+        scrollToRight = ft.IconButton(icon=ft.icons.ARROW_RIGHT, icon_size=30, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),), width=50, height=50, on_click=self.scrollRight)
+        super().__init__(controls=[scrollToLeft, self.listView, scrollToRight])
+
+    def append(self, item: ft.Control):
+        self.listView.controls.append(item)
+
+    def scrollLeft(self, e):
+        self.listView.scroll_to(delta=-510, duration=500)
+
+    def scrollRight(self, e):
+        self.listView.scroll_to(delta=510, duration=500)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.row.Row</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.scrollable_control.ScrollableControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.HorizontalListView.listView"><code class="name">var <span class="ident">listView</span> : flet_core.list_view.ListView</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.HorizontalListView.append"><code class="name flex">
+<span>def <span class="ident">append</span></span>(<span>self, item: flet_core.control.Control)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append(self, item: ft.Control):
+    self.listView.controls.append(item)</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollLeft"><code class="name flex">
+<span>def <span class="ident">scrollLeft</span></span>(<span>self, e)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scrollLeft(self, e):
+    self.listView.scroll_to(delta=-510, duration=500)</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollRight"><code class="name flex">
+<span>def <span class="ident">scrollRight</span></span>(<span>self, e)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scrollRight(self, e):
+    self.listView.scroll_to(delta=510, duration=500)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.Player_widget"><code class="flex name class">
+<span>class <span class="ident">Player_widget</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Container allows to decorate a control with background color and border and position it with padding, margin and alignment.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Container&quot;
+
+    c1 = ft.Container(
+        content=ft.Text(&quot;Container with background&quot;),
+        bgcolor=ft.colors.AMBER_100,
+        padding=5,
+    )
+    page.add(c1)
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/container">https://flet.dev/docs/controls/container</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Player_widget(ft.Container):
+    def __init__(self):
+        super().__init__()
+        self.bgcolor=&#39;#ffffff2&#39;
+        self.border_radius = 20
+        self.alignment = ft.alignment.center
+        self.padding = ft.Padding(0, 0, 0, 10)
+
+
+        self.content = ft.Column(controls=[
+            ft.Slider(),
+            ft.Row(controls=[
+                ft.IconButton(icon=ft.icons.SHUFFLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_PREVIOUS, icon_size=40),
+                ft.IconButton(icon=ft.icons.PLAY_CIRCLE, icon_size=40),
+                ft.IconButton(icon=ft.icons.SKIP_NEXT, icon_size=40),
+                ft.IconButton(icon=ft.icons.REPEAT, icon_size=40),
+            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.alignment.center, expand=True),
+            
+        ],)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.container.Container</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SearchResults"><code class="flex name class">
+<span>class <span class="ident">SearchResults</span></span>
+<span>(</span><span>results: api_client.Youtube.api_models.SearchResponse, player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A scrollable list of controls arranged linearly.</p>
+<p>ListView is the most commonly used scrolling control. It displays its children one after another in the scroll direction. In the cross axis, the children are required to fill the ListView.</p>
+<p>Example:</p>
+<pre><code>from time import sleep
+import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Auto-scrolling ListView&quot;
+
+    lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+    count = 1
+
+    for i in range(0, 60):
+        lv.controls.append(ft.Text(f&quot;Line {count}&quot;))
+        count += 1
+
+    page.add(lv)
+
+    for i in range(0, 60):
+        sleep(1)
+        lv.controls.append(ft.Text(f&quot;Line {count}&quot;))
+        count += 1
+        page.update()
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/listview">https://flet.dev/docs/controls/listview</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SearchResults(ft.ListView):
+    def __init__(self, results: yt_models.SearchResponse, player: models.Player):
+        super().__init__(expand=1, divider_thickness=2, spacing=10)
+        artistsWidgets = HorizontalListView()
+        albumsWidgets = []
+        songsWidgets = []
+        [artistsWidgets.append(SquareArtistWidget(artist=artist)) for artist in results.artists]
+        [self.controls.append(AlbumWidget(album=album)) for album in results.albums]
+        [self.controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
+        self.controls.append(artistsWidgets)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.list_view.ListView</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.scrollable_control.ScrollableControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.Search_bar_widget"><code class="flex name class">
+<span>class <span class="ident">Search_bar_widget</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A text field lets the user enter text, either with hardware keyboard or with an onscreen keyboard.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    def button_clicked(e):
+        t.value = f&quot;Textboxes values are:  '{tb1.value}', '{tb2.value}', '{tb3.value}', '{tb4.value}', '{tb5.value}'.&quot;
+        page.update()
+
+    t = ft.Text()
+    tb1 = ft.TextField(label=&quot;Standard&quot;)
+    tb2 = ft.TextField(label=&quot;Disabled&quot;, disabled=True, value=&quot;First name&quot;)
+    tb3 = ft.TextField(label=&quot;Read-only&quot;, read_only=True, value=&quot;Last name&quot;)
+    tb4 = ft.TextField(label=&quot;With placeholder&quot;, hint_text=&quot;Please enter text here&quot;)
+    tb5 = ft.TextField(label=&quot;With an icon&quot;, icon=ft.icons.EMOJI_EMOTIONS)
+    b = ft.ElevatedButton(text=&quot;Submit&quot;, on_click=button_clicked)
+    page.add(tb1, tb2, tb3, tb4, tb5, b, t)
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textfield">https://flet.dev/docs/controls/textfield</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Search_bar_widget(ft.TextField):
+    def __init__(self):
+        super().__init__()
+        self.border_radius=20
+        self.bgcolor=&#39;FFFFFF2&#39;
+        self.hint_text = &#39;What do you want to listen to?&#39;
+        self.height = 50</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.textfield.TextField</li>
+<li>flet_core.form_field_control.FormFieldControl</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SongWidget"><code class="flex name class">
+<span>class <span class="ident">SongWidget</span></span>
+<span>(</span><span>song: data_models.Song, songList: list[data_models.Song], player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SongWidget(ft.TextButton):
+    def __init__(self, song: dm.Song, songList: list[dm.Song], player: models.Player):
+        self.songList: list[dm.Song] = songList
+        self.song: yt_models.OnlineSong = song
+        super().__init__(content=ft.Container(content=ft.Row(
+                    [
+                        ft.Image(src=song.cover_art, width=100, height=100, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Column(controls=[
+                            ft.Text(song.name),
+                            ft.Text(song.duration),
+                            ]
+                        ),
+                    ],
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            on_click=lambda e: self.onSongClicked(e, player=player)
+        )
+        
+    def onSongClicked(self, e, player: models.Player):
+        if type(self.song) is yt_models.OnlineSong:
+            lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+            response = yt.getSongUrl(self.song.id)
+            if not response.has_error:
+                self.song._path = response.url
+        queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+        player.stop()
+        player.change_queue(queue=queue)
+        player.play()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.SongWidget.onSongClicked"><code class="name flex">
+<span>def <span class="ident">onSongClicked</span></span>(<span>self, e, player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def onSongClicked(self, e, player: models.Player):
+    if type(self.song) is yt_models.OnlineSong:
+        lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+        response = yt.getSongUrl(self.song.id)
+        if not response.has_error:
+            self.song._path = response.url
+    queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+    player.stop()
+    player.change_queue(queue=queue)
+    player.play()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SquareAlbumWidget"><code class="flex name class">
+<span>class <span class="ident">SquareAlbumWidget</span></span>
+<span>(</span><span>album: api_client.Youtube.api_models.OnlineAlbum)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SquareAlbumWidget(ft.TextButton):
+    def __init__(self, album: yt_models.OnlineAlbum):
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=album.cover_art, width=150, height=150, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Text(album.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE)
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SquareArtistWidget"><code class="flex name class">
+<span>class <span class="ident">SquareArtistWidget</span></span>
+<span>(</span><span>artist: api_client.Youtube.api_models.OnlineArtist)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SquareArtistWidget(ft.TextButton):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=artist.cover_art, width=150, height=150, border_radius=75, fit=ft.ImageFit.COVER),
+                        ft.Text(artist.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE)
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SquareSongWidget"><code class="flex name class">
+<span>class <span class="ident">SquareSongWidget</span></span>
+<span>(</span><span>song: api_client.Youtube.api_models.OnlineSong, songList: list[data_models.Song], player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Text buttons are used for the lowest priority actions, especially when presenting multiple options. Text buttons can be placed on a variety of backgrounds. Until the button is interacted with, its container isn’t visible.</p>
+<p>Example:</p>
+<pre><code>import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Basic text buttons&quot;
+    page.add(
+        ft.TextButton(text=&quot;Text button&quot;),
+        ft.TextButton(&quot;Disabled button&quot;, disabled=True),
+    )
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/textbutton">https://flet.dev/docs/controls/textbutton</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SquareSongWidget(ft.TextButton):
+    def __init__(self, song: yt_models.OnlineSong, songList: list[dm.Song], player:models.Player):
+        self.song: yt_models.OnlineSong = song
+        self.songList: list[dm.Song] = songList
+        super().__init__(content=ft.Container(content=ft.Column(
+                    [
+                        ft.Image(src=song.cover_art, width=150, height=150, border_radius=15, fit=ft.ImageFit.COVER),
+                        ft.Column(controls=[
+                            ft.Text(song.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE),
+                            ft.Text(song.duration),
+                            ]
+                        ),
+                    ],
+                    alignment=ft.alignment.center,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=ft.Padding(top=10, bottom=10, left=0, right=0),
+                alignment=ft.alignment.center,
+            ),
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=25),),
+            width=170,
+            on_click=lambda e: self.onSongClicked(e, player=player),
+        )
+
+    def onSongClicked(self, e, player: models.Player):
+        if type(self.song) is yt_models.OnlineSong:
+            lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+            response = yt.getSongUrl(self.song.id)
+            if not response.has_error:
+                self.song._path = response.url
+        queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+        player.stop()
+        player.change_queue(queue=queue)
+        player.play()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.text_button.TextButton</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.SquareSongWidget.onSongClicked"><code class="name flex">
+<span>def <span class="ident">onSongClicked</span></span>(<span>self, e, player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def onSongClicked(self, e, player: models.Player):
+    if type(self.song) is yt_models.OnlineSong:
+        lib.logger(&#34;SquareSongWidget/onSongClicked&#34;, f&#34;Clicked on {self.song.id} by {self.song.artist_id}&#34;)
+        response = yt.getSongUrl(self.song.id)
+        if not response.has_error:
+            self.song._path = response.url
+    queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
+    player.stop()
+    player.change_queue(queue=queue)
+    player.play()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.ui.ui_widgets.SuggestionsWidget"><code class="flex name class">
+<span>class <span class="ident">SuggestionsWidget</span></span>
+<span>(</span><span>results: api_client.Youtube.api_models.GetSuggestionsResponse, player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A scrollable list of controls arranged linearly.</p>
+<p>ListView is the most commonly used scrolling control. It displays its children one after another in the scroll direction. In the cross axis, the children are required to fill the ListView.</p>
+<p>Example:</p>
+<pre><code>from time import sleep
+import flet as ft
+
+def main(page: ft.Page):
+    page.title = &quot;Auto-scrolling ListView&quot;
+
+    lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+    count = 1
+
+    for i in range(0, 60):
+        lv.controls.append(ft.Text(f&quot;Line {count}&quot;))
+        count += 1
+
+    page.add(lv)
+
+    for i in range(0, 60):
+        sleep(1)
+        lv.controls.append(ft.Text(f&quot;Line {count}&quot;))
+        count += 1
+        page.update()
+
+ft.app(target=main)
+</code></pre>
+<hr>
+<p>Online docs: <a href="https://flet.dev/docs/controls/listview">https://flet.dev/docs/controls/listview</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SuggestionsWidget(ft.ListView):
+    suggestions: yt_models.GetSuggestionsResponse
+    def __init__(self, results: yt_models.GetSuggestionsResponse, player: models.Player):
+        self.player = player
+        self.suggestions = results
+        super().__init__(expand=1)
+
+        artists = HorizontalListView()
+        albums = HorizontalListView()
+        songs = HorizontalListView()
+        
+        if len(self.suggestions.songs) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Try listening to&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for song in self.suggestions.songs:
+                songs.append(SquareSongWidget(song=song, songList=self.suggestions.songs, player=self.player))
+        self.controls.append(ft.Container(content=songs, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
+
+        if len(self.suggestions.albums) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Made for you&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for album in self.suggestions.albums:
+                albums.append(SquareAlbumWidget(album=album))
+        self.controls.append(ft.Container(content=albums, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))
+
+        if len(self.suggestions.artists) &gt; 0:
+            self.controls.append(ft.Container(content=ft.Text(&#39;Artists you might like&#39;, font_family=&#39;lilitaone&#39;, size=40), padding=ft.Padding(top=20, bottom=10, left=55, right=0)))
+            for artist in self.suggestions.artists:
+                artists.append(SquareArtistWidget(artist=artist))
+        self.controls.append(ft.Container(content=artists, bgcolor=&#39;#ffffff5&#39;, padding=ft.Padding(top=20, bottom=20, left=20, right=20), border_radius=25))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>flet_core.list_view.ListView</li>
+<li>flet_core.constrained_control.ConstrainedControl</li>
+<li>flet_core.scrollable_control.ScrollableControl</li>
+<li>flet_core.control.Control</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.ui.ui_widgets.SuggestionsWidget.suggestions"><code class="name">var <span class="ident">suggestions</span> : api_client.Youtube.api_models.GetSuggestionsResponse</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="FTC-Music-Player.ui" href="index.html">FTC-Music-Player.ui</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.AlbumWidget" href="#FTC-Music-Player.ui.ui_widgets.AlbumWidget">AlbumWidget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.ArtistWidget" href="#FTC-Music-Player.ui.ui_widgets.ArtistWidget">ArtistWidget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.Home" href="#FTC-Music-Player.ui.ui_widgets.Home">Home</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.Home.onContentChange" href="#FTC-Music-Player.ui.ui_widgets.Home.onContentChange">onContentChange</a></code></li>
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.Home.onKeyboardEvent" href="#FTC-Music-Player.ui.ui_widgets.Home.onKeyboardEvent">onKeyboardEvent</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.HorizontalListView" href="#FTC-Music-Player.ui.ui_widgets.HorizontalListView">HorizontalListView</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.HorizontalListView.append" href="#FTC-Music-Player.ui.ui_widgets.HorizontalListView.append">append</a></code></li>
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.HorizontalListView.listView" href="#FTC-Music-Player.ui.ui_widgets.HorizontalListView.listView">listView</a></code></li>
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollLeft" href="#FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollLeft">scrollLeft</a></code></li>
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollRight" href="#FTC-Music-Player.ui.ui_widgets.HorizontalListView.scrollRight">scrollRight</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.Player_widget" href="#FTC-Music-Player.ui.ui_widgets.Player_widget">Player_widget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SearchResults" href="#FTC-Music-Player.ui.ui_widgets.SearchResults">SearchResults</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.Search_bar_widget" href="#FTC-Music-Player.ui.ui_widgets.Search_bar_widget">Search_bar_widget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SongWidget" href="#FTC-Music-Player.ui.ui_widgets.SongWidget">SongWidget</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.SongWidget.onSongClicked" href="#FTC-Music-Player.ui.ui_widgets.SongWidget.onSongClicked">onSongClicked</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SquareAlbumWidget" href="#FTC-Music-Player.ui.ui_widgets.SquareAlbumWidget">SquareAlbumWidget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SquareArtistWidget" href="#FTC-Music-Player.ui.ui_widgets.SquareArtistWidget">SquareArtistWidget</a></code></h4>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SquareSongWidget" href="#FTC-Music-Player.ui.ui_widgets.SquareSongWidget">SquareSongWidget</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.SquareSongWidget.onSongClicked" href="#FTC-Music-Player.ui.ui_widgets.SquareSongWidget.onSongClicked">onSongClicked</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.ui.ui_widgets.SuggestionsWidget" href="#FTC-Music-Player.ui.ui_widgets.SuggestionsWidget">SuggestionsWidget</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui.ui_widgets.SuggestionsWidget.suggestions" href="#FTC-Music-Player.ui.ui_widgets.SuggestionsWidget.suggestions">suggestions</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

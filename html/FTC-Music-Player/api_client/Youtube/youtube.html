@@ -33,13 +33,12 @@ This file builds the requests to the API server via the api_client and parses th
 
 
 import sys
-sys.path.append(&#34;./api_client&#34;)
-import api_client
+sys.path.append(&#34;../api_client/Youtube/&#34;)
 
+import api_client.api_client as api_client
 import requests
 import json
-import Youtube.models as yt_models
-
+import api_client.Youtube.api_models as yt_models
 
 def search(request: yt_models.SearchRequest) -&gt; yt_models.SearchResponse:
     &#34;&#34;&#34;
@@ -231,9 +230,48 @@ def getArtistSongs(artist_id: str) -&gt; yt_models.GetArtistSongsResponse:
     #Return the GetArtistSongsResponse object.
     return getArtistSongsResponse
 
+def getSuggestions(request: yt_models.GetSuggestionsRequest) -&gt; yt_models.GetSuggestionsResponse:
+    &#34;&#34;&#34;
+    Invokes a GetSuggestions Request via api_client.
+    
+    Takes in a GetSuggestionsRequest object.
+    
+    Returns a GetSuggestionsResponse containing the suggestions.
+    &#34;&#34;&#34;
+    
+    #Creates the params string for the api_client.
+    params = &#34;?artCount=&#34; + str(request.artist_count) + &#34;&amp;albCount=&#34; + str(request.album_count) + &#34;&amp;sonCount=&#34; + str(request.song_count)
+
+    try:
+        #gets the response (in json format) from the api_client.
+        response = api_client.sendApiRequest(api_client.ApiControllers.Youtube.value, api_client.ApiRequests.Suggestions.value, params)
+    except requests.exceptions.ConnectionError:
+        #If there is a connection error, return a GetSuggestionsResponse with has_error set to True and error set to &#34;Connection Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;Connection Error&#34;, [], [], [])
+    
+    try:
+        #Parses the json response into a dictionary.
+        parsed_data = json.loads(response)
+    except json.decoder.JSONDecodeError:
+        #If there is a JSON Decode Error, return a GetSuggestionsResponse with has_error set to True and error set to &#34;JSON Decode Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;JSON Decode Error&#34;, [], [], [])
+    
+    try:
+        #Creates the GetSuggestionsResponse object from the parsed data.
+        songs = [yt_models.OnlineSong(song[&#34;id&#34;], song[&#34;artistId&#34;], song[&#34;name&#34;], song[&#34;url&#34;], song[&#34;coverArt&#34;], song[&#34;duration&#34;]) for song in parsed_data[&#34;songs&#34;]]
+        albums = [yt_models.OnlineAlbum(album[&#34;id&#34;], album[&#34;artistId&#34;], album[&#34;name&#34;], album[&#34;coverArt&#34;], []) for album in parsed_data[&#34;albums&#34;]]
+        artists = [yt_models.OnlineArtist(artist[&#34;id&#34;], artist[&#34;name&#34;], artist[&#34;coverArt&#34;], [], []) for artist in parsed_data[&#34;artists&#34;]]
+        getSuggestionsResponse = yt_models.GetSuggestionsResponse(parsed_data[&#34;hasError&#34;], parsed_data[&#34;error&#34;], artists, albums, songs)
+    except KeyError:
+        #If there is a KeyError, return a GetSuggestionsResponse with has_error set to True and error set to &#34;Key Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;Key Error&#34;, [], [], [])
+
+    #Return the GetSuggestionsResponse object.
+    return getSuggestionsResponse
+
 if __name__ == &#34;__main__&#34;:
-    request = yt_models.SearchRequest(&#34;eminem&#34;, 5, 5, 5)
-    search_results = search(request)
+    request = yt_models.GetSuggestionsRequest(5, 5, 5)
+    search_results = getSuggestions(request)
     print(search_results.artists)
     print(search_results.albums)
     print(search_results.songs)
@@ -249,7 +287,7 @@ if __name__ == &#34;__main__&#34;:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="FTC-Music-Player.api_client.Youtube.youtube.getAlbumSongs"><code class="name flex">
-<span>def <span class="ident">getAlbumSongs</span></span>(<span>album_id: str) ‑> Youtube.models.GetAlbumSongsResponse</span>
+<span>def <span class="ident">getAlbumSongs</span></span>(<span>album_id: str) ‑> api_client.Youtube.api_models.GetAlbumSongsResponse</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invokes a GetAlbumSongs Request via api_client.</p>
@@ -298,7 +336,7 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="FTC-Music-Player.api_client.Youtube.youtube.getArtistAlbums"><code class="name flex">
-<span>def <span class="ident">getArtistAlbums</span></span>(<span>artist_id: str) ‑> Youtube.models.GetArtistAlbumsResponse</span>
+<span>def <span class="ident">getArtistAlbums</span></span>(<span>artist_id: str) ‑> api_client.Youtube.api_models.GetArtistAlbumsResponse</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invokes a GetArtistAlbums Request via api_client.</p>
@@ -347,7 +385,7 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="FTC-Music-Player.api_client.Youtube.youtube.getArtistSongs"><code class="name flex">
-<span>def <span class="ident">getArtistSongs</span></span>(<span>artist_id: str) ‑> Youtube.models.GetArtistSongsResponse</span>
+<span>def <span class="ident">getArtistSongs</span></span>(<span>artist_id: str) ‑> api_client.Youtube.api_models.GetArtistSongsResponse</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invokes a GetArtistSongs Request via api_client.</p>
@@ -396,7 +434,7 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="FTC-Music-Player.api_client.Youtube.youtube.getSongUrl"><code class="name flex">
-<span>def <span class="ident">getSongUrl</span></span>(<span>song_id: str) ‑> Youtube.models.GetSongUrlResponse</span>
+<span>def <span class="ident">getSongUrl</span></span>(<span>song_id: str) ‑> api_client.Youtube.api_models.GetSongUrlResponse</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invokes a GetSongUrl Request via api_client.</p>
@@ -443,8 +481,59 @@ if __name__ == &#34;__main__&#34;:
     return getSongUrlResponse</code></pre>
 </details>
 </dd>
+<dt id="FTC-Music-Player.api_client.Youtube.youtube.getSuggestions"><code class="name flex">
+<span>def <span class="ident">getSuggestions</span></span>(<span>request: api_client.Youtube.api_models.GetSuggestionsRequest) ‑> api_client.Youtube.api_models.GetSuggestionsResponse</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Invokes a GetSuggestions Request via api_client.</p>
+<p>Takes in a GetSuggestionsRequest object.</p>
+<p>Returns a GetSuggestionsResponse containing the suggestions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getSuggestions(request: yt_models.GetSuggestionsRequest) -&gt; yt_models.GetSuggestionsResponse:
+    &#34;&#34;&#34;
+    Invokes a GetSuggestions Request via api_client.
+    
+    Takes in a GetSuggestionsRequest object.
+    
+    Returns a GetSuggestionsResponse containing the suggestions.
+    &#34;&#34;&#34;
+    
+    #Creates the params string for the api_client.
+    params = &#34;?artCount=&#34; + str(request.artist_count) + &#34;&amp;albCount=&#34; + str(request.album_count) + &#34;&amp;sonCount=&#34; + str(request.song_count)
+
+    try:
+        #gets the response (in json format) from the api_client.
+        response = api_client.sendApiRequest(api_client.ApiControllers.Youtube.value, api_client.ApiRequests.Suggestions.value, params)
+    except requests.exceptions.ConnectionError:
+        #If there is a connection error, return a GetSuggestionsResponse with has_error set to True and error set to &#34;Connection Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;Connection Error&#34;, [], [], [])
+    
+    try:
+        #Parses the json response into a dictionary.
+        parsed_data = json.loads(response)
+    except json.decoder.JSONDecodeError:
+        #If there is a JSON Decode Error, return a GetSuggestionsResponse with has_error set to True and error set to &#34;JSON Decode Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;JSON Decode Error&#34;, [], [], [])
+    
+    try:
+        #Creates the GetSuggestionsResponse object from the parsed data.
+        songs = [yt_models.OnlineSong(song[&#34;id&#34;], song[&#34;artistId&#34;], song[&#34;name&#34;], song[&#34;url&#34;], song[&#34;coverArt&#34;], song[&#34;duration&#34;]) for song in parsed_data[&#34;songs&#34;]]
+        albums = [yt_models.OnlineAlbum(album[&#34;id&#34;], album[&#34;artistId&#34;], album[&#34;name&#34;], album[&#34;coverArt&#34;], []) for album in parsed_data[&#34;albums&#34;]]
+        artists = [yt_models.OnlineArtist(artist[&#34;id&#34;], artist[&#34;name&#34;], artist[&#34;coverArt&#34;], [], []) for artist in parsed_data[&#34;artists&#34;]]
+        getSuggestionsResponse = yt_models.GetSuggestionsResponse(parsed_data[&#34;hasError&#34;], parsed_data[&#34;error&#34;], artists, albums, songs)
+    except KeyError:
+        #If there is a KeyError, return a GetSuggestionsResponse with has_error set to True and error set to &#34;Key Error&#34;.
+        return yt_models.GetSuggestionsResponse(True, &#34;Key Error&#34;, [], [], [])
+
+    #Return the GetSuggestionsResponse object.
+    return getSuggestionsResponse</code></pre>
+</details>
+</dd>
 <dt id="FTC-Music-Player.api_client.Youtube.youtube.search"><code class="name flex">
-<span>def <span class="ident">search</span></span>(<span>request: Youtube.models.SearchRequest) ‑> Youtube.models.SearchResponse</span>
+<span>def <span class="ident">search</span></span>(<span>request: api_client.Youtube.api_models.SearchRequest) ‑> api_client.Youtube.api_models.SearchResponse</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Invokes a Search Request via api_client.</p>
@@ -511,11 +600,12 @@ if __name__ == &#34;__main__&#34;:
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.getAlbumSongs" href="#FTC-Music-Player.api_client.Youtube.youtube.getAlbumSongs">getAlbumSongs</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.getArtistAlbums" href="#FTC-Music-Player.api_client.Youtube.youtube.getArtistAlbums">getArtistAlbums</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.getArtistSongs" href="#FTC-Music-Player.api_client.Youtube.youtube.getArtistSongs">getArtistSongs</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.getSongUrl" href="#FTC-Music-Player.api_client.Youtube.youtube.getSongUrl">getSongUrl</a></code></li>
+<li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.getSuggestions" href="#FTC-Music-Player.api_client.Youtube.youtube.getSuggestions">getSuggestions</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.Youtube.youtube.search" href="#FTC-Music-Player.api_client.Youtube.youtube.search">search</a></code></li>
 </ul>
 </li>

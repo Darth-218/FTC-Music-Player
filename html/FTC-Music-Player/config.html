@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>FTC-Music-Player.main API documentation</title>
-<meta name="description" content="The main file that will initialise the GUI and start the program process.
-It first initialises a &#34;player&#34;, which communicates with an external
-…" />
+<title>FTC-Music-Player.config API documentation</title>
+<meta name="description" content="Various variables needed by several other files." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -21,35 +19,23 @@ It first initialises a &#34;player&#34;, which communicates with an external
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>FTC-Music-Player.main</code></h1>
+<h1 class="title">Module <code>FTC-Music-Player.config</code></h1>
 </header>
 <section id="section-intro">
-<p>The main file that will initialise the GUI and start the program process.
-It first initialises a "player", which communicates with an external library
-to play the actual audio. It then initialises the GUI (graphical user
-interface) and starts the program.</p>
+<p>Various variables needed by several other files.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#!/bin/python
-&#34;&#34;&#34;The main file that will initialise the GUI and start the program process.
-It first initialises a &#34;player&#34;, which communicates with an external library
-to play the actual audio. It then initialises the GUI (graphical user
-interface) and starts the program.
+<pre><code class="python">&#34;&#34;&#34;Various variables needed by several other files.
 &#34;&#34;&#34;
+numberOfArtistsPerInterest = 10
+numberOfAlbumsPerInterest = 15
+numberOfSongsPerInterest = 20
 
-from time import sleep
-from models import *
-import ui_builder
-
-if __name__ == &#34;__main__&#34;:
-    # Initialise the actual audio player (in this case, one based on
-    # VLC) that will play all audio throughout the program process.
-    player = VlcMediaPlayer({}, queue=Queue([]))
-
-    # Initialise the GUI and start the window.
-    interface = ui_builder.UI(player=player)</code></pre>
+numberOfSearchArtists = 10
+numberOfSearchAlbums = 15
+numberOfSearchSongs = 20</code></pre>
 </details>
 </section>
 <section>

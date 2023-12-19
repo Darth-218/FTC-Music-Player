@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>FTC-Music-Player.main API documentation</title>
-<meta name="description" content="The main file that will initialise the GUI and start the program process.
-It first initialises a &#34;player&#34;, which communicates with an external
-…" />
+<title>FTC-Music-Player.ui_builder API documentation</title>
+<meta name="description" content="Initialise the GUI window." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -21,35 +19,33 @@ It first initialises a &#34;player&#34;, which communicates with an external
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>FTC-Music-Player.main</code></h1>
+<h1 class="title">Module <code>FTC-Music-Player.ui_builder</code></h1>
 </header>
 <section id="section-intro">
-<p>The main file that will initialise the GUI and start the program process.
-It first initialises a "player", which communicates with an external library
-to play the actual audio. It then initialises the GUI (graphical user
-interface) and starts the program.</p>
+<p>Initialise the GUI window.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#!/bin/python
-&#34;&#34;&#34;The main file that will initialise the GUI and start the program process.
-It first initialises a &#34;player&#34;, which communicates with an external library
-to play the actual audio. It then initialises the GUI (graphical user
-interface) and starts the program.
+<pre><code class="python">&#34;&#34;&#34;Initialise the GUI window.
 &#34;&#34;&#34;
+import flet as ft
+import ui.ui_widgets as uiWidgets
+import models
 
-from time import sleep
-from models import *
-import ui_builder
-
-if __name__ == &#34;__main__&#34;:
-    # Initialise the actual audio player (in this case, one based on
-    # VLC) that will play all audio throughout the program process.
-    player = VlcMediaPlayer({}, queue=Queue([]))
-
-    # Initialise the GUI and start the window.
-    interface = ui_builder.UI(player=player)</code></pre>
+class UI():
+    def __init__(self, player: models.Player) -&gt; None:
+        self.player = player
+        ft.app(self.open_home)
+    
+    def open_home(self, page: ft.Page):
+        page.fonts = {
+            &#34;lilitaone&#34;: &#34;./Assets/Fonts/LilitaOne-Regular.ttf&#34;
+        }
+        page.add(uiWidgets.Home(self.player, page=page))
+        page.bottom_appbar = ft.BottomAppBar(uiWidgets.Player_widget(), height=120, padding=ft.Padding(top=0, bottom=0, left=0, right=0))
+        page.controls[0].onContentChange(0)
+        page.update()</code></pre>
 </details>
 </section>
 <section>
@@ -59,6 +55,56 @@ if __name__ == &#34;__main__&#34;:
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="FTC-Music-Player.ui_builder.UI"><code class="flex name class">
+<span>class <span class="ident">UI</span></span>
+<span>(</span><span>player: models.Player)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UI():
+    def __init__(self, player: models.Player) -&gt; None:
+        self.player = player
+        ft.app(self.open_home)
+    
+    def open_home(self, page: ft.Page):
+        page.fonts = {
+            &#34;lilitaone&#34;: &#34;./Assets/Fonts/LilitaOne-Regular.ttf&#34;
+        }
+        page.add(uiWidgets.Home(self.player, page=page))
+        page.bottom_appbar = ft.BottomAppBar(uiWidgets.Player_widget(), height=120, padding=ft.Padding(top=0, bottom=0, left=0, right=0))
+        page.controls[0].onContentChange(0)
+        page.update()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.ui_builder.UI.open_home"><code class="name flex">
+<span>def <span class="ident">open_home</span></span>(<span>self, page: flet_core.page.Page)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open_home(self, page: ft.Page):
+    page.fonts = {
+        &#34;lilitaone&#34;: &#34;./Assets/Fonts/LilitaOne-Regular.ttf&#34;
+    }
+    page.add(uiWidgets.Home(self.player, page=page))
+    page.bottom_appbar = ft.BottomAppBar(uiWidgets.Player_widget(), height=120, padding=ft.Padding(top=0, bottom=0, left=0, right=0))
+    page.controls[0].onContentChange(0)
+    page.update()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -70,6 +116,16 @@ if __name__ == &#34;__main__&#34;:
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="FTC-Music-Player" href="index.html">FTC-Music-Player</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="FTC-Music-Player.ui_builder.UI" href="#FTC-Music-Player.ui_builder.UI">UI</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.ui_builder.UI.open_home" href="#FTC-Music-Player.ui_builder.UI.open_home">open_home</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

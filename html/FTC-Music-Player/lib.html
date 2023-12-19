@@ -35,9 +35,20 @@ Definitions of some generally useful functions to use throughout the
 project.
 &#34;&#34;&#34;
 
+from datetime import timedelta
 import colorama as c
 
+def calc_pos(duration: timedelta, time: timedelta):
+    dursecs  = duration.total_seconds()
+    timesecs = time.total_seconds()
+    return timesecs / dursecs
+
 def TODO(s: str):
+    &#34;&#34;&#34;
+    Mark a function or method as unimplemented.
+
+    * `s` -- name.
+    &#34;&#34;&#34;
     print(c.Fore.YELLOW + &#34;&gt;&gt;=UNIMPLEMENTED{. %s .}=&lt;&lt;&#34; %(s),
           c.Style.RESET_ALL)
 
@@ -59,7 +70,16 @@ def err(name: str, e: str):
     &#34;&#34;&#34;
     print(c.Fore.RED + &#34;#[ERROR{. %s .}]=!=|&#34; %(name), e, c.Style.RESET_ALL)
 
+def passive():
+    &#34;&#34;&#34;Sometimes you need to pass a function as a parametre to
+    another, or sometimes you need an expression for the interpreter
+    to stop complaining. This allows you to do so while also not doing
+    anything.
+    &#34;&#34;&#34;
+    pass
+
 if __name__ == &#34;__main__&#34;:
+    # Demo code
     TODO(&#34;lib/testing&#34;)
     logger(&#34;lib&#34;, &#34;Hello, world!&#34;)
     err(&#34;lib&#34;, &#34;418 - I am a Teapot.&#34;)
@@ -77,14 +97,37 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">TODO</span></span>(<span>s: str)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Mark a function or method as unimplemented.</p>
+<ul>
+<li><code>s</code> &ndash; name.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def TODO(s: str):
+    &#34;&#34;&#34;
+    Mark a function or method as unimplemented.
+
+    * `s` -- name.
+    &#34;&#34;&#34;
     print(c.Fore.YELLOW + &#34;&gt;&gt;=UNIMPLEMENTED{. %s .}=&lt;&lt;&#34; %(s),
           c.Style.RESET_ALL)</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.lib.calc_pos"><code class="name flex">
+<span>def <span class="ident">calc_pos</span></span>(<span>duration: datetime.timedelta, time: datetime.timedelta)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_pos(duration: timedelta, time: timedelta):
+    dursecs  = duration.total_seconds()
+    timesecs = time.total_seconds()
+    return timesecs / dursecs</code></pre>
 </details>
 </dd>
 <dt id="FTC-Music-Player.lib.err"><code class="name flex">
@@ -137,6 +180,27 @@ if __name__ == &#34;__main__&#34;:
     print(c.Fore.GREEN + &#34;#[LOG{. %s .}]=||&#34; %(name), s, c.Style.RESET_ALL)</code></pre>
 </details>
 </dd>
+<dt id="FTC-Music-Player.lib.passive"><code class="name flex">
+<span>def <span class="ident">passive</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sometimes you need to pass a function as a parametre to
+another, or sometimes you need an expression for the interpreter
+to stop complaining. This allows you to do so while also not doing
+anything.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def passive():
+    &#34;&#34;&#34;Sometimes you need to pass a function as a parametre to
+    another, or sometimes you need an expression for the interpreter
+    to stop complaining. This allows you to do so while also not doing
+    anything.
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -156,8 +220,10 @@ if __name__ == &#34;__main__&#34;:
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="FTC-Music-Player.lib.TODO" href="#FTC-Music-Player.lib.TODO">TODO</a></code></li>
+<li><code><a title="FTC-Music-Player.lib.calc_pos" href="#FTC-Music-Player.lib.calc_pos">calc_pos</a></code></li>
 <li><code><a title="FTC-Music-Player.lib.err" href="#FTC-Music-Player.lib.err">err</a></code></li>
 <li><code><a title="FTC-Music-Player.lib.logger" href="#FTC-Music-Player.lib.logger">logger</a></code></li>
+<li><code><a title="FTC-Music-Player.lib.passive" href="#FTC-Music-Player.lib.passive">passive</a></code></li>
 </ul>
 </li>
 </ul>

@@ -56,9 +56,7 @@ the C# backend to be used by the Python frontend:
 &#34;&#34;&#34;
 
 import lib
-import time
 from datetime import timedelta
-import vlc
 
 
 class Content:
@@ -89,21 +87,12 @@ class Song(Content):
 
     duration: timedelta
 
-    def __init__(self, name: str, artist, path: str, duration: timedelta):
+    def __init__(self, name: str, artist, path: str, duration: timedelta, cover_art: str = &#39;&#39;):
         self.name = name
         self.artist = artist
         self.duration = duration
         self._path = path
-
-    def play(self):
-        &#34;&#34;&#34;
-        Start playing the current song from `_path`
-        &#34;&#34;&#34;
-        lib.logger(&#34;Song/play&#34;, f&#34;Now playing {self.name}&#34;)
-        player = vlc.MediaPlayer(self._path)
-        player.play()
-        time.sleep(self.duration.total_seconds())
-
+        self.cover_art = cover_art
 
 class Album(Content):
     &#34;&#34;&#34;
@@ -520,7 +509,7 @@ front-ends.</p>
 </dd>
 <dt id="FTC-Music-Player.data_models.Song"><code class="flex name class">
 <span>class <span class="ident">Song</span></span>
-<span>(</span><span>name: str, artist, path: str, duration: datetime.timedelta)</span>
+<span>(</span><span>name: str, artist, path: str, duration: datetime.timedelta, cover_art: str = '')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Models a single Song that can be a part of zero or more Albums or
@@ -550,20 +539,12 @@ from the C# back-end.</li>
 
     duration: timedelta
 
-    def __init__(self, name: str, artist, path: str, duration: timedelta):
+    def __init__(self, name: str, artist, path: str, duration: timedelta, cover_art: str = &#39;&#39;):
         self.name = name
         self.artist = artist
         self.duration = duration
         self._path = path
-
-    def play(self):
-        &#34;&#34;&#34;
-        Start playing the current song from `_path`
-        &#34;&#34;&#34;
-        lib.logger(&#34;Song/play&#34;, f&#34;Now playing {self.name}&#34;)
-        player = vlc.MediaPlayer(self._path)
-        player.play()
-        time.sleep(self.duration.total_seconds())</code></pre>
+        self.cover_art = cover_art</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -574,28 +555,6 @@ from the C# back-end.</li>
 <dt id="FTC-Music-Player.data_models.Song.duration"><code class="name">var <span class="ident">duration</span> : datetime.timedelta</code></dt>
 <dd>
 <div class="desc"></div>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="FTC-Music-Player.data_models.Song.play"><code class="name flex">
-<span>def <span class="ident">play</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Start playing the current song from <code>_path</code></p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def play(self):
-    &#34;&#34;&#34;
-    Start playing the current song from `_path`
-    &#34;&#34;&#34;
-    lib.logger(&#34;Song/play&#34;, f&#34;Now playing {self.name}&#34;)
-    player = vlc.MediaPlayer(self._path)
-    player.play()
-    time.sleep(self.duration.total_seconds())</code></pre>
-</details>
 </dd>
 </dl>
 </dd>
@@ -841,7 +800,6 @@ user's username with their password and computing their SHA256.
 <h4><code><a title="FTC-Music-Player.data_models.Song" href="#FTC-Music-Player.data_models.Song">Song</a></code></h4>
 <ul class="">
 <li><code><a title="FTC-Music-Player.data_models.Song.duration" href="#FTC-Music-Player.data_models.Song.duration">duration</a></code></li>
-<li><code><a title="FTC-Music-Player.data_models.Song.play" href="#FTC-Music-Player.data_models.Song.play">play</a></code></li>
 </ul>
 </li>
 <li>

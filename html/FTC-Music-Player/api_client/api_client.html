@@ -45,7 +45,8 @@ from enum import Enum
 import requests
 
 #Server IP Address
-serverIp = &#34;10.2.157.102:5239&#34; #Please update this to the IP Address of the server.
+serverIp = &#34;ahmedafifi.bsite.net&#34; #Please update this to the IP Address of the server.
+#serverIp = &#34;localhost:5239&#34; #Please update this to the IP Address of the server.
 
 #API Controller Options
 class ApiControllers(Enum):
@@ -58,13 +59,13 @@ class ApiRequests(Enum):
     AlbumSongs   = &#34;/GetAlbumSongs&#34;
     ArtistAlbums = &#34;/GetArtistAlbums&#34;
     ArtistSongs  = &#34;/GetArtistSongs&#34;
+    Suggestions  = &#34;/GetSuggestions&#34;
     
 
 #Sends a request to the server and returns the response (in json format).
 #Takes in the controller, request, and params as strings.
 def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
     response = requests.get(&#34;http://&#34; + serverIp + controller + request + params)
-    # print(response.text)
     return response.text</code></pre>
 </details>
 </section>
@@ -86,7 +87,6 @@ def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
 </summary>
 <pre><code class="python">def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
     response = requests.get(&#34;http://&#34; + serverIp + controller + request + params)
-    # print(response.text)
     return response.text</code></pre>
 </details>
 </dd>
@@ -135,7 +135,8 @@ def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
     AudioUrl     = &#34;/GetAudioUrl&#34;
     AlbumSongs   = &#34;/GetAlbumSongs&#34;
     ArtistAlbums = &#34;/GetArtistAlbums&#34;
-    ArtistSongs  = &#34;/GetArtistSongs&#34;</code></pre>
+    ArtistSongs  = &#34;/GetArtistSongs&#34;
+    Suggestions  = &#34;/GetSuggestions&#34;</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -160,6 +161,10 @@ def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
 <div class="desc"></div>
 </dd>
 <dt id="FTC-Music-Player.api_client.api_client.ApiRequests.Search"><code class="name">var <span class="ident">Search</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.api_client.api_client.ApiRequests.Suggestions"><code class="name">var <span class="ident">Suggestions</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -194,12 +199,13 @@ def sendApiRequest(controller: str, request: str, params: str) -&gt; str:
 </li>
 <li>
 <h4><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests" href="#FTC-Music-Player.api_client.api_client.ApiRequests">ApiRequests</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.AlbumSongs" href="#FTC-Music-Player.api_client.api_client.ApiRequests.AlbumSongs">AlbumSongs</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.ArtistAlbums" href="#FTC-Music-Player.api_client.api_client.ApiRequests.ArtistAlbums">ArtistAlbums</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.ArtistSongs" href="#FTC-Music-Player.api_client.api_client.ApiRequests.ArtistSongs">ArtistSongs</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.AudioUrl" href="#FTC-Music-Player.api_client.api_client.ApiRequests.AudioUrl">AudioUrl</a></code></li>
 <li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.Search" href="#FTC-Music-Player.api_client.api_client.ApiRequests.Search">Search</a></code></li>
+<li><code><a title="FTC-Music-Player.api_client.api_client.ApiRequests.Suggestions" href="#FTC-Music-Player.api_client.api_client.ApiRequests.Suggestions">Suggestions</a></code></li>
 </ul>
 </li>
 </ul>

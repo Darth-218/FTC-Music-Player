@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>FTC-Music-Player.models API documentation</title>
-<meta name="description" content="Defines several classes modelling data that will be received from
-the C# backend to be used by the Python frontend: …" />
+<meta name="description" content="Some general classes that are neither data or to do with communicating
+with the API." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,186 +23,215 @@ the C# backend to be used by the Python frontend: …" />
 <h1 class="title">Module <code>FTC-Music-Player.models</code></h1>
 </header>
 <section id="section-intro">
-<p>Defines several classes modelling data that will be received from
-the C# backend to be used by the Python frontend:</p>
-<ul>
-<li>User &ndash; A class to represent a single User of the application.
-</li>
-<li>Content &ndash; Top level class modelling any kind of content an Artist could make.
-</li>
-<li>Album : Content &ndash; A collection of Songs.
-</li>
-<li>Playlist : Album &ndash; A /mutable/ collection of Songs created by the User.
-</li>
-<li>Song : Content &ndash; A single Song.
-</li>
-<li>Artist &ndash; An entity that has zero or more Content.</li>
-</ul>
+<p>Some general classes that are neither data or to do with communicating
+with the API.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-Defines several classes modelling data that will be received from
-the C# backend to be used by the Python frontend:
-
-* User -- A class to represent a single User of the application.   
-* Content -- Top level class modelling any kind of content an Artist could make.   
-* Album : Content -- A collection of Songs.   
-* Playlist : Album -- A /mutable/ collection of Songs created by the User.   
-* Song : Content -- A single Song.   
-* Artist -- An entity that has zero or more Content.   
+Some general classes that are neither data or to do with communicating
+with the API.
 &#34;&#34;&#34;
 
-import lib
+from data_models import *
+from player_handlers import *
+from enum import Enum, auto
+from typing import Callable, Any
+import vlc
 
-
-class Content:
+class Queue():
     &#34;&#34;&#34;
-    Class modelling any form of Content made my an Artist, inherited
-    by several other classes.
-    &#34;&#34;&#34;
-
-    name: str
-    artist = None
-
-
-class Song(Content):
-    &#34;&#34;&#34;
-    Models a single Song that can be a part of zero or more Albums or
-    Playlists, as well as followed by zero or more Users.
+    Class representing a song queue with methods for interacting with
+    it, for example jumping to the next song, etc.
     &#34;&#34;&#34;
 
-    def __init__(self, name: str, artist):
-        self.name = name
-        self.artist = artist
+    song_list: list[Song] = []
+    current: Song
+    # = Song(name=&#34;Test Song&#34;,
+    #        artist=&#34;Test Artist&#34;,
+    #        duration=timedelta(minutes=8, seconds=15),
+    #        path=&#34;test path&#34;)
+    curr_index: int = 0
+    elapsed: timedelta = timedelta(0)
+    position: float = 0
+    duration: timedelta = timedelta(0)
+
+    def __init__(
+            self,
+            song_list: list[Song] = [],
+            curr_index: int = 0,
+            ):
+        self.current = song_list[curr_index] if song_list else Song(
+            &#34;No Song Selected&#34;,
+            Artist(&#34;FTC&#34;),
+            &#34;./none&#34;,
+            timedelta(seconds=0)
+            )
+        self.song_list = song_list
 
 
-class Album(Content):
-    &#34;&#34;&#34;
-    Immutable collection of Songs made by the same Artist and grouped
-    togther.
+    def _reset(self):
+        self.position = 0
+        self.current = self.song_list[self.curr_index]
+        self.duration = self.current.duration
 
-    * name       -- Name of the Album.   
-    * arist      -- Name of the Artist that made the Album.   
-    * songs      -- List of Songs in the Album.   
-    &#34;&#34;&#34;
+    def next(self):
+        &#34;&#34;&#34;Go to the next song in the queue. If we&#39;re already at the
+        last song, reset the current state but otherwise do nothing.
+        &#34;&#34;&#34;
+        if self.curr_index == len(self.song_list) - 1:
+            self._reset()
+            return
+        self.curr_index += 1
+        self._reset()
 
-    songs: list[Song]
-
-    def __init__(self, name: str, artist, songs: list[Song]):
-        self.name = name
-        self.artist = artist
-        self.songs = songs
-
-
-class Playlist(Album):
-    &#34;&#34;&#34;
-    Playlist class to be used in the interface between the back- and
-    front-ends.
-
-    * name       -- Name of the Playlist.   
-    * arist      -- Name of the Artist that made the Playlist.   
-    * songs      -- List of Songs in the Playlist.   
-    * add_song() -- Adds a Song to the list of Songs.   
-    &#34;&#34;&#34;
-
-    def __init__(self, name: str, songs: list[Song] = []):
-        self.name = name
-        self.songs = songs
+    def prev(self):
+        &#34;&#34;&#34;Go to the previous song in the queue. If we&#39;re already at the
+        first song, reset the current state but otherwise do nothing.
+        &#34;&#34;&#34;
+        if self.curr_index == 0:
+            self._reset()
+            return
+        self.curr_index -= 1
+        self._reset()
 
     def add_song(self, song: Song):
-        self.songs.append(song)
-        lib.TODO(&#34;Playlist.add_song()&#34;)
+        &#34;&#34;&#34;Add a song to the queue.
 
+        - `song` -- A `Song` object to add to the end of the queue.
+        &#34;&#34;&#34;
+        self.song_list.append(song)
+    
+    def play_next(self, song: Song):
+        &#34;&#34;&#34;Insert a song into the queue to be played directly after the current song.
 
-class Artist:
+        - `song` -- A `Song` object to insert to the queue.
+        &#34;&#34;&#34;
+        self.song_list.insert(self.curr_index + 1, song)
 
-    name: str
-    albums: list[Album]
-    songs: list[Song]
-
-    def __init__(self,
-                 name: str,
-                 albums: list[Album] = [],
-                 songs: list[Song] = []):
-        self.name = name
-        self.albums = albums
-        self.songs = songs
-
-
-class User:
+class Player():
     &#34;&#34;&#34;
-    A User class to model the data for a user of the application.
+    Abstract class to represent a music player, i.e., an API to
+    communicate with an external audio playing application from within
+    the program.
 
-    * username  -- Personal identifier   
-    * playlists -- List of playlists/albums the user has saved   
-    * favourites     -- Special playlist of the user’s favourite songs.   
-    * followed  -- List of all the artists that the user has followed.   
+    - `queue` -- A `Queue` object representing the queue of songs the
+    player will play when prompted.
+    - `handlers` -- A dict of handler functions to interact with the
+    UI.
+    - `player` -- The actual player object that will allow us to
+    communicate with whatever external library we use to play audio.
     &#34;&#34;&#34;
 
-    username: str
-    playlists: list[Playlist]
-    favourites: Playlist
-    followed_artists: list[Artist]
-    followed_albums: list[Album]
+    queue: Queue
+    handlers: dict[HandlerType, Callable[[], None]]
+    player: Any | None
 
-    def __init__(self, handle):
+    def __init__(self, handlers, queue):
+        self.queue = queue
+        self.handlers = handlers
+
+    def play(self):
+        &#34;&#34;&#34;Start playing the current song at the current elapsed time.
         &#34;&#34;&#34;
-        Initialise a User instance with no playlists, no
-        liked/favourited songs and no followed artists.
+        raise NotImplementedError
+
+    def next(self):
+        &#34;&#34;&#34;Skip the rest of the current song and move to the next one in
+        the queue.
         &#34;&#34;&#34;
+        raise NotImplementedError
 
-        self.username = handle
-        self.playlists = []
-        self.favourites = Playlist(&#34;Favourites&#34;)
-        self.followed_artists = []
-        self.followed_albums = []
+    def prev(self):
+        &#34;&#34;&#34;Stop playing the current song and return to the previous one
+        in the queue.
+        &#34;&#34;&#34;
+        raise NotImplementedError
 
-    def change_username(self, new_handle: str):
-        lib.TODO(&#34;User.change_username()&#34;)
-        self.username = new_handle
+    def seektime(self, time: timedelta):
+        &#34;&#34;&#34;Jump to a specific time stamp in the current song.
+        &#34;&#34;&#34;
+        raise NotImplementedError
 
-    def like_song(self, song: Song):
-        lib.TODO(&#34;User.like_song()&#34;)
-        self.favourites.add_song(song)
+    def seekpos(self, pos: float):
+        &#34;&#34;&#34;Jump to a specific position in the current song.
+        &#34;&#34;&#34;
+        raise NotImplementedError
 
-    def follow_artist(self, artist: Artist):
-        lib.TODO(&#34;User.follow_artist()&#34;)
-        self.followed_artists.append(artist)
+    def stop(self):
+        &#34;&#34;&#34;Stop playing the current song.
+        &#34;&#34;&#34;
+        self.player.stop() if self.player else lib.passive()
+    
+    def pause(self):
+        &#34;&#34;&#34;Pause playing the current song.
+        &#34;&#34;&#34;
+        self.player.pause() if self.player else lib.passive()
+        
+    def change_queue(self, queue: Queue):
+        &#34;&#34;&#34;Swap the current queue of songs to another one.
+        &#34;&#34;&#34;
+        self.queue = queue
 
-    def follow_album(self, album: Album):
-        lib.TODO(&#34;User.follow_album()&#34;)
-        self.followed_albums.append(album)
-
-    def create_playlist(self, name: str):
-        lib.TODO(&#34;User.create_playlist()&#34;)
-        playlist = Playlist(name)
-        self.playlists.append(playlist)
+    def add_to_queu(self, song: Song):
+        &#34;&#34;&#34;Add a song to the current queue.
+        &#34;&#34;&#34;
+        self.queu.add_song()
 
 
-if __name__ == &#34;__main__&#34;:
-    # Testing code:
-    me = User(&#34;alchemistsGestalt&#34;)
-    mono = Artist(&#34;Mono Inc.&#34;)
-    heile_segen = Song(&#34;Heile, heile Segen&#34;, mono)
-    teile = Song(&#34;Ich teile dich nicht&#34;, mono)
-    nimmer = Album(&#34;Nimmermehr&#34;, mono, [heile_segen, teile])
-    # These three calls to append (instead of having an Artist method deal
-    # with them) should never happen, this is just here to set up the example.
-    mono.songs.append(heile_segen)
-    mono.songs.append(teile)
-    mono.albums.append(nimmer)
-    me.like_song(heile_segen)
-    me.like_song(teile)
-    me.follow_artist(mono)
-    me.follow_album(nimmer)
-    for song in me.favourites.songs:
-        print(song.name)
-    for artist in me.followed_artists:
-        print(artist.name)
-    for album in me.followed_albums:
-        print(album.name)</code></pre>
+class VlcMediaPlayer(Player):
+    &#34;&#34;&#34;
+    A player that uses VLC to play audio.
+    &#34;&#34;&#34;
+
+    player: vlc.MediaPlayer
+
+    def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
+        super().__init__(handlers, queue)
+        self.player = vlc.MediaPlayer(self.queue.current._path)
+
+    def play(self):
+        current = self.queue.current
+        self.player = vlc.MediaPlayer(current._path)
+        lib.logger(&#34;VlcMediaPlayer/play&#34;,
+            f&#34;Now playing {current.name}.\nFrom {current._path}.&#34;)
+        self.player.play()
+
+    def next(self):
+        self.player.stop()
+        self.queue.next()
+        self.play()
+
+    def prev(self):
+        self.player.stop()
+        self.queue.prev()
+        self.play()
+
+    def seektime(self, time: timedelta):
+        pos = lib.calc_pos(self.queue.duration, time)
+        self.seekpos(pos)
+
+    def seekpos(self, pos):
+        self.player.set_position(pos)
+
+    def _change_song(self, queue: Queue):
+        self.player.stop()
+        self.queue = queue
+        self.play()
+        self.handlers.get(HandlerType.on_source_changed, lib.passive)
+
+    def _add_handler(self, handler: Callable[[], None], type: HandlerType):
+        self.handlers[type] = handler
+
+
+class PlayerState(Enum):
+    &#34;&#34;&#34;An enumeration representing the current state of the player.
+    &#34;&#34;&#34;
+    playing     = auto()
+    paused      = auto()
+    finished    = auto()
+    not_started = auto()</code></pre>
 </details>
 </section>
 <section>
@@ -214,398 +243,574 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="FTC-Music-Player.models.Album"><code class="flex name class">
-<span>class <span class="ident">Album</span></span>
-<span>(</span><span>name: str, artist, songs: list[FTC-Music-Player.models.Song])</span>
+<dt id="FTC-Music-Player.models.Player"><code class="flex name class">
+<span>class <span class="ident">Player</span></span>
+<span>(</span><span>handlers, queue)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Immutable collection of Songs made by the same Artist and grouped
-togther.</p>
+<div class="desc"><p>Abstract class to represent a music player, i.e., an API to
+communicate with an external audio playing application from within
+the program.</p>
 <ul>
-<li>name
-&ndash; Name of the Album.
-</li>
-<li>arist
-&ndash; Name of the Artist that made the Album.
-</li>
-<li>songs
-&ndash; List of Songs in the Album.</li>
+<li><code>queue</code> &ndash; A <code><a title="FTC-Music-Player.models.Queue" href="#FTC-Music-Player.models.Queue">Queue</a></code> object representing the queue of songs the
+player will play when prompted.</li>
+<li><code>handlers</code> &ndash; A dict of handler functions to interact with the
+UI.</li>
+<li><code>player</code> &ndash; The actual player object that will allow us to
+communicate with whatever external library we use to play audio.</li>
 </ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Album(Content):
+<pre><code class="python">class Player():
     &#34;&#34;&#34;
-    Immutable collection of Songs made by the same Artist and grouped
-    togther.
+    Abstract class to represent a music player, i.e., an API to
+    communicate with an external audio playing application from within
+    the program.
 
-    * name       -- Name of the Album.   
-    * arist      -- Name of the Artist that made the Album.   
-    * songs      -- List of Songs in the Album.   
-    &#34;&#34;&#34;
-
-    songs: list[Song]
-
-    def __init__(self, name: str, artist, songs: list[Song]):
-        self.name = name
-        self.artist = artist
-        self.songs = songs</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="FTC-Music-Player.models.Content" href="#FTC-Music-Player.models.Content">Content</a></li>
-</ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="FTC-Music-Player.models.Playlist" href="#FTC-Music-Player.models.Playlist">Playlist</a></li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="FTC-Music-Player.models.Album.songs"><code class="name">var <span class="ident">songs</span> : list[FTC-Music-Player.models.Song]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
-<dt id="FTC-Music-Player.models.Artist"><code class="flex name class">
-<span>class <span class="ident">Artist</span></span>
-<span>(</span><span>name: str, albums: list[FTC-Music-Player.models.Album] = [], songs: list[FTC-Music-Player.models.Song] = [])</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Artist:
-
-    name: str
-    albums: list[Album]
-    songs: list[Song]
-
-    def __init__(self,
-                 name: str,
-                 albums: list[Album] = [],
-                 songs: list[Song] = []):
-        self.name = name
-        self.albums = albums
-        self.songs = songs</code></pre>
-</details>
-<h3>Class variables</h3>
-<dl>
-<dt id="FTC-Music-Player.models.Artist.albums"><code class="name">var <span class="ident">albums</span> : list[FTC-Music-Player.models.Album]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.Artist.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.Artist.songs"><code class="name">var <span class="ident">songs</span> : list[FTC-Music-Player.models.Song]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
-<dt id="FTC-Music-Player.models.Content"><code class="flex name class">
-<span>class <span class="ident">Content</span></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Class modelling any form of Content made my an Artist, inherited
-by several other classes.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Content:
-    &#34;&#34;&#34;
-    Class modelling any form of Content made my an Artist, inherited
-    by several other classes.
+    - `queue` -- A `Queue` object representing the queue of songs the
+    player will play when prompted.
+    - `handlers` -- A dict of handler functions to interact with the
+    UI.
+    - `player` -- The actual player object that will allow us to
+    communicate with whatever external library we use to play audio.
     &#34;&#34;&#34;
 
-    name: str
-    artist = None</code></pre>
+    queue: Queue
+    handlers: dict[HandlerType, Callable[[], None]]
+    player: Any | None
+
+    def __init__(self, handlers, queue):
+        self.queue = queue
+        self.handlers = handlers
+
+    def play(self):
+        &#34;&#34;&#34;Start playing the current song at the current elapsed time.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def next(self):
+        &#34;&#34;&#34;Skip the rest of the current song and move to the next one in
+        the queue.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def prev(self):
+        &#34;&#34;&#34;Stop playing the current song and return to the previous one
+        in the queue.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def seektime(self, time: timedelta):
+        &#34;&#34;&#34;Jump to a specific time stamp in the current song.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def seekpos(self, pos: float):
+        &#34;&#34;&#34;Jump to a specific position in the current song.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def stop(self):
+        &#34;&#34;&#34;Stop playing the current song.
+        &#34;&#34;&#34;
+        self.player.stop() if self.player else lib.passive()
+    
+    def pause(self):
+        &#34;&#34;&#34;Pause playing the current song.
+        &#34;&#34;&#34;
+        self.player.pause() if self.player else lib.passive()
+        
+    def change_queue(self, queue: Queue):
+        &#34;&#34;&#34;Swap the current queue of songs to another one.
+        &#34;&#34;&#34;
+        self.queue = queue
+
+    def add_to_queu(self, song: Song):
+        &#34;&#34;&#34;Add a song to the current queue.
+        &#34;&#34;&#34;
+        self.queu.add_song()</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="FTC-Music-Player.models.Album" href="#FTC-Music-Player.models.Album">Album</a></li>
-<li><a title="FTC-Music-Player.models.Song" href="#FTC-Music-Player.models.Song">Song</a></li>
+<li><a title="FTC-Music-Player.models.VlcMediaPlayer" href="#FTC-Music-Player.models.VlcMediaPlayer">VlcMediaPlayer</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="FTC-Music-Player.models.Content.artist"><code class="name">var <span class="ident">artist</span></code></dt>
+<dt id="FTC-Music-Player.models.Player.handlers"><code class="name">var <span class="ident">handlers</span> : dict[player_handlers.HandlerType, typing.Callable[[], NoneType]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="FTC-Music-Player.models.Content.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dt id="FTC-Music-Player.models.Player.player"><code class="name">var <span class="ident">player</span> : Optional[Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Player.queue"><code class="name">var <span class="ident">queue</span> : FTC-Music-Player.models.Queue</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
-</dd>
-<dt id="FTC-Music-Player.models.Playlist"><code class="flex name class">
-<span>class <span class="ident">Playlist</span></span>
-<span>(</span><span>name: str, songs: list[FTC-Music-Player.models.Song] = [])</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Playlist class to be used in the interface between the back- and
-front-ends.</p>
-<ul>
-<li>name
-&ndash; Name of the Playlist.
-</li>
-<li>arist
-&ndash; Name of the Artist that made the Playlist.
-</li>
-<li>songs
-&ndash; List of Songs in the Playlist.
-</li>
-<li>add_song() &ndash; Adds a Song to the list of Songs.</li>
-</ul></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Playlist(Album):
-    &#34;&#34;&#34;
-    Playlist class to be used in the interface between the back- and
-    front-ends.
-
-    * name       -- Name of the Playlist.   
-    * arist      -- Name of the Artist that made the Playlist.   
-    * songs      -- List of Songs in the Playlist.   
-    * add_song() -- Adds a Song to the list of Songs.   
-    &#34;&#34;&#34;
-
-    def __init__(self, name: str, songs: list[Song] = []):
-        self.name = name
-        self.songs = songs
-
-    def add_song(self, song: Song):
-        self.songs.append(song)
-        lib.TODO(&#34;Playlist.add_song()&#34;)</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="FTC-Music-Player.models.Album" href="#FTC-Music-Player.models.Album">Album</a></li>
-<li><a title="FTC-Music-Player.models.Content" href="#FTC-Music-Player.models.Content">Content</a></li>
-</ul>
 <h3>Methods</h3>
 <dl>
-<dt id="FTC-Music-Player.models.Playlist.add_song"><code class="name flex">
-<span>def <span class="ident">add_song</span></span>(<span>self, song: FTC-Music-Player.models.Song)</span>
+<dt id="FTC-Music-Player.models.Player.add_to_queu"><code class="name flex">
+<span>def <span class="ident">add_to_queu</span></span>(<span>self, song: data_models.Song)</span>
 </code></dt>
 <dd>
+<div class="desc"><p>Add a song to the current queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_to_queu(self, song: Song):
+    &#34;&#34;&#34;Add a song to the current queue.
+    &#34;&#34;&#34;
+    self.queu.add_song()</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.change_queue"><code class="name flex">
+<span>def <span class="ident">change_queue</span></span>(<span>self, queue: FTC-Music-Player.models.Queue)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Swap the current queue of songs to another one.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def change_queue(self, queue: Queue):
+    &#34;&#34;&#34;Swap the current queue of songs to another one.
+    &#34;&#34;&#34;
+    self.queue = queue</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.next"><code class="name flex">
+<span>def <span class="ident">next</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Skip the rest of the current song and move to the next one in
+the queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next(self):
+    &#34;&#34;&#34;Skip the rest of the current song and move to the next one in
+    the queue.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.pause"><code class="name flex">
+<span>def <span class="ident">pause</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pause playing the current song.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pause(self):
+    &#34;&#34;&#34;Pause playing the current song.
+    &#34;&#34;&#34;
+    self.player.pause() if self.player else lib.passive()</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.play"><code class="name flex">
+<span>def <span class="ident">play</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start playing the current song at the current elapsed time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def play(self):
+    &#34;&#34;&#34;Start playing the current song at the current elapsed time.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.prev"><code class="name flex">
+<span>def <span class="ident">prev</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stop playing the current song and return to the previous one
+in the queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prev(self):
+    &#34;&#34;&#34;Stop playing the current song and return to the previous one
+    in the queue.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.seekpos"><code class="name flex">
+<span>def <span class="ident">seekpos</span></span>(<span>self, pos: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Jump to a specific position in the current song.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def seekpos(self, pos: float):
+    &#34;&#34;&#34;Jump to a specific position in the current song.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.seektime"><code class="name flex">
+<span>def <span class="ident">seektime</span></span>(<span>self, time: datetime.timedelta)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Jump to a specific time stamp in the current song.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def seektime(self, time: timedelta):
+    &#34;&#34;&#34;Jump to a specific time stamp in the current song.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Player.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stop playing the current song.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self):
+    &#34;&#34;&#34;Stop playing the current song.
+    &#34;&#34;&#34;
+    self.player.stop() if self.player else lib.passive()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.models.PlayerState"><code class="flex name class">
+<span>class <span class="ident">PlayerState</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration representing the current state of the player.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PlayerState(Enum):
+    &#34;&#34;&#34;An enumeration representing the current state of the player.
+    &#34;&#34;&#34;
+    playing     = auto()
+    paused      = auto()
+    finished    = auto()
+    not_started = auto()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.models.PlayerState.finished"><code class="name">var <span class="ident">finished</span></code></dt>
+<dd>
 <div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.PlayerState.not_started"><code class="name">var <span class="ident">not_started</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.PlayerState.paused"><code class="name">var <span class="ident">paused</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.PlayerState.playing"><code class="name">var <span class="ident">playing</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.models.Queue"><code class="flex name class">
+<span>class <span class="ident">Queue</span></span>
+<span>(</span><span>song_list: list[data_models.Song] = [], curr_index: int = 0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class representing a song queue with methods for interacting with
+it, for example jumping to the next song, etc.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Queue():
+    &#34;&#34;&#34;
+    Class representing a song queue with methods for interacting with
+    it, for example jumping to the next song, etc.
+    &#34;&#34;&#34;
+
+    song_list: list[Song] = []
+    current: Song
+    # = Song(name=&#34;Test Song&#34;,
+    #        artist=&#34;Test Artist&#34;,
+    #        duration=timedelta(minutes=8, seconds=15),
+    #        path=&#34;test path&#34;)
+    curr_index: int = 0
+    elapsed: timedelta = timedelta(0)
+    position: float = 0
+    duration: timedelta = timedelta(0)
+
+    def __init__(
+            self,
+            song_list: list[Song] = [],
+            curr_index: int = 0,
+            ):
+        self.current = song_list[curr_index] if song_list else Song(
+            &#34;No Song Selected&#34;,
+            Artist(&#34;FTC&#34;),
+            &#34;./none&#34;,
+            timedelta(seconds=0)
+            )
+        self.song_list = song_list
+
+
+    def _reset(self):
+        self.position = 0
+        self.current = self.song_list[self.curr_index]
+        self.duration = self.current.duration
+
+    def next(self):
+        &#34;&#34;&#34;Go to the next song in the queue. If we&#39;re already at the
+        last song, reset the current state but otherwise do nothing.
+        &#34;&#34;&#34;
+        if self.curr_index == len(self.song_list) - 1:
+            self._reset()
+            return
+        self.curr_index += 1
+        self._reset()
+
+    def prev(self):
+        &#34;&#34;&#34;Go to the previous song in the queue. If we&#39;re already at the
+        first song, reset the current state but otherwise do nothing.
+        &#34;&#34;&#34;
+        if self.curr_index == 0:
+            self._reset()
+            return
+        self.curr_index -= 1
+        self._reset()
+
+    def add_song(self, song: Song):
+        &#34;&#34;&#34;Add a song to the queue.
+
+        - `song` -- A `Song` object to add to the end of the queue.
+        &#34;&#34;&#34;
+        self.song_list.append(song)
+    
+    def play_next(self, song: Song):
+        &#34;&#34;&#34;Insert a song into the queue to be played directly after the current song.
+
+        - `song` -- A `Song` object to insert to the queue.
+        &#34;&#34;&#34;
+        self.song_list.insert(self.curr_index + 1, song)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="FTC-Music-Player.models.Queue.curr_index"><code class="name">var <span class="ident">curr_index</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.current"><code class="name">var <span class="ident">current</span> : data_models.Song</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.duration"><code class="name">var <span class="ident">duration</span> : datetime.timedelta</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.elapsed"><code class="name">var <span class="ident">elapsed</span> : datetime.timedelta</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.position"><code class="name">var <span class="ident">position</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.song_list"><code class="name">var <span class="ident">song_list</span> : list[data_models.Song]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.models.Queue.add_song"><code class="name flex">
+<span>def <span class="ident">add_song</span></span>(<span>self, song: data_models.Song)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a song to the queue.</p>
+<ul>
+<li><code>song</code> &ndash; A <code>Song</code> object to add to the end of the queue.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_song(self, song: Song):
-    self.songs.append(song)
-    lib.TODO(&#34;Playlist.add_song()&#34;)</code></pre>
+    &#34;&#34;&#34;Add a song to the queue.
+
+    - `song` -- A `Song` object to add to the end of the queue.
+    &#34;&#34;&#34;
+    self.song_list.append(song)</code></pre>
 </details>
 </dd>
-</dl>
-</dd>
-<dt id="FTC-Music-Player.models.Song"><code class="flex name class">
-<span>class <span class="ident">Song</span></span>
-<span>(</span><span>name: str, artist)</span>
+<dt id="FTC-Music-Player.models.Queue.next"><code class="name flex">
+<span>def <span class="ident">next</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Models a single Song that can be a part of zero or more Albums or
-Playlists, as well as followed by zero or more Users.</p></div>
+<div class="desc"><p>Go to the next song in the queue. If we're already at the
+last song, reset the current state but otherwise do nothing.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Song(Content):
+<pre><code class="python">def next(self):
+    &#34;&#34;&#34;Go to the next song in the queue. If we&#39;re already at the
+    last song, reset the current state but otherwise do nothing.
     &#34;&#34;&#34;
-    Models a single Song that can be a part of zero or more Albums or
-    Playlists, as well as followed by zero or more Users.
+    if self.curr_index == len(self.song_list) - 1:
+        self._reset()
+        return
+    self.curr_index += 1
+    self._reset()</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.play_next"><code class="name flex">
+<span>def <span class="ident">play_next</span></span>(<span>self, song: data_models.Song)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Insert a song into the queue to be played directly after the current song.</p>
+<ul>
+<li><code>song</code> &ndash; A <code>Song</code> object to insert to the queue.</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def play_next(self, song: Song):
+    &#34;&#34;&#34;Insert a song into the queue to be played directly after the current song.
+
+    - `song` -- A `Song` object to insert to the queue.
+    &#34;&#34;&#34;
+    self.song_list.insert(self.curr_index + 1, song)</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.models.Queue.prev"><code class="name flex">
+<span>def <span class="ident">prev</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Go to the previous song in the queue. If we're already at the
+first song, reset the current state but otherwise do nothing.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prev(self):
+    &#34;&#34;&#34;Go to the previous song in the queue. If we&#39;re already at the
+    first song, reset the current state but otherwise do nothing.
+    &#34;&#34;&#34;
+    if self.curr_index == 0:
+        self._reset()
+        return
+    self.curr_index -= 1
+    self._reset()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="FTC-Music-Player.models.VlcMediaPlayer"><code class="flex name class">
+<span>class <span class="ident">VlcMediaPlayer</span></span>
+<span>(</span><span>handlers: dict[player_handlers.HandlerType, typing.Callable[[], NoneType]], queue: FTC-Music-Player.models.Queue)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A player that uses VLC to play audio.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VlcMediaPlayer(Player):
+    &#34;&#34;&#34;
+    A player that uses VLC to play audio.
     &#34;&#34;&#34;
 
-    def __init__(self, name: str, artist):
-        self.name = name
-        self.artist = artist</code></pre>
+    player: vlc.MediaPlayer
+
+    def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
+        super().__init__(handlers, queue)
+        self.player = vlc.MediaPlayer(self.queue.current._path)
+
+    def play(self):
+        current = self.queue.current
+        self.player = vlc.MediaPlayer(current._path)
+        lib.logger(&#34;VlcMediaPlayer/play&#34;,
+            f&#34;Now playing {current.name}.\nFrom {current._path}.&#34;)
+        self.player.play()
+
+    def next(self):
+        self.player.stop()
+        self.queue.next()
+        self.play()
+
+    def prev(self):
+        self.player.stop()
+        self.queue.prev()
+        self.play()
+
+    def seektime(self, time: timedelta):
+        pos = lib.calc_pos(self.queue.duration, time)
+        self.seekpos(pos)
+
+    def seekpos(self, pos):
+        self.player.set_position(pos)
+
+    def _change_song(self, queue: Queue):
+        self.player.stop()
+        self.queue = queue
+        self.play()
+        self.handlers.get(HandlerType.on_source_changed, lib.passive)
+
+    def _add_handler(self, handler: Callable[[], None], type: HandlerType):
+        self.handlers[type] = handler</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="FTC-Music-Player.models.Content" href="#FTC-Music-Player.models.Content">Content</a></li>
+<li><a title="FTC-Music-Player.models.Player" href="#FTC-Music-Player.models.Player">Player</a></li>
 </ul>
-</dd>
-<dt id="FTC-Music-Player.models.User"><code class="flex name class">
-<span>class <span class="ident">User</span></span>
-<span>(</span><span>handle)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>A User class to model the data for a user of the application.</p>
-<ul>
-<li>username
-&ndash; Personal identifier
-</li>
-<li>playlists &ndash; List of playlists/albums the user has saved
-</li>
-<li>favourites
-&ndash; Special playlist of the user’s favourite songs.
-</li>
-<li>followed
-&ndash; List of all the artists that the user has followed.
-</li>
-</ul>
-<p>Initialise a User instance with no playlists, no
-liked/favourited songs and no followed artists.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class User:
-    &#34;&#34;&#34;
-    A User class to model the data for a user of the application.
-
-    * username  -- Personal identifier   
-    * playlists -- List of playlists/albums the user has saved   
-    * favourites     -- Special playlist of the user’s favourite songs.   
-    * followed  -- List of all the artists that the user has followed.   
-    &#34;&#34;&#34;
-
-    username: str
-    playlists: list[Playlist]
-    favourites: Playlist
-    followed_artists: list[Artist]
-    followed_albums: list[Album]
-
-    def __init__(self, handle):
-        &#34;&#34;&#34;
-        Initialise a User instance with no playlists, no
-        liked/favourited songs and no followed artists.
-        &#34;&#34;&#34;
-
-        self.username = handle
-        self.playlists = []
-        self.favourites = Playlist(&#34;Favourites&#34;)
-        self.followed_artists = []
-        self.followed_albums = []
-
-    def change_username(self, new_handle: str):
-        lib.TODO(&#34;User.change_username()&#34;)
-        self.username = new_handle
-
-    def like_song(self, song: Song):
-        lib.TODO(&#34;User.like_song()&#34;)
-        self.favourites.add_song(song)
-
-    def follow_artist(self, artist: Artist):
-        lib.TODO(&#34;User.follow_artist()&#34;)
-        self.followed_artists.append(artist)
-
-    def follow_album(self, album: Album):
-        lib.TODO(&#34;User.follow_album()&#34;)
-        self.followed_albums.append(album)
-
-    def create_playlist(self, name: str):
-        lib.TODO(&#34;User.create_playlist()&#34;)
-        playlist = Playlist(name)
-        self.playlists.append(playlist)</code></pre>
-</details>
 <h3>Class variables</h3>
 <dl>
-<dt id="FTC-Music-Player.models.User.favourites"><code class="name">var <span class="ident">favourites</span> : FTC-Music-Player.models.Playlist</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.User.followed_albums"><code class="name">var <span class="ident">followed_albums</span> : list[FTC-Music-Player.models.Album]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.User.followed_artists"><code class="name">var <span class="ident">followed_artists</span> : list[FTC-Music-Player.models.Artist]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.User.playlists"><code class="name">var <span class="ident">playlists</span> : list[FTC-Music-Player.models.Playlist]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="FTC-Music-Player.models.User.username"><code class="name">var <span class="ident">username</span> : str</code></dt>
+<dt id="FTC-Music-Player.models.VlcMediaPlayer.player"><code class="name">var <span class="ident">player</span> : vlc.MediaPlayer</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="FTC-Music-Player.models.User.change_username"><code class="name flex">
-<span>def <span class="ident">change_username</span></span>(<span>self, new_handle: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def change_username(self, new_handle: str):
-    lib.TODO(&#34;User.change_username()&#34;)
-    self.username = new_handle</code></pre>
-</details>
-</dd>
-<dt id="FTC-Music-Player.models.User.create_playlist"><code class="name flex">
-<span>def <span class="ident">create_playlist</span></span>(<span>self, name: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def create_playlist(self, name: str):
-    lib.TODO(&#34;User.create_playlist()&#34;)
-    playlist = Playlist(name)
-    self.playlists.append(playlist)</code></pre>
-</details>
-</dd>
-<dt id="FTC-Music-Player.models.User.follow_album"><code class="name flex">
-<span>def <span class="ident">follow_album</span></span>(<span>self, album: FTC-Music-Player.models.Album)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def follow_album(self, album: Album):
-    lib.TODO(&#34;User.follow_album()&#34;)
-    self.followed_albums.append(album)</code></pre>
-</details>
-</dd>
-<dt id="FTC-Music-Player.models.User.follow_artist"><code class="name flex">
-<span>def <span class="ident">follow_artist</span></span>(<span>self, artist: FTC-Music-Player.models.Artist)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def follow_artist(self, artist: Artist):
-    lib.TODO(&#34;User.follow_artist()&#34;)
-    self.followed_artists.append(artist)</code></pre>
-</details>
-</dd>
-<dt id="FTC-Music-Player.models.User.like_song"><code class="name flex">
-<span>def <span class="ident">like_song</span></span>(<span>self, song: FTC-Music-Player.models.Song)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def like_song(self, song: Song):
-    lib.TODO(&#34;User.like_song()&#34;)
-    self.favourites.add_song(song)</code></pre>
-</details>
-</dd>
-</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="FTC-Music-Player.models.Player" href="#FTC-Music-Player.models.Player">Player</a></b></code>:
+<ul class="hlist">
+<li><code><a title="FTC-Music-Player.models.Player.add_to_queu" href="#FTC-Music-Player.models.Player.add_to_queu">add_to_queu</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.change_queue" href="#FTC-Music-Player.models.Player.change_queue">change_queue</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.next" href="#FTC-Music-Player.models.Player.next">next</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.pause" href="#FTC-Music-Player.models.Player.pause">pause</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.play" href="#FTC-Music-Player.models.Player.play">play</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.prev" href="#FTC-Music-Player.models.Player.prev">prev</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.seekpos" href="#FTC-Music-Player.models.Player.seekpos">seekpos</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.seektime" href="#FTC-Music-Player.models.Player.seektime">seektime</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.stop" href="#FTC-Music-Player.models.Player.stop">stop</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -624,48 +829,50 @@ liked/favourited songs and no followed artists.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="FTC-Music-Player.models.Album" href="#FTC-Music-Player.models.Album">Album</a></code></h4>
-<ul class="">
-<li><code><a title="FTC-Music-Player.models.Album.songs" href="#FTC-Music-Player.models.Album.songs">songs</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="FTC-Music-Player.models.Artist" href="#FTC-Music-Player.models.Artist">Artist</a></code></h4>
-<ul class="">
-<li><code><a title="FTC-Music-Player.models.Artist.albums" href="#FTC-Music-Player.models.Artist.albums">albums</a></code></li>
-<li><code><a title="FTC-Music-Player.models.Artist.name" href="#FTC-Music-Player.models.Artist.name">name</a></code></li>
-<li><code><a title="FTC-Music-Player.models.Artist.songs" href="#FTC-Music-Player.models.Artist.songs">songs</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="FTC-Music-Player.models.Content" href="#FTC-Music-Player.models.Content">Content</a></code></h4>
-<ul class="">
-<li><code><a title="FTC-Music-Player.models.Content.artist" href="#FTC-Music-Player.models.Content.artist">artist</a></code></li>
-<li><code><a title="FTC-Music-Player.models.Content.name" href="#FTC-Music-Player.models.Content.name">name</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="FTC-Music-Player.models.Playlist" href="#FTC-Music-Player.models.Playlist">Playlist</a></code></h4>
-<ul class="">
-<li><code><a title="FTC-Music-Player.models.Playlist.add_song" href="#FTC-Music-Player.models.Playlist.add_song">add_song</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="FTC-Music-Player.models.Song" href="#FTC-Music-Player.models.Song">Song</a></code></h4>
-</li>
-<li>
-<h4><code><a title="FTC-Music-Player.models.User" href="#FTC-Music-Player.models.User">User</a></code></h4>
+<h4><code><a title="FTC-Music-Player.models.Player" href="#FTC-Music-Player.models.Player">Player</a></code></h4>
 <ul class="two-column">
-<li><code><a title="FTC-Music-Player.models.User.change_username" href="#FTC-Music-Player.models.User.change_username">change_username</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.create_playlist" href="#FTC-Music-Player.models.User.create_playlist">create_playlist</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.favourites" href="#FTC-Music-Player.models.User.favourites">favourites</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.follow_album" href="#FTC-Music-Player.models.User.follow_album">follow_album</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.follow_artist" href="#FTC-Music-Player.models.User.follow_artist">follow_artist</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.followed_albums" href="#FTC-Music-Player.models.User.followed_albums">followed_albums</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.followed_artists" href="#FTC-Music-Player.models.User.followed_artists">followed_artists</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.like_song" href="#FTC-Music-Player.models.User.like_song">like_song</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.playlists" href="#FTC-Music-Player.models.User.playlists">playlists</a></code></li>
-<li><code><a title="FTC-Music-Player.models.User.username" href="#FTC-Music-Player.models.User.username">username</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.add_to_queu" href="#FTC-Music-Player.models.Player.add_to_queu">add_to_queu</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.change_queue" href="#FTC-Music-Player.models.Player.change_queue">change_queue</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.handlers" href="#FTC-Music-Player.models.Player.handlers">handlers</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.next" href="#FTC-Music-Player.models.Player.next">next</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.pause" href="#FTC-Music-Player.models.Player.pause">pause</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.play" href="#FTC-Music-Player.models.Player.play">play</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.player" href="#FTC-Music-Player.models.Player.player">player</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.prev" href="#FTC-Music-Player.models.Player.prev">prev</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.queue" href="#FTC-Music-Player.models.Player.queue">queue</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.seekpos" href="#FTC-Music-Player.models.Player.seekpos">seekpos</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.seektime" href="#FTC-Music-Player.models.Player.seektime">seektime</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Player.stop" href="#FTC-Music-Player.models.Player.stop">stop</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.models.PlayerState" href="#FTC-Music-Player.models.PlayerState">PlayerState</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.models.PlayerState.finished" href="#FTC-Music-Player.models.PlayerState.finished">finished</a></code></li>
+<li><code><a title="FTC-Music-Player.models.PlayerState.not_started" href="#FTC-Music-Player.models.PlayerState.not_started">not_started</a></code></li>
+<li><code><a title="FTC-Music-Player.models.PlayerState.paused" href="#FTC-Music-Player.models.PlayerState.paused">paused</a></code></li>
+<li><code><a title="FTC-Music-Player.models.PlayerState.playing" href="#FTC-Music-Player.models.PlayerState.playing">playing</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.models.Queue" href="#FTC-Music-Player.models.Queue">Queue</a></code></h4>
+<ul class="two-column">
+<li><code><a title="FTC-Music-Player.models.Queue.add_song" href="#FTC-Music-Player.models.Queue.add_song">add_song</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.curr_index" href="#FTC-Music-Player.models.Queue.curr_index">curr_index</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.current" href="#FTC-Music-Player.models.Queue.current">current</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.duration" href="#FTC-Music-Player.models.Queue.duration">duration</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.elapsed" href="#FTC-Music-Player.models.Queue.elapsed">elapsed</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.next" href="#FTC-Music-Player.models.Queue.next">next</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.play_next" href="#FTC-Music-Player.models.Queue.play_next">play_next</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.position" href="#FTC-Music-Player.models.Queue.position">position</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.prev" href="#FTC-Music-Player.models.Queue.prev">prev</a></code></li>
+<li><code><a title="FTC-Music-Player.models.Queue.song_list" href="#FTC-Music-Player.models.Queue.song_list">song_list</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="FTC-Music-Player.models.VlcMediaPlayer" href="#FTC-Music-Player.models.VlcMediaPlayer">VlcMediaPlayer</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.models.VlcMediaPlayer.player" href="#FTC-Music-Player.models.VlcMediaPlayer.player">player</a></code></li>
 </ul>
 </li>
 </ul>

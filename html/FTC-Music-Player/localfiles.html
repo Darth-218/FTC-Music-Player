@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>FTC-Music-Player.localfiles API documentation</title>
-<meta name="description" content="Testing how to select a main music folder and a song to play" />
+<meta name="description" content="Defines a `Local` class that ..." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,139 +22,160 @@
 <h1 class="title">Module <code>FTC-Music-Player.localfiles</code></h1>
 </header>
 <section id="section-intro">
-<p>Testing how to select a main music folder and a song to play</p>
+<p>Defines a <code><a title="FTC-Music-Player.localfiles.Local" href="#FTC-Music-Player.localfiles.Local">Local</a></code> class that &hellip;</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-Testing how to select a main music folder and a song to play
+<pre><code class="python">#!/usr/bin/python
 &#34;&#34;&#34;
-
+Defines a `Local` class that ...
+&#34;&#34;&#34;
 # Imports
-
-# To find files and directories
+import lib
+# os to find files and directories
 import os
-# To make windows and widgets
-import tkinter as tk
-from tkinter import filedialog, Listbox, Tk, StringVar, Button, Label, EW
+# curses to create the UI
+import flet as ft
 
-# Main window variables
+flist = []
+pathlist = []
+paths = []
+qu = []
 
-root = Tk()
-root.title(&#34;FTC - Music Player&#34;)
-#root.geometry(&#34;500x400&#34;)
 
-# Functions
+class Local:
+    &#34;&#34;&#34;
+    This class does things.
 
-# Funtion to get the main music folder&#39;s path
-def getfile(listbox):
+    - `flist` -- ...   
+    - `pathlist` -- ...   
+    &#34;&#34;&#34;
 
-    flist = []
+    # TODO: make __init__
 
-    # Getting the folder path as a variable
-    foldername = filedialog.askdirectory(initialdir=&#34;/&#34;, title=&#34;Select File&#34;)
-    
-    # At the moment of getting the directory path
-    if foldername:
+    # Functions
+    # Function to get the main music folder&#39;s path
+    def getfolder(self, listbox: ft.ListView, selected: str) -&gt; str | None:
+        &#34;&#34;&#34;
+        Get a folder selected by the user from a file dialog.
 
-        #Removing old files shown in the listbox
-        listbox.delete(0, tk.END)
+        - `listbox` -- Where the results will be displayed.   
+        - `selected` -- Selected folder to be displayed.
+        &#34;&#34;&#34;
+
+        global flist, pathlist
+
+        flist = []
+        pathlist = []
+        paths = []
+
+        selected_folder = selected
+
+        if not selected_folder:
+            lib.TODO(&#34;Local/getfolder: Handle error&#34;)
+            return None
 
         # Obtaining files to show on window from the path variable
-        for path, subdir, files in os.walk(foldername):
-            
+        for path, _subdir, files in os.walk(selected_folder):
+
+            paths.append(path.split(&#34;/&#34;)[-1])
+
             for fname in files:
-                
+
                 if fname.endswith(&#34;.mp3&#34;):
-                    
-                    # Adds all files with &#34;.mp3&#34; extention to the Listbox &#34;musiclist&#34;
-                    flist.append(os.path.join(fname))
-        print(flist, &#39;\n&#39;)
 
-        # Inserts all songs in the chosen directory into the listbox
-        for song in flist:
+                    # Adds all files with &#34;.mp3&#34; extension and their paths to the respective lists&#34;
+                    flist.append(os.path.join(fname.rstrip(&#34;.mp3&#34;)))
+                    pathlist.append(os.path.join(path, fname))
 
-            listbox.insert(tk.END, song)
+            for i in flist:
 
+                listbox.controls.append(ft.TextButton(f&#34;{i}&#34;))
 
-# Function used to get the name of the selected file in the listbox &#34;musiclist&#34;
-def getselected(event, listbox):
+                listbox.update()
 
-    global selectedfile
+        # print(paths, flist, pathlist)
+        lib.logger(&#34;Local/getfolder&#34;, f&#34;{paths},\n{flist},\n{pathlist}&#34;)
 
-    # A variable that hold the index of the selected item
-    selectedindex = listbox.curselection()
-    
-    if selectedindex:
+        return selected_folder
 
-        selectedfile = listbox.get(selectedindex[0])
+    def pick_files_result(self, e: ft.FilePickerResultEvent):
 
-        # Sets the test label to the selected file from the listbox
-        pathstring.set(selectedfile)
-        print(selectedfile)
+        folder_name = (e.path if e.path else &#34;Cancelled&#34;)
 
+        # print(folder_name)
+        lib.logger(&#34;Local/pick_files_result&#34;, folder_name)
 
-# Function used to create queue
-def addtoqu(listbox):
+        Local.getfolder(self, listv, folder_name)
 
-    global qu
+        return folder_name
 
-    qu = []
+    # Function used to get the name of the selected file in the listbox &#34;musiclist&#34;
+    def getselected(self, _event, listbox):
 
-    # Gets selected file
-    if selectedfile:
+        global selectedfile
 
-        # Adds selected file to queue
-        qu.append(selectedfile)
+        # A variable that hold the index of the selected item
+        selectedindex = listbox.curselection() # get replaced with mouse coordinates
 
-        for song in qu:
+        if selectedindex:
 
-            # Adds selected file to the queue listbox
-            listbox.insert(tk.END, song)
+            selectedfile = listbox.get(selectedindex[0]) # replace with position in subwindow
 
+            # Sets the test label to the selected file from the listbox
+            selectedpath = pathlist[flist.index(selectedfile)]
+            print(selectedpath)
 
-# A function to clear the queue
-def quclear(listbox):
+    # Function used to create queue
+    def addtoqu(self):
 
-    qu.clear()
+        # Gets selected file
+        if selectedfile:
 
-    listbox.delete(0, tk.END)
+            # Adds selected file to queue
+            qu.append(selectedfile)
 
+            for song in qu: # Adds all songs in queue to the queue subwindow
 
-# Basic widgets
+                pass
 
-# Test label to show the selected song
-pathstring = StringVar()
-pathlabel = Label(root, textvariable=pathstring)
+    # A function to clear the queue
+    def quclear(self): # to be re-created
 
-# Test frame showing the list of music in a directory
-musiclist = Listbox(root, width=55)
-#Using the mouse left-click to trigger the functon &#34;getselected&#34;
-musiclist.bind(&#34;&lt;Double-Button-1&gt;&#34;, lambda event: getselected(event, musiclist))
-
-#Test button to get the folder path
-pathfinder = Button(root, text=&#34;Select Music folder&#34;, command=lambda: getfile(musiclist))
-
-#Queue listbox that tests the addtoqu Function
-qulist = Listbox(root, width=55)
-
-#Test button that adds songs to queue
-qubutton = Button(root, text=&#34;Add to Queue&#34;, command=lambda: addtoqu(qulist))
-
-#Test button that clears the queue
-clearqu = Button(root, text=&#34;Clear Queue&#34;, command=lambda: quclear(qulist))
+        qu.clear()
 
 
-pathlabel.grid(row=0, columnspan=2, sticky=EW)
-musiclist.grid(row=1, columnspan=2, sticky=EW)
-pathfinder.grid(row=2, columnspan=2, sticky=EW)
-qubutton.grid(row=3, column=0, sticky=EW)
-clearqu.grid(row=3, column=1, sticky=EW)
-qulist.grid(row=4, columnspan=2, sticky=EW)
+Localclass = Local()
 
 
-root.mainloop()</code></pre>
+def main(page: ft.Page):
+
+    global listv
+
+    listv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+    pick_files_dialog = ft.FilePicker(
+        on_result=Localclass.pick_files_result
+    )
+
+    page.overlay.append(pick_files_dialog)
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+    picker = ft.ElevatedButton(
+        &#34;Pick Directory&#34;,
+        icon=ft.icons.UPLOAD_FILE_ROUNDED,
+        on_click=lambda _: pick_files_dialog.get_directory_path()
+    )
+
+    page.add(ft.Column([picker, listv]))
+
+    page.update()
+
+
+if __name__ == &#34;__main__&#34;:
+
+    ft.app(target=main)</code></pre>
 </details>
 </section>
 <section>
@@ -164,8 +185,8 @@ root.mainloop()</code></pre>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="FTC-Music-Player.localfiles.addtoqu"><code class="name flex">
-<span>def <span class="ident">addtoqu</span></span>(<span>listbox)</span>
+<dt id="FTC-Music-Player.localfiles.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>page: flet_core.page.Page)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -173,11 +194,162 @@ root.mainloop()</code></pre>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addtoqu(listbox):
+<pre><code class="python">def main(page: ft.Page):
 
-    global qu
+    global listv
 
-    qu = []
+    listv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+    pick_files_dialog = ft.FilePicker(
+        on_result=Localclass.pick_files_result
+    )
+
+    page.overlay.append(pick_files_dialog)
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+    picker = ft.ElevatedButton(
+        &#34;Pick Directory&#34;,
+        icon=ft.icons.UPLOAD_FILE_ROUNDED,
+        on_click=lambda _: pick_files_dialog.get_directory_path()
+    )
+
+    page.add(ft.Column([picker, listv]))
+
+    page.update()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="FTC-Music-Player.localfiles.Local"><code class="flex name class">
+<span>class <span class="ident">Local</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class does things.</p>
+<ul>
+<li><code>flist</code> &ndash; &hellip;
+</li>
+<li><code>pathlist</code> &ndash; &hellip;</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Local:
+    &#34;&#34;&#34;
+    This class does things.
+
+    - `flist` -- ...   
+    - `pathlist` -- ...   
+    &#34;&#34;&#34;
+
+    # TODO: make __init__
+
+    # Functions
+    # Function to get the main music folder&#39;s path
+    def getfolder(self, listbox: ft.ListView, selected: str) -&gt; str | None:
+        &#34;&#34;&#34;
+        Get a folder selected by the user from a file dialog.
+
+        - `listbox` -- Where the results will be displayed.   
+        - `selected` -- Selected folder to be displayed.
+        &#34;&#34;&#34;
+
+        global flist, pathlist
+
+        flist = []
+        pathlist = []
+        paths = []
+
+        selected_folder = selected
+
+        if not selected_folder:
+            lib.TODO(&#34;Local/getfolder: Handle error&#34;)
+            return None
+
+        # Obtaining files to show on window from the path variable
+        for path, _subdir, files in os.walk(selected_folder):
+
+            paths.append(path.split(&#34;/&#34;)[-1])
+
+            for fname in files:
+
+                if fname.endswith(&#34;.mp3&#34;):
+
+                    # Adds all files with &#34;.mp3&#34; extension and their paths to the respective lists&#34;
+                    flist.append(os.path.join(fname.rstrip(&#34;.mp3&#34;)))
+                    pathlist.append(os.path.join(path, fname))
+
+            for i in flist:
+
+                listbox.controls.append(ft.TextButton(f&#34;{i}&#34;))
+
+                listbox.update()
+
+        # print(paths, flist, pathlist)
+        lib.logger(&#34;Local/getfolder&#34;, f&#34;{paths},\n{flist},\n{pathlist}&#34;)
+
+        return selected_folder
+
+    def pick_files_result(self, e: ft.FilePickerResultEvent):
+
+        folder_name = (e.path if e.path else &#34;Cancelled&#34;)
+
+        # print(folder_name)
+        lib.logger(&#34;Local/pick_files_result&#34;, folder_name)
+
+        Local.getfolder(self, listv, folder_name)
+
+        return folder_name
+
+    # Function used to get the name of the selected file in the listbox &#34;musiclist&#34;
+    def getselected(self, _event, listbox):
+
+        global selectedfile
+
+        # A variable that hold the index of the selected item
+        selectedindex = listbox.curselection() # get replaced with mouse coordinates
+
+        if selectedindex:
+
+            selectedfile = listbox.get(selectedindex[0]) # replace with position in subwindow
+
+            # Sets the test label to the selected file from the listbox
+            selectedpath = pathlist[flist.index(selectedfile)]
+            print(selectedpath)
+
+    # Function used to create queue
+    def addtoqu(self):
+
+        # Gets selected file
+        if selectedfile:
+
+            # Adds selected file to queue
+            qu.append(selectedfile)
+
+            for song in qu: # Adds all songs in queue to the queue subwindow
+
+                pass
+
+    # A function to clear the queue
+    def quclear(self): # to be re-created
+
+        qu.clear()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="FTC-Music-Player.localfiles.Local.addtoqu"><code class="name flex">
+<span>def <span class="ident">addtoqu</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addtoqu(self):
 
     # Gets selected file
     if selectedfile:
@@ -185,53 +357,72 @@ root.mainloop()</code></pre>
         # Adds selected file to queue
         qu.append(selectedfile)
 
-        for song in qu:
+        for song in qu: # Adds all songs in queue to the queue subwindow
 
-            # Adds selected file to the queue listbox
-            listbox.insert(tk.END, song)</code></pre>
+            pass</code></pre>
 </details>
 </dd>
-<dt id="FTC-Music-Player.localfiles.getfile"><code class="name flex">
-<span>def <span class="ident">getfile</span></span>(<span>listbox)</span>
+<dt id="FTC-Music-Player.localfiles.Local.getfolder"><code class="name flex">
+<span>def <span class="ident">getfolder</span></span>(<span>self, listbox: flet_core.list_view.ListView, selected: str) ‑> str | None</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get a folder selected by the user from a file dialog.</p>
+<ul>
+<li><code>listbox</code> &ndash; Where the results will be displayed.
+</li>
+<li><code>selected</code> &ndash; Selected folder to be displayed.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def getfile(listbox):
+<pre><code class="python">def getfolder(self, listbox: ft.ListView, selected: str) -&gt; str | None:
+    &#34;&#34;&#34;
+    Get a folder selected by the user from a file dialog.
+
+    - `listbox` -- Where the results will be displayed.   
+    - `selected` -- Selected folder to be displayed.
+    &#34;&#34;&#34;
+
+    global flist, pathlist
 
     flist = []
+    pathlist = []
+    paths = []
 
-    # Getting the folder path as a variable
-    foldername = filedialog.askdirectory(initialdir=&#34;/&#34;, title=&#34;Select File&#34;)
-    
-    # At the moment of getting the directory path
-    if foldername:
+    selected_folder = selected
 
-        #Removing old files shown in the listbox
-        listbox.delete(0, tk.END)
+    if not selected_folder:
+        lib.TODO(&#34;Local/getfolder: Handle error&#34;)
+        return None
 
-        # Obtaining files to show on window from the path variable
-        for path, subdir, files in os.walk(foldername):
-            
-            for fname in files:
-                
-                if fname.endswith(&#34;.mp3&#34;):
-                    
-                    # Adds all files with &#34;.mp3&#34; extention to the Listbox &#34;musiclist&#34;
-                    flist.append(os.path.join(fname))
-        print(flist, &#39;\n&#39;)
+    # Obtaining files to show on window from the path variable
+    for path, _subdir, files in os.walk(selected_folder):
 
-        # Inserts all songs in the chosen directory into the listbox
-        for song in flist:
+        paths.append(path.split(&#34;/&#34;)[-1])
 
-            listbox.insert(tk.END, song)</code></pre>
+        for fname in files:
+
+            if fname.endswith(&#34;.mp3&#34;):
+
+                # Adds all files with &#34;.mp3&#34; extension and their paths to the respective lists&#34;
+                flist.append(os.path.join(fname.rstrip(&#34;.mp3&#34;)))
+                pathlist.append(os.path.join(path, fname))
+
+        for i in flist:
+
+            listbox.controls.append(ft.TextButton(f&#34;{i}&#34;))
+
+            listbox.update()
+
+    # print(paths, flist, pathlist)
+    lib.logger(&#34;Local/getfolder&#34;, f&#34;{paths},\n{flist},\n{pathlist}&#34;)
+
+    return selected_folder</code></pre>
 </details>
 </dd>
-<dt id="FTC-Music-Player.localfiles.getselected"><code class="name flex">
-<span>def <span class="ident">getselected</span></span>(<span>event, listbox)</span>
+<dt id="FTC-Music-Player.localfiles.Local.getselected"><code class="name flex">
+<span>def <span class="ident">getselected</span></span>(<span>self, _event, listbox)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -239,24 +430,24 @@ root.mainloop()</code></pre>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def getselected(event, listbox):
+<pre><code class="python">def getselected(self, _event, listbox):
 
     global selectedfile
 
     # A variable that hold the index of the selected item
-    selectedindex = listbox.curselection()
-    
+    selectedindex = listbox.curselection() # get replaced with mouse coordinates
+
     if selectedindex:
 
-        selectedfile = listbox.get(selectedindex[0])
+        selectedfile = listbox.get(selectedindex[0]) # replace with position in subwindow
 
         # Sets the test label to the selected file from the listbox
-        pathstring.set(selectedfile)
-        print(selectedfile)</code></pre>
+        selectedpath = pathlist[flist.index(selectedfile)]
+        print(selectedpath)</code></pre>
 </details>
 </dd>
-<dt id="FTC-Music-Player.localfiles.quclear"><code class="name flex">
-<span>def <span class="ident">quclear</span></span>(<span>listbox)</span>
+<dt id="FTC-Music-Player.localfiles.Local.pick_files_result"><code class="name flex">
+<span>def <span class="ident">pick_files_result</span></span>(<span>self, e: flet_core.file_picker.FilePickerResultEvent)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -264,16 +455,35 @@ root.mainloop()</code></pre>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def quclear(listbox):
+<pre><code class="python">def pick_files_result(self, e: ft.FilePickerResultEvent):
 
-    qu.clear()
+    folder_name = (e.path if e.path else &#34;Cancelled&#34;)
 
-    listbox.delete(0, tk.END)</code></pre>
+    # print(folder_name)
+    lib.logger(&#34;Local/pick_files_result&#34;, folder_name)
+
+    Local.getfolder(self, listv, folder_name)
+
+    return folder_name</code></pre>
+</details>
+</dd>
+<dt id="FTC-Music-Player.localfiles.Local.quclear"><code class="name flex">
+<span>def <span class="ident">quclear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def quclear(self): # to be re-created
+
+    qu.clear()</code></pre>
 </details>
 </dd>
 </dl>
-</section>
-<section>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -289,10 +499,21 @@ root.mainloop()</code></pre>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="FTC-Music-Player.localfiles.addtoqu" href="#FTC-Music-Player.localfiles.addtoqu">addtoqu</a></code></li>
-<li><code><a title="FTC-Music-Player.localfiles.getfile" href="#FTC-Music-Player.localfiles.getfile">getfile</a></code></li>
-<li><code><a title="FTC-Music-Player.localfiles.getselected" href="#FTC-Music-Player.localfiles.getselected">getselected</a></code></li>
-<li><code><a title="FTC-Music-Player.localfiles.quclear" href="#FTC-Music-Player.localfiles.quclear">quclear</a></code></li>
+<li><code><a title="FTC-Music-Player.localfiles.main" href="#FTC-Music-Player.localfiles.main">main</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="FTC-Music-Player.localfiles.Local" href="#FTC-Music-Player.localfiles.Local">Local</a></code></h4>
+<ul class="">
+<li><code><a title="FTC-Music-Player.localfiles.Local.addtoqu" href="#FTC-Music-Player.localfiles.Local.addtoqu">addtoqu</a></code></li>
+<li><code><a title="FTC-Music-Player.localfiles.Local.getfolder" href="#FTC-Music-Player.localfiles.Local.getfolder">getfolder</a></code></li>
+<li><code><a title="FTC-Music-Player.localfiles.Local.getselected" href="#FTC-Music-Player.localfiles.Local.getselected">getselected</a></code></li>
+<li><code><a title="FTC-Music-Player.localfiles.Local.pick_files_result" href="#FTC-Music-Player.localfiles.Local.pick_files_result">pick_files_result</a></code></li>
+<li><code><a title="FTC-Music-Player.localfiles.Local.quclear" href="#FTC-Music-Player.localfiles.Local.quclear">quclear</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
