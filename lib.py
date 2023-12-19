@@ -39,9 +39,16 @@ def err(name: str, e: str):
     """
     print(c.Fore.RED + "#[ERROR{. %s .}]=!=|" %(name), e, c.Style.RESET_ALL)
 
-def passive(): pass
+def passive():
+    """Sometimes you need to pass a function as a parametre to
+    another, or sometimes you need an expression for the interpreter
+    to stop complaining. This allows you to do so while also not doing
+    anything.
+    """
+    pass
 
 if __name__ == "__main__":
+    # Demo code
     TODO("lib/testing")
     logger("lib", "Hello, world!")
     err("lib", "418 - I am a Teapot.")

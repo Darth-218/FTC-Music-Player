@@ -2,18 +2,6 @@
 
 ## Dependencies for Running the App:
 
-* TK-Interface (`tkinter`)
-
-```sh
-sudo apt-get install python3-tk
-```
-
-* `customtkinter`
-
-```sh
-pip install customtkinter
-```
-
 * `packaging`
 
 ```sh
@@ -32,10 +20,22 @@ pip install Pillow
 pip install requests
 ```
 
-* CTkListbox
+* PythonNet
 
 ```sh
-pip install CTkListbox
+pip install pythonnet
+```
+
+* Python-VLC
+
+```sh
+pip install python-vlc
+```
+
+* Flet
+
+```sh
+pip install flet
 ```
 
 ## Dependencies for generating the documentation:
