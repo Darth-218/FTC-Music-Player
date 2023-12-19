@@ -11,8 +11,8 @@ from enum import Enum
 import requests
 
 #Server IP Address
-#serverIp = "ahmedafifi.bsite.net" #Please update this to the IP Address of the server.
-serverIp = "localhost:5239" #Please update this to the IP Address of the server.
+serverIp = "ahmedafifi.bsite.net" #Please update this to the IP Address of the server.
+#serverIp = "localhost:5239" #Please update this to the IP Address of the server.
 
 #API Controller Options
 class ApiControllers(Enum):

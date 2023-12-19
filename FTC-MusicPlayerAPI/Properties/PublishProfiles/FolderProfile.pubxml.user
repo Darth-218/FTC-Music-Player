@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\Projects\NU\CSCI 102</_PublishTargetUrl>
-    <History>True|2023-12-13T23:31:48.8290980Z;True|2023-12-14T01:27:49.5589947+02:00;True|2023-12-14T00:15:54.7737612+02:00;True|2023-11-28T11:07:14.6133584+02:00;</History>
+    <History>True|2023-12-19T21:05:04.8209790Z;True|2023-12-14T01:31:48.8290980+02:00;True|2023-12-14T01:27:49.5589947+02:00;True|2023-12-14T00:15:54.7737612+02:00;True|2023-11-28T11:07:14.6133584+02:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
