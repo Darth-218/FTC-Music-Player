@@ -281,6 +281,6 @@ class SearchResults(ft.ListView):
         albumsWidgets = []
         songsWidgets = []
         [artistsWidgets.append(SquareArtistWidget(artist=artist)) for artist in results.artists]
-        [super().controls.append(AlbumWidget(album=album)) for album in results.albums]
-        [super().controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
-        super().controls.append(artistsWidgets)
+        [self.controls.append(AlbumWidget(album=album)) for album in results.albums]
+        [self.controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
+        self.controls.append(artistsWidgets)
