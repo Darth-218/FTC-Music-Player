@@ -10,7 +10,7 @@ namespace FTC_MusicPlayerAPI.Services
 {
     public class YoutubeExplodeService : IYoutubeService
     {
-        private YoutubeClient client { get; set; } = new YoutubeClient();
+        private YoutubeClient Client { get; set; } = new YoutubeClient();
         public async Task<SearchResponse> Search(SearchRequest request)
         {
             SearchResponse response = new SearchResponse()
@@ -25,11 +25,11 @@ namespace FTC_MusicPlayerAPI.Services
                 Task artistsTask = Task.Run(async () =>
                 {
                     int counter = 0;
-                    var rawArtists = client.Search.GetChannelsAsync(request.Query);
+                    var rawArtists = Client.Search.GetChannelsAsync(request.Query);
 
                     await foreach (var rawArtist in rawArtists)
                     {
-                        var cha = await client.Channels.GetAsync(rawArtist.Id);
+                        var cha = await Client.Channels.GetAsync(rawArtist.Id);
 
                         if (counter == request.ArtistsCount)
                         {
@@ -48,7 +48,7 @@ namespace FTC_MusicPlayerAPI.Services
                 Task albumsTask = Task.Run(async () =>
                 {
                     int counter = 0;
-                    var rawAlbums = client.Search.GetPlaylistsAsync(request.Query);
+                    var rawAlbums = Client.Search.GetPlaylistsAsync(request.Query);
 
                     await foreach (var rawAlbum in rawAlbums)
                     {
@@ -71,7 +71,7 @@ namespace FTC_MusicPlayerAPI.Services
                 Task songsTask = Task.Run(async () =>
                 {
                     int counter = 0;
-                    var rawSongs = client.Search.GetVideosAsync(request.Query);
+                    var rawSongs = Client.Search.GetVideosAsync(request.Query);
                     await foreach (var rawSong in rawSongs)
                     {
                         if (counter == request.SongsCount)
@@ -104,8 +104,8 @@ namespace FTC_MusicPlayerAPI.Services
         {
             try
             {
-                var video = await client.Videos.GetAsync(songId);
-                var streamsManifest = await client.Videos.Streams.GetManifestAsync(video.Id);
+                var video = await Client.Videos.GetAsync(songId);
+                var streamsManifest = await Client.Videos.Streams.GetManifestAsync(video.Id);
 
                 var audioStreams = streamsManifest.GetAudioOnlyStreams();
                 var bestAudioStream = audioStreams.FirstOrDefault();
@@ -124,7 +124,7 @@ namespace FTC_MusicPlayerAPI.Services
         {
             try
             {
-                var contents = client.Playlists.GetVideosAsync(albumId);
+                var contents = Client.Playlists.GetVideosAsync(albumId);
                 List<Song> songs = new List<Song>();
 
                 await foreach (var song in contents)
@@ -233,7 +233,7 @@ namespace FTC_MusicPlayerAPI.Services
         {
             try
             {
-                var contents = client.Channels.GetUploadsAsync(artistId);
+                var contents = Client.Channels.GetUploadsAsync(artistId);
                 List<Song> songs = new List<Song>();
 
                 await foreach (var song in contents)
@@ -261,16 +261,28 @@ namespace FTC_MusicPlayerAPI.Services
         public async Task<SuggestionsRespose> GetSuggestions(SuggestionsRequest suggestionsRequest)
         {
             Debug.WriteLine("GetSuggestionsStarted...");
-            suggestionsRequest.Intrests = new()
+
+            var tmp1 = suggestionsRequest.RawIntrests?.Split("|*|");
+            if (tmp1 != null)
             {
-                new() { Name = "jacob's piano", Priority = 10 },
-                new() { Name = "piano", Priority = 2 },
-                new() { Name = "cello", Priority = 6 },
-                new() { Name = "piano guys", Priority = 8 },
-                new() { Name = "guitar", Priority = 3 },
-                new() { Name = "violin", Priority = 5 },
-                new() { Name = "viola", Priority = 1 },
-            };
+                suggestionsRequest.Intrests = new();
+                foreach (string item in tmp1)
+                {
+                    var tmp2 = item.Split("--)");
+                    suggestionsRequest.Intrests.Add(new Interest() { Name = tmp2[0], Priority = int.Parse(tmp2[1]) });
+                }
+            }
+            
+            //suggestionsRequest.Intrests = new()
+            //{
+            //    new() { Name = "jacob's piano", Priority = 10 },
+            //    new() { Name = "piano", Priority = 2 },
+            //    new() { Name = "cello", Priority = 6 },
+            //    new() { Name = "piano guys", Priority = 8 },
+            //    new() { Name = "guitar", Priority = 3 },
+            //    new() { Name = "violin", Priority = 5 },
+            //    new() { Name = "viola", Priority = 1 },
+            //};
 
             suggestionsRequest.Intrests.Sort((x, y) => y.Priority.CompareTo(x.Priority));
 

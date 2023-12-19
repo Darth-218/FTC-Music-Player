@@ -113,7 +113,7 @@ namespace FTC_MusicPlayerAPI.Controllers
 
         [HttpGet]
         [Route("/Youtube/GetSuggestions")]
-        public async Task<SuggestionsRespose> GetSuggestions(int artCount, int albCount, int sonCount)
+        public async Task<SuggestionsRespose> GetSuggestions(int artCount, int albCount, int sonCount, string intrests)
         {
             try
             {
@@ -122,7 +122,8 @@ namespace FTC_MusicPlayerAPI.Controllers
                     ArtistsCount = artCount,
                     AlbumsCount = albCount,
                     SongsCount = sonCount,
-                    Intrests = new()
+                    Intrests = new(),
+                    RawIntrests = intrests
                 };
                 return await _youtubeService.GetSuggestions(request);
             }

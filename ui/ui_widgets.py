@@ -59,7 +59,7 @@ class Home(ft.Container):
             case 0:
                 self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
                 self.update()
-                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
+                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest, config.intrests)
                 suggestions = yt.getSuggestions(request=request)
                 results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
                 self.tabView.controls[2] = results_widget

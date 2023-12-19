@@ -127,11 +127,13 @@ class GetSuggestionsRequest:
     artist_count: int
     album_count: int
     song_count: int
+    interests: str
 
-    def __init__(self, artist_count, album_count, song_count):
+    def __init__(self, artist_count, album_count, song_count, interests):
         self.artist_count = artist_count
         self.album_count  = album_count
         self.song_count   = song_count
+        self.interests    = interests
 
 #Represents a GetSuggestions response from the API.
 class GetSuggestionsResponse:
