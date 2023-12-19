@@ -36,6 +36,7 @@ class Home(ft.Container):
                     on_change=lambda e: self.onContentChange(e.control.selected_index)
                 ),
             ),
+            ft.VerticalDivider(color='#ffffff2'),
             self.tabContent,
         ]
         
@@ -44,30 +45,30 @@ class Home(ft.Container):
 
     def onKeyboardEvent(self, e: ft.KeyboardEvent):
         if e.key == 'Enter':
-            query = self.tabView.controls[1].controls[0].value
-            self.tabView.controls[1] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+            query = self.tabView.controls[2].controls[0].value
+            self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
             self.update()
             request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
             response = yt.search(request=request)
             results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
-            self.tabView.controls[1] = results_widget
+            self.tabView.controls[2] = results_widget
             self.update()
 
     def onContentChange(self, selectedItem: int):
         match selectedItem:
             case 0:
-                self.tabView.controls[1] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+                self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
                 self.update()
                 request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest)
                 suggestions = yt.getSuggestions(request=request)
                 results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
-                self.tabView.controls[1] = results_widget
+                self.tabView.controls[2] = results_widget
             case 1:
-                self.tabView.controls[1] = ft.Column(controls=[Search_bar_widget()], expand=True)         
+                self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)         
             case 2:
-                self.tabView.controls[1] = ft.Text('Browse')
+                self.tabView.controls[2] = ft.Text('Browse')
             case 3:
-                self.tabView.controls[1] = ft.Text('Settings')
+                self.tabView.controls[2] = ft.Text('Settings')
         self.update()
 
 class ArtistWidget(ft.TextButton):
