@@ -7,8 +7,9 @@ import lib
 import config
 
 class Home(ft.Container):
-    def __init__(self, player: models.Player):
+    def __init__(self, player: models.Player, page:ft.Page):
         self.player = player
+        page.on_keyboard_event = self.onKeyboardEvent
         super().__init__()
         self.expand = True
         self.tabContent = ft.Container(content=ft.Text('Index did not change!'), expand=True)
@@ -40,6 +41,17 @@ class Home(ft.Container):
         
         self.tabView = ft.Row(controls=self.tabViewContents, expand=True)
         self.content = self.tabView
+
+    def onKeyboardEvent(self, e: ft.KeyboardEvent):
+        if e.key == 'Enter':
+            query = self.tabView.controls[1].controls[0].value
+            self.tabView.controls[1] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+            self.update()
+            request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
+            response = yt.search(request=request)
+            results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
+            self.tabView.controls[1] = results_widget
+            self.update()
 
     def onContentChange(self, selectedItem: int):
         match selectedItem:
@@ -140,6 +152,11 @@ class SongWidget(ft.TextButton):
         )
         
     def onSongClicked(self, e, player: models.Player):
+        if type(self.song) is yt_models.OnlineSong:
+            lib.logger("SquareSongWidget/onSongClicked", f"Clicked on {self.song.id} by {self.song.artist_id}")
+            response = yt.getSongUrl(self.song.id)
+            if not response.has_error:
+                self.song._path = response.url
         queue = models.Queue(song_list=self.songList, curr_index=self.songList.index(self.song))
         player.stop()
         player.change_queue(queue=queue)
@@ -258,8 +275,12 @@ class Search_bar_widget(ft.TextField):
         self.height = 50
 
 class SearchResults(ft.ListView):
-    def __init__(self, results: yt_models.SearchResponse):
+    def __init__(self, results: yt_models.SearchResponse, player: models.Player):
         super().__init__(expand=1, divider_thickness=2, spacing=10)
-        [super().controls.append(ArtistWidget.ArtistWidget(artist=artist)) for artist in results.artists]
-        [super().controls.append(AlbumWidget.AlbumWidget(album=album)) for album in results.albums]
-        [super().controls.append(SongWidget.SongWidget(song=song)) for song in results.songs]
+        artistsWidgets = HorizontalListView()
+        albumsWidgets = []
+        songsWidgets = []
+        [artistsWidgets.append(SquareArtistWidget(artist=artist)) for artist in results.artists]
+        [super().controls.append(AlbumWidget(album=album)) for album in results.albums]
+        [super().controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
+        super().controls.append(artistsWidgets)

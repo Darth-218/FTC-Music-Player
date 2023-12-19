@@ -11,7 +11,7 @@ class UI():
         page.fonts = {
             "lilitaone": "./Assets/Fonts/LilitaOne-Regular.ttf"
         }
-        page.add(uiWidgets.Home(self.player))
+        page.add(uiWidgets.Home(self.player, page=page))
         page.bottom_appbar = ft.BottomAppBar(uiWidgets.Player_widget(), height=120, padding=ft.Padding(top=0, bottom=0, left=0, right=0))
         page.controls[0].onContentChange(0)
         page.update()
