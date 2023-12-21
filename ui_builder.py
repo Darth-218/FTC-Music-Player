@@ -1,7 +1,7 @@
 """Initialise the GUI window.
 """
 import flet as ft
-import ui.ui_widgets as uiWidgets
+import ui_widgets as uiWidgets
 import models
 
 class UI():

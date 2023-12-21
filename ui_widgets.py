@@ -279,9 +279,10 @@ class SearchResults(ft.ListView):
     def __init__(self, results: yt_models.SearchResponse, player: models.Player):
         super().__init__(expand=1, divider_thickness=2, spacing=10)
         artistsWidgets = HorizontalListView()
-        albumsWidgets = []
+        albumsWidgets = HorizontalListView()
         songsWidgets = []
         [artistsWidgets.append(SquareArtistWidget(artist=artist)) for artist in results.artists]
-        [self.controls.append(AlbumWidget(album=album)) for album in results.albums]
+        [albumsWidgets.append(SquareAlbumWidget(album=album)) for album in results.albums]
+        self.controls.append(albumsWidgets)
         [self.controls.append(SongWidget(song=song, player=player, songList=results.songs)) for song in results.songs]
         self.controls.append(artistsWidgets)
