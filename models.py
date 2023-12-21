@@ -17,10 +17,6 @@ class Queue():
 
     song_list: list[Song] = []
     current: Song
-    # = Song(name="Test Song",
-    #        artist="Test Artist",
-    #        duration=timedelta(minutes=8, seconds=15),
-    #        path="test path")
     curr_index: int = 0
     elapsed: timedelta = timedelta(0)
     position: float = 0
@@ -73,7 +69,8 @@ class Queue():
         self.song_list.append(song)
     
     def play_next(self, song: Song):
-        """Insert a song into the queue to be played directly after the current song.
+        """Insert a song into the queue to be played directly after
+        the current song.
 
         - `song` -- A `Song` object to insert to the queue.
         """
@@ -143,10 +140,10 @@ class Player():
         """
         self.queue = queue
 
-    def add_to_queu(self, song: Song):
+    def add_to_queue(self, song: Song):
         """Add a song to the current queue.
         """
-        self.queu.add_song()
+        self.queue.add_song(song)
 
 
 class VlcMediaPlayer(Player):
@@ -154,7 +151,7 @@ class VlcMediaPlayer(Player):
     A player that uses VLC to play audio.
     """
 
-    player: vlc.MediaPlayer
+    player: vlc.MediaPlayer | None
 
     def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
         super().__init__(handlers, queue)
@@ -165,15 +162,15 @@ class VlcMediaPlayer(Player):
         self.player = vlc.MediaPlayer(current._path)
         lib.logger("VlcMediaPlayer/play",
             f"Now playing {current.name}.\nFrom {current._path}.")
-        self.player.play()
+        self.player.play() if self.player else lib.passive()
 
     def next(self):
-        self.player.stop()
+        self.player.stop() if self.player else lib.passive()
         self.queue.next()
         self.play()
 
     def prev(self):
-        self.player.stop()
+        self.player.stop() if self.player else lib.passive()
         self.queue.prev()
         self.play()
 
@@ -182,10 +179,10 @@ class VlcMediaPlayer(Player):
         self.seekpos(pos)
 
     def seekpos(self, pos):
-        self.player.set_position(pos)
+        self.player.set_position(pos) if self.player else lib.passive()
 
     def _change_song(self, queue: Queue):
-        self.player.stop()
+        self.player.stop() if self.player else lib.passive()
         self.queue = queue
         self.play()
         self.handlers.get(HandlerType.on_source_changed, lib.passive)
