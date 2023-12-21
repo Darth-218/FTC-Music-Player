@@ -7,6 +7,9 @@ import lib
 import config
 
 class Home(ft.Container):
+    searchResults = None
+    suggestions = None
+    
     def __init__(self, player: models.Player, page:ft.Page):
         self.player = player
         page.on_keyboard_event = self.onKeyboardEvent
@@ -50,21 +53,26 @@ class Home(ft.Container):
             self.update()
             request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
             response = yt.search(request=request)
-            results_widget = ft.Column(controls=[SearchResults(results=response, player=self.player)], expand=True)
+            self.searchResults = SearchResults(results=response, player=self.player)
+            results_widget = ft.Column(controls=[Search_bar_widget(), self.searchResults], expand=True)
             self.tabView.controls[2] = results_widget
             self.update()
 
     def onContentChange(self, selectedItem: int):
         match selectedItem:
             case 0:
-                self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
-                self.update()
-                request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest, config.intrests)
-                suggestions = yt.getSuggestions(request=request)
-                results_widget = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
-                self.tabView.controls[2] = results_widget
+                if not self.suggestions:
+                    self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+                    self.update()
+                    request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest, config.intrests)
+                    suggestions = yt.getSuggestions(request=request)
+                    self.suggestions = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
+                self.tabView.controls[2] = self.suggestions
             case 1:
-                self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)         
+                if self.searchResults:
+                    self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget(), self.searchResults], expand=True)
+                else:
+                    self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)
             case 2:
                 self.tabView.controls[2] = ft.Text('Browse')
             case 3:
