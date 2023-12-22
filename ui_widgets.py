@@ -7,7 +7,8 @@ import lib
 import config
 
 class Home(ft.Container):
-    searchResults = None
+    isBusy = False
+    resultsPage = None
     suggestions = None
     
     def __init__(self, player: models.Player, page:ft.Page):
@@ -39,7 +40,7 @@ class Home(ft.Container):
                     on_change=lambda e: self.onContentChange(e.control.selected_index)
                 ),
             ),
-            ft.VerticalDivider(color='#ffffff2'),
+            ft.VerticalDivider(),
             self.tabContent,
         ]
         
@@ -47,37 +48,60 @@ class Home(ft.Container):
         self.content = self.tabView
 
     def onKeyboardEvent(self, e: ft.KeyboardEvent):
-        if e.key == 'Enter':
+        if e.key == 'Enter' and self.content.controls[0].content.selected_index == 1:
             query = self.tabView.controls[2].controls[0].value
-            self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
-            self.update()
-            request = yt_models.SearchRequest(query=query, artist_count=config.numberOfSearchArtists, album_count=config.numberOfSearchAlbums, song_count=config.numberOfSearchSongs)
-            response = yt.search(request=request)
-            self.searchResults = SearchResults(results=response, player=self.player)
-            results_widget = ft.Column(controls=[Search_bar_widget(), self.searchResults], expand=True)
-            self.tabView.controls[2] = results_widget
-            self.update()
+            if (query != "" and query != None) and not self.isBusy:
+                self.isBusy = True
+                self.resultsPage = ft.Container(content=ft.ProgressRing(),
+                                                        alignment=ft.alignment.center,
+                                                        expand=True)
+                self.updateTheUI(1)
+                request = yt_models.SearchRequest(query=query,
+                                                  artist_count=config.numberOfSearchArtists,
+                                                  album_count=config.numberOfSearchAlbums,
+                                                  song_count=config.numberOfSearchSongs)
+                response = yt.search(request=request)
+                searchResultsWidget = SearchResults(results=response, player=self.player)
+                self.resultsPage = ft.Column(controls=[Search_bar_widget(query=query), searchResultsWidget], expand=True)
+                self.updateTheUI(1)
+            self.isBusy = False
 
     def onContentChange(self, selectedItem: int):
         match selectedItem:
             case 0:
                 if not self.suggestions:
-                    self.tabView.controls[2] = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
-                    self.update()
-                    request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, config.numberOfAlbumsPerInterest, config.numberOfSongsPerInterest, config.intrests)
+                    self.suggestions = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+                    self.updateTheUI(selectedItem)
+                    request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest,
+                                                              config.numberOfAlbumsPerInterest,
+                                                              config.numberOfSongsPerInterest,
+                                                              config.intrests)
                     suggestions = yt.getSuggestions(request=request)
                     self.suggestions = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
-                self.tabView.controls[2] = self.suggestions
+                    self.updateTheUI(selectedItem)
             case 1:
-                if self.searchResults:
-                    self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget(), self.searchResults], expand=True)
-                else:
-                    self.tabView.controls[2] = ft.Column(controls=[Search_bar_widget()], expand=True)
+                if not self.resultsPage:
+                    self.resultsPage = ft.Column(controls=[Search_bar_widget()], expand=True)
+                    self.updateTheUI(1)
             case 2:
                 self.tabView.controls[2] = ft.Text('Browse')
             case 3:
                 self.tabView.controls[2] = ft.Text('Settings')
-        self.update()
+
+        self.updateTheUI(selectedItem)
+
+    def updateTheUI(self, updatedIndex: int):
+        if self.content.controls[0].content.selected_index == updatedIndex:
+            match updatedIndex:
+                case 0:
+                    self.tabView.controls[2] = self.suggestions
+                case 1:
+                    self.tabView.controls[2] = self.resultsPage
+                case 2:
+                    self.tabView.controls[2] = ft.Text('Browse')
+                case 3:
+                    self.tabView.controls[2] = ft.Text('Settings')
+            self.update()
 
 class ArtistWidget(ft.TextButton):
     def __init__(self, artist: yt_models.OnlineArtist):
@@ -239,23 +263,22 @@ class SuggestionsWidget(ft.ListView):
 class Player_widget(ft.Container):
     def __init__(self):
         super().__init__()
-        self.bgcolor='#ffffff2'
+        self.bgcolor='0000003'
         self.border_radius = 20
         self.alignment = ft.alignment.center
         self.padding = ft.Padding(0, 0, 0, 10)
 
 
         self.content = ft.Column(controls=[
-            ft.Slider(),
+            ft.Container(ft.Slider(), width=500, alignment=ft.alignment.center),
             ft.Row(controls=[
                 ft.IconButton(icon=ft.icons.SHUFFLE, icon_size=40),
                 ft.IconButton(icon=ft.icons.SKIP_PREVIOUS, icon_size=40),
                 ft.IconButton(icon=ft.icons.PLAY_CIRCLE, icon_size=40),
                 ft.IconButton(icon=ft.icons.SKIP_NEXT, icon_size=40),
                 ft.IconButton(icon=ft.icons.REPEAT, icon_size=40),
-            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.alignment.center, expand=True),
-            
-        ],)
+            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.alignment.center, expand=False), 
+        ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
 
 class HorizontalListView(ft.Row):
@@ -276,12 +299,14 @@ class HorizontalListView(ft.Row):
         self.listView.scroll_to(delta=510, duration=500)
 
 class Search_bar_widget(ft.TextField):
-    def __init__(self):
+    def __init__(self, query=None):
         super().__init__()
         self.border_radius=20
         self.bgcolor='FFFFFF2'
         self.hint_text = 'What do you want to listen to?'
         self.height = 50
+        if query != None:
+            self.value = query
 
 class SearchResults(ft.ListView):
     def __init__(self, results: yt_models.SearchResponse, player: models.Player):
