@@ -57,9 +57,9 @@ class Home(ft.Container):
                                                         expand=True)
                 self.updateTheUI(1)
                 request = yt_models.SearchRequest(query=query,
-                                                  artist_count=config.numberOfSearchArtists,
-                                                  album_count=config.numberOfSearchAlbums,
-                                                  song_count=config.numberOfSearchSongs)
+                                                artist_count=config.numberOfSearchArtists,
+                                                album_count=config.numberOfSearchAlbums,
+                                                song_count=config.numberOfSearchSongs)
                 response = yt.search(request=request)
                 searchResultsWidget = SearchResults(results=response, player=self.player)
                 self.resultsPage = ft.Column(controls=[Search_bar_widget(query=query), searchResultsWidget], expand=True)
@@ -73,9 +73,9 @@ class Home(ft.Container):
                     self.suggestions = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
                     self.updateTheUI(selectedItem)
                     request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest,
-                                                              config.numberOfAlbumsPerInterest,
-                                                              config.numberOfSongsPerInterest,
-                                                              config.intrests)
+                                                            config.numberOfAlbumsPerInterest,
+                                                            config.numberOfSongsPerInterest,
+                                                            config.intrests)
                     suggestions = yt.getSuggestions(request=request)
                     self.suggestions = ft.Column(controls=[SuggestionsWidget(suggestions, player=self.player)], expand=True)
                     self.updateTheUI(selectedItem)
