@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/FTC-MusicPlayerAPI.props" />
+</Project>
