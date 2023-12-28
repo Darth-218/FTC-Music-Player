@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 """The main file that will initialise the GUI and start the program process.
 It first initialises a "player", which communicates with an external library
 to play the actual audio. It then initialises the GUI (graphical user

@@ -9,7 +9,8 @@ from enum import Enum, auto
 from typing import Callable, Any
 import vlc
 
-class Queue():
+
+class Queue:
     """
     Class representing a song queue with methods for interacting with
     it, for example jumping to the next song, etc.
@@ -23,18 +24,16 @@ class Queue():
     duration: timedelta = timedelta(0)
 
     def __init__(
-            self,
-            song_list: list[Song] = [],
-            curr_index: int = 0,
-            ):
-        self.current = song_list[curr_index] if song_list else Song(
-            "No Song Selected",
-            Artist("FTC"),
-            "./none",
-            timedelta(seconds=0)
-            )
+        self,
+        song_list: list[Song] = [],
+        curr_index: int = 0,
+    ):
+        self.current = (
+            song_list[curr_index]
+            if song_list
+            else Song("No Song Selected", Artist("FTC"), "./none", timedelta(seconds=0))
+        )
         self.song_list = song_list
-
 
     def _reset(self):
         self.position = 0
@@ -67,7 +66,7 @@ class Queue():
         - `song` -- A `Song` object to add to the end of the queue.
         """
         self.song_list.append(song)
-    
+
     def play_next(self, song: Song):
         """Insert a song into the queue to be played directly after
         the current song.
@@ -76,7 +75,17 @@ class Queue():
         """
         self.song_list.insert(self.curr_index + 1, song)
 
-class Player():
+
+class PlayerState(Enum):
+    """An enumeration representing the current state of the player."""
+
+    playing = auto()
+    paused = auto()
+    finished = auto()
+    not_started = auto()
+
+
+class Player:
     """
     Abstract class to represent a music player, i.e., an API to
     communicate with an external audio playing application from within
@@ -93,15 +102,27 @@ class Player():
     queue: Queue
     handlers: dict[HandlerType, Callable[[], None]]
     player: Any | None
+    state: PlayerState
 
     def __init__(self, handlers, queue):
         self.queue = queue
         self.handlers = handlers
+        self.state = PlayerState.not_started
 
     def play(self):
-        """Start playing the current song at the current elapsed time.
-        """
+        """Start playing the current song at the current elapsed time."""
+
+        self.state = PlayerState.playing
         raise NotImplementedError
+
+    def pause(self):
+        """Pause playing the current song."""
+        match self.state:
+            case PlayerState.playing:
+                self.state = PlayerState.paused
+            case PlayerState.paused:
+                self.state = PlayerState.playing
+        self.player.pause() if self.player else lib.passive()
 
     def next(self):
         """Skip the rest of the current song and move to the next one in
@@ -116,33 +137,23 @@ class Player():
         raise NotImplementedError
 
     def seektime(self, time: timedelta):
-        """Jump to a specific time stamp in the current song.
-        """
+        """Jump to a specific time stamp in the current song."""
         raise NotImplementedError
 
     def seekpos(self, pos: float):
-        """Jump to a specific position in the current song.
-        """
+        """Jump to a specific position in the current song."""
         raise NotImplementedError
 
     def stop(self):
-        """Stop playing the current song.
-        """
+        """Stop playing the current song."""
         self.player.stop() if self.player else lib.passive()
-    
-    def pause(self):
-        """Pause playing the current song.
-        """
-        self.player.pause() if self.player else lib.passive()
-        
+
     def change_queue(self, queue: Queue):
-        """Swap the current queue of songs to another one.
-        """
+        """Swap the current queue of songs to another one."""
         self.queue = queue
 
     def add_to_queue(self, song: Song):
-        """Add a song to the current queue.
-        """
+        """Add a song to the current queue."""
         self.queue.add_song(song)
 
 
@@ -158,10 +169,12 @@ class VlcMediaPlayer(Player):
         self.player = vlc.MediaPlayer(self.queue.current._path)
 
     def play(self):
+        self.state = PlayerState.playing
         current = self.queue.current
         self.player = vlc.MediaPlayer(current._path)
-        lib.logger("VlcMediaPlayer/play",
-            f"Now playing {current.name}.\nFrom {current._path}.")
+        lib.logger(
+            "VlcMediaPlayer/play", f"Now playing {current.name}.\nFrom {current._path}."
+        )
         self.player.play() if self.player else lib.passive()
 
     def next(self):
@@ -189,12 +202,3 @@ class VlcMediaPlayer(Player):
 
     def _add_handler(self, handler: Callable[[], None], type: HandlerType):
         self.handlers[type] = handler
-
-
-class PlayerState(Enum):
-    """An enumeration representing the current state of the player.
-    """
-    playing     = auto()
-    paused      = auto()
-    finished    = auto()
-    not_started = auto()
