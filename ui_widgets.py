@@ -497,10 +497,10 @@ class PlayerWidget(ft.Container):
         match self.player.state:
             case models.PlayerState.playing:
                 self.player.pause()
-                setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
+                setattr(self.btn_play_pause, "icon", ft.icons.PLAY_CIRCLE)
             case models.PlayerState.paused:
                 self.player.pause()
-                setattr(self.btn_play_pause, "icon", ft.icons.PLAY_CIRCLE)
+                setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.page.update()
 
 
