@@ -1,3 +1,5 @@
+"""This module contains the UI widgets for the app."""
+
 import flet as ft
 import api_client.Youtube.api_models as yt_models
 import api_client.Youtube.youtube as yt
