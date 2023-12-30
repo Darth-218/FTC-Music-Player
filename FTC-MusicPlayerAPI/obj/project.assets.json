@@ -3203,11 +3203,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/FTC-MusicPlayerAPI.csproj",
+      "projectUniqueName": "/home/ahmedafifi/projects/python/FTC-Music-Player/FTC-MusicPlayerAPI/FTC-MusicPlayerAPI.csproj",
       "projectName": "FTC-MusicPlayerAPI",
-      "projectPath": "/home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/FTC-MusicPlayerAPI.csproj",
+      "projectPath": "/home/ahmedafifi/projects/python/FTC-Music-Player/FTC-MusicPlayerAPI/FTC-MusicPlayerAPI.csproj",
       "packagesPath": "/home/ahmedafifi/.nuget/packages/",
-      "outputPath": "/home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/obj/",
+      "outputPath": "/home/ahmedafifi/projects/python/FTC-Music-Player/FTC-MusicPlayerAPI/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/ahmedafifi/.nuget/NuGet/NuGet.Config"
