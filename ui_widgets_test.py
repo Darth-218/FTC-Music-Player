@@ -535,6 +535,7 @@ class SearchResultsView(ft.UserControl):
                     alignment=ft.alignment.center,
                     expand=True,
                 ), expand=True) # The content of the view.
+    results: yt_models.SearchResponse = None # The search API response.
 
     def __init__(self, player: models.Player, query: str):
         self.query = query # The query to search for.
@@ -561,10 +562,10 @@ class SearchResultsView(ft.UserControl):
                                         album_count=config.numberOfSearchAlbums, 
                                         song_count=config.numberOfSearchSongs) # The request to search for the query.
         
-        response = yt.search(request) # The search API response.
+        self.results = yt.search(request) # The search API response.
 
-        if response.has_error: # If there was an error, log it and return.
-            lib.logger("SearchView/search", response.error)
+        if self.results.has_error: # If there was an error, log it and return.
+            lib.logger("SearchView/search", self.results.error)
             return
         
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
@@ -572,16 +573,16 @@ class SearchResultsView(ft.UserControl):
         artists = HorizontalListView() # The horizontal list view for the artists.
         albums = HorizontalListView() # The horizontal list view for the albums.
         
-        for artist in response.artists: # For each artist, add it to the artists list view.
+        for artist in self.results.artists: # For each artist, add it to the artists list view.
             artists.append(SquareArtistWidget(artist=artist))
         
-        for album in response.albums: # For each album, add it to the albums list view.
+        for album in self.results.albums: # For each album, add it to the albums list view.
             albums.append(SquareAlbumWidget(album=album))
         
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
         
-        for song in response.songs: # For each song, add it to the final widget.
-            finalWidget.controls.append(SongWidget(song=song, songList=response.songs, player=self.player))
+        for song in self.results.songs: # For each song, add it to the final widget.
+            finalWidget.controls.append(SongWidget(song=song, songList=self.results.songs, player=self.player))
         
         finalWidget.controls.append(artists) # Add the artists list view to the final widget.
         
@@ -593,8 +594,9 @@ class SearchResultsView(ft.UserControl):
         self.update() # Refresh the UI.
         
     def build(self):
-        thread = threading.Thread(target=self.search) # Create a thread to search for the query.
-        thread.start() # Start the thread.
+        if self.results is None or self.results.has_error:
+            thread = threading.Thread(target=self.search) # Create a thread to search for the query.
+            thread.start() # Start the thread.
         return self.content
 
 
