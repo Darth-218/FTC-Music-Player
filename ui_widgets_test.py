@@ -8,6 +8,8 @@ import models
 import lib
 import config
 from typing import Callable, Any
+from datetime import timedelta
+from threading import Timer
 import threading
 
 class Tab():
@@ -681,7 +683,7 @@ class SearchView(ft.UserControl):
         self.update() # Refresh the UI.
 
 
-class PlayerWidget(ft.Container):
+class PlayerWidget(ft.UserControl):
     """A Player widget at the bottom of the screen having buttons
     for playing/pausing, skipping forwards and backwards, shuffling etc.
     as well as a slider for the current song.
@@ -692,14 +694,15 @@ class PlayerWidget(ft.Container):
     btn_play_pause: ft.IconButton
     btn_next: ft.IconButton
     btn_repeat: ft.IconButton
+    slider: ft.Slider
 
-    def __init__(self, player: models.Player, page: ft.Page):
+    def __init__(self, player: models.Player):
         super().__init__()
-        self.bgcolor = "#000000"
-        # self.border_radius = 20
-        self.alignment = ft.alignment.center
-        self.padding = ft.Padding(0, 0, 0, 10)
         self.player = player
+
+    def build(self):
+        self.bgcolor = "#000000"
+        self.padding = ft.Padding(0, 0, 0, 10)
 
         self.btn_shuffle = ft.IconButton(icon=ft.icons.SHUFFLE, icon_size=40)
         self.btn_prev = ft.IconButton(
@@ -711,13 +714,13 @@ class PlayerWidget(ft.Container):
             icon=ft.icons.PLAY_CIRCLE, on_click=self.play_pause, icon_size=40
         )
         self.btn_next = ft.IconButton(
-            icon=ft.icons.SKIP_NEXT, on_click=self.player.next, icon_size=40
+            icon=ft.icons.SKIP_NEXT, on_click=lambda e: self.player.next(), icon_size=40
         )
         self.btn_repeat = ft.IconButton(icon=ft.icons.REPEAT, icon_size=40)
-
-        self.content = ft.Column(
+        self.slider = ft.Slider(min=0.0, max=1.0, on_change=self.slider_seek, value=0.0)
+        return ft.Column(
             controls=[
-                ft.Container(ft.Slider(), width=500, alignment=ft.alignment.center),
+                ft.Container(self.slider, width=500, alignment=ft.alignment.center),
                 ft.Row(
                     controls=[
                         self.btn_shuffle,
@@ -733,9 +736,10 @@ class PlayerWidget(ft.Container):
             ],
             expand=True,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.alignment.center,
         )
-
-    def play_pause(self, event) -> None:
+    def play_pause(self, event=None) -> None:
+        """Toggles the player's currently paused/resumed state."""
         match self.player.state:
             case models.PlayerState.playing:
                 self.player.pause()
@@ -743,6 +747,29 @@ class PlayerWidget(ft.Container):
             case models.PlayerState.paused:
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
-        self.page.update()
+        self.update()
+    def play(self):
+        setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
+        self.update_slider()
+        self.player.play()
 
+    def pause(self):
+        self.play_pause()
 
+    def update_slider(self):
+        Timer(0.2, self.update_slider).start()
+        current_position = self.player.getpos()
+        if current_position == self.slider.value:
+            return
+        setattr(self.slider, "value", current_position)
+        current_time_in_ms = self.player.gettime()
+        current_time = timedelta(milliseconds=current_time_in_ms)
+        lib.logger("PlayerWidget/update_slider", f"Updating to {current_time}")
+        self.update()
+
+    def slider_seek(self, e):
+        new_val = e.control.value
+        self.player.seekpos(new_val)
+        current_time_in_ms = self.player.gettime()
+        current_time = timedelta(milliseconds=current_time_in_ms)
+        lib.logger("PlayerWidget/slider_seek", f"Moved to {current_time}")
