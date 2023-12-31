@@ -1,6 +1,7 @@
 # Imports
 import os
 import flet as ft
+from mutagen.easyid3 import EasyID3
 import data_models as dm
 from data_models import *
 
@@ -9,23 +10,28 @@ class Local:
 
     def __init__(self):
 
-        self.listv = ft.ListView(expand=1, spacing=10, padding=20)
+        self.songlist = ft.ListView(expand=1, spacing=10, padding=20)
+        self.albumlist = ft.ListView(expand=1, spacing=12, padding=20)
+
+        self.pick_files_dialog = ft.FilePicker(on_result=lambda e: Localclass.pick_files_result(e))
+        self.picker = ft.ElevatedButton("Pick Directory", icon=ft.icons.UPLOAD_FILE_ROUNDED, tooltip="Click here to choose a song directory",  on_click=lambda _: self.pick_files_dialog.get_directory_path())
 
         self.paths = []
         self.filepaths = {}
 
         self.song = dm.Song
+        self.songmeta = {}
 
     # Functions
     # Function to get the main music folder's path
-    def getfolder(self, listbox: ft.ListView, selected):
+    def getfolder(self, songbox: ft.ListView, selected):
 
         selected_folder = selected
 
         # At the moment of getting the directory path
         if selected_folder:
 
-            listbox.clean()
+            songbox.clean()
 
             # Obtaining files to show on window from the path variable
             for path, subdir, files in os.walk(selected_folder):
@@ -41,11 +47,15 @@ class Local:
 
                 for i in self.filepaths:
 
+                    self.getdetails(self.filepaths[i])
+
                     self.song.name = i
 
-                    self.localsongwidget(self.listv, self.song.name)
-
-            print(self.paths)
+                    self.localsongwidget(self.songlist,
+                                         self.song.name,
+                                         self.songmeta["artist"],
+                                         self.songmeta["duration"],
+                                         self.songmeta["album"])
 
         return selected_folder
     
@@ -53,22 +63,40 @@ class Local:
 
         self.folder_name = (e.path if e.path else "Cancelled")
 
-        print(self.folder_name)
+        print(f"The selected folder is:", self.folder_name)
 
-        self.getfolder(self.listv, self.folder_name)
+        self.getfolder(self.songlist, self.folder_name)
 
         return self.folder_name
 
-    def getdetails(filename):
+    def getdetails(self, filepath):
 
-        pass
+        #try:
+
+        audio = EasyID3(filepath)
+
+        title = audio["title"][0] if "title" in audio else None
+        artist = audio["artist"][0] if "artist" in audio else None
+        album = audio['album'][0] if 'album' in audio else None
+        duration = audio.info.length if hasattr(audio, 'info') and hasattr(audio.info, 'length') else None
+
+        self.songmeta["title"] = title
+        self.songmeta["artist"] = artist
+        self.songmeta["album"] = album
+        self.songmeta["duration"] = duration
+
+        return self.songmeta
+
+        #except Exception as e:
+
+            #print(f"Error reading metadata for the file {filepath}")
     
     # Function used to get the name of the selected file in the listbox "musiclist"
     def getselected(self, songname):
 
-        chosenpath = self.filepaths[songname]
+        self.song._path = self.filepaths[songname]
 
-        return chosenpath
+        return self.song._path
 
     # Function used to create queue
     def addtoqu(self):
@@ -88,18 +116,23 @@ class Local:
 
         qu.clear()
 
-    def localsongwidget(self, listbox: ft.ListView, songname: str, artistname: str = "N/A"):
+    def localsongwidget(self, songbox: ft.ListView, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
 
-        self.songcontainer = ft.Container(content = ft.Column([ft.Text(songname), ft.Text(artistname)]), on_click = lambda _: print(self.getselected(songname)))
+        self.songcontainer = ft.Container(content = ft.Column([
+            ft.Row([ft.Text(f"{songname.strip('.mp3')}  |  "),
+                    ft.Text(songalbum)]),
+            ft.Row([ft.Text(f"{songduration}  |  "),
+                    ft.Text(artistname)])]),
+                                          on_click = lambda _: print(self.getselected(songname)))
 
         self.songcontainer.border = ft.border.all(1, ft.colors.GREY)
         self.songcontainer.border_radius = ft.border_radius.all(7)
         self.songcontainer.padding = 5
         self.songcontainer.margin = 2
 
-        listbox.controls.append(self.songcontainer)
+        songbox.controls.append(self.songcontainer)
 
-        listbox.update()
+        songbox.update()
 
 
 Localclass = Local()
@@ -107,14 +140,12 @@ Localclass = Local()
 
 def main(page: ft.Page):
 
-    pick_files_dialog = ft.FilePicker(on_result=lambda e: Localclass.pick_files_result(e))
 
-    page.overlay.append(pick_files_dialog)
+    page.overlay.append(Localclass.pick_files_dialog)
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    picker = ft.ElevatedButton("Pick Directory", icon=ft.icons.UPLOAD_FILE_ROUNDED, on_click=lambda _: pick_files_dialog.get_directory_path())
 
-    page.add(ft.Column([picker, Localclass.listv], expand = 1))
+    page.add(ft.Column([Localclass.songlist, Localclass.picker], expand = 1))
 
     page.update()
 
