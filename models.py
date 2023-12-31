@@ -147,6 +147,9 @@ class Player:
     def getpos(self) -> float:
         return self.player.get_position() if self.player else lib.passive()
 
+    def gettime(self) -> int:
+        return self.player.get_time() if self.player else lib.passive()
+
     def stop(self):
         """Stop playing the current song."""
         self.player.stop() if self.player else lib.passive()
