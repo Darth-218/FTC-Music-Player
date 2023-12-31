@@ -8,29 +8,30 @@
     ".NETCoreApp,Version=v7.0": {
       "FTC-MusicPlayerAPI/1.0.0": {
         "dependencies": {
-          "Microsoft.AspNetCore.OpenApi": "7.0.11",
+          "Microsoft.AspNetCore.OpenApi": "7.0.14",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.14",
           "Swashbuckle.AspNetCore": "6.5.0",
-          "YoutubeExplode": "6.3.7"
+          "System.Linq.Async": "6.0.1",
+          "YoutubeExplode": "6.3.9"
         },
         "runtime": {
           "FTC-MusicPlayerAPI.dll": {}
         }
       },
-      "AngleSharp/1.0.5": {
+      "AngleSharp/1.0.7": {
         "dependencies": {
           "System.Text.Encoding.CodePages": "7.0.0"
         },
         "runtime": {
           "lib/net7.0/AngleSharp.dll": {
-            "assemblyVersion": "1.0.5.0",
-            "fileVersion": "1.0.5.0"
+            "assemblyVersion": "1.0.7.0",
+            "fileVersion": "1.0.7.0"
           }
         }
       },
       "Azure.Core/1.25.0": {
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "System.Diagnostics.DiagnosticSource": "6.0.0",
           "System.Memory.Data": "1.0.2",
           "System.Numerics.Vectors": "4.5.0",
@@ -62,22 +63,22 @@
           }
         }
       },
-      "Microsoft.AspNetCore.OpenApi/7.0.11": {
+      "Microsoft.AspNetCore.OpenApi/7.0.14": {
         "dependencies": {
           "Microsoft.OpenApi": "1.4.3"
         },
         "runtime": {
           "lib/net7.0/Microsoft.AspNetCore.OpenApi.dll": {
-            "assemblyVersion": "7.0.11.0",
-            "fileVersion": "7.0.1123.42502"
+            "assemblyVersion": "7.0.14.0",
+            "fileVersion": "7.0.1423.52316"
           }
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+      "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "4.700.20.21406"
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
           }
         }
       },
@@ -452,6 +453,17 @@
           }
         }
       },
+      "System.Linq.Async/6.0.1": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/System.Linq.Async.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.1.35981"
+          }
+        }
+      },
       "System.Memory/4.5.4": {},
       "System.Memory.Data/1.0.2": {
         "dependencies": {
@@ -561,14 +573,14 @@
           }
         }
       },
-      "YoutubeExplode/6.3.7": {
+      "YoutubeExplode/6.3.9": {
         "dependencies": {
-          "AngleSharp": "1.0.5"
+          "AngleSharp": "1.0.7"
         },
         "runtime": {
           "lib/net5.0/YoutubeExplode.dll": {
-            "assemblyVersion": "6.3.7.0",
-            "fileVersion": "6.3.7.0"
+            "assemblyVersion": "6.3.9.0",
+            "fileVersion": "6.3.9.0"
           }
         }
       }
@@ -580,12 +592,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "AngleSharp/1.0.5": {
+    "AngleSharp/1.0.7": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-4IeYlrwnbjLloXFigls5JkdfxfkBUp5DKI+8sUl4OUZQ3VKcsVCb99bqlxJOTIuAHy6rT6pfb2Lq87n+Tp3IqQ==",
-      "path": "anglesharp/1.0.5",
-      "hashPath": "anglesharp.1.0.5.nupkg.sha512"
+      "sha512": "sha512-jZg7lDcrXRiIC8VBluuGKOCMR9mc4CIRX5vpQJ8fcgafs6T6plOzKHhAn3lJEwXorrltd9p1WtRxxhFpRBACbg==",
+      "path": "anglesharp/1.0.7",
+      "hashPath": "anglesharp.1.0.7.nupkg.sha512"
     },
     "Azure.Core/1.25.0": {
       "type": "package",
@@ -601,19 +613,19 @@
       "path": "azure.identity/1.7.0",
       "hashPath": "azure.identity.1.7.0.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.OpenApi/7.0.11": {
+    "Microsoft.AspNetCore.OpenApi/7.0.14": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-+3PUTx950QiUzw9CriQfCpfv11cJ0uMzQrDS3BwkEDlRduAh/2+1mxDy2S8wS1j3zyQpjbtQU0fFeWTU8j0Ljg==",
-      "path": "microsoft.aspnetcore.openapi/7.0.11",
-      "hashPath": "microsoft.aspnetcore.openapi.7.0.11.nupkg.sha512"
+      "sha512": "sha512-GvrqOw9jyBSAUPQqEFmptKGwr7IH4Wvn+iDZKaEeccCmlXiBPRbTzdlqduc+teiMqnK/JJByg4FMwYHkPin1OA==",
+      "path": "microsoft.aspnetcore.openapi/7.0.14",
+      "hashPath": "microsoft.aspnetcore.openapi.7.0.14.nupkg.sha512"
     },
-    "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+    "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-yuvf07qFWFqtK3P/MRkEKLhn5r2UbSpVueRziSqj0yJQIKFwG1pq9mOayK3zE5qZCTs0CbrwL9M6R8VwqyGy2w==",
-      "path": "microsoft.bcl.asyncinterfaces/1.1.1",
-      "hashPath": "microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512"
+      "sha512": "sha512-UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
+      "path": "microsoft.bcl.asyncinterfaces/6.0.0",
+      "hashPath": "microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512"
     },
     "Microsoft.CSharp/4.5.0": {
       "type": "package",
@@ -895,6 +907,13 @@
       "path": "system.identitymodel.tokens.jwt/6.24.0",
       "hashPath": "system.identitymodel.tokens.jwt.6.24.0.nupkg.sha512"
     },
+    "System.Linq.Async/6.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+      "path": "system.linq.async/6.0.1",
+      "hashPath": "system.linq.async.6.0.1.nupkg.sha512"
+    },
     "System.Memory/4.5.4": {
       "type": "package",
       "serviceable": true,
@@ -1014,12 +1033,12 @@
       "path": "system.windows.extensions/6.0.0",
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
     },
-    "YoutubeExplode/6.3.7": {
+    "YoutubeExplode/6.3.9": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-MWER4pgMGHdNGDINhafl7PxTnVJUT6bIpwDZIG+OdaMsYtlu30wTgkz496l16aah4R0GoJQLnOhw3ltUfhvsUQ==",
-      "path": "youtubeexplode/6.3.7",
-      "hashPath": "youtubeexplode.6.3.7.nupkg.sha512"
+      "sha512": "sha512-coN6vw39gDA3tL1KvZnOZ2fGAyHIQ69QcczrLtsVUdy7dhbp41y/y0lidhCppjyNt3EY7Ielss1fB3IzFqXSwg==",
+      "path": "youtubeexplode/6.3.9",
+      "hashPath": "youtubeexplode.6.3.9.nupkg.sha512"
     }
   }
 }

@@ -450,7 +450,7 @@ class SuggestionsView(ft.UserControl):
             request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, 
                                                     config.numberOfAlbumsPerInterest, 
                                                     config.numberOfSongsPerInterest, 
-                                                    config.intrests) # The request to get the suggestions.
+                                                    config.interests) # The request to get the suggestions.
             self.suggestions = yt.getSuggestions(request) # The suggestions API response.
 
         if self.suggestions.has_error: # If there was an error, log it and return.

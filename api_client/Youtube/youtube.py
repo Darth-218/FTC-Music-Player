@@ -211,7 +211,7 @@ def getSuggestions(request: yt_models.GetSuggestionsRequest) -> yt_models.GetSug
     """
     
     #Creates the params string for the api_client.
-    params = "?artCount=" + str(request.artist_count) + "&albCount=" + str(request.album_count) + "&sonCount=" + str(request.song_count) + "&intrests=" + request.interests
+    params = "?artCount=" + str(request.artist_count) + "&albCount=" + str(request.album_count) + "&sonCount=" + str(request.song_count) + "&interests=" + request.interests
 
     try:
         #gets the response (in json format) from the api_client.
