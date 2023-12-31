@@ -240,11 +240,45 @@ def getSuggestions(request: yt_models.GetSuggestionsRequest) -> yt_models.GetSug
     #Return the GetSuggestionsResponse object.
     return getSuggestionsResponse
 
+def getLatestRelease(artistId: str):
+    """
+    Invokes a GetArtistLatestRelease Request via api_client.
+    
+    Takes in a channelId as a string.
+    
+    Returns a GetArtistLatestReleaseResponse containing the latest release of the artist.
+    """
+    
+    #Creates the params string for the api_client.
+    params = "?artistId=" + artistId
+
+    try:
+        #gets the response (in json format) from the api_client.
+        response = api_client.sendApiRequest(api_client.ApiControllers.Youtube.value, api_client.ApiRequests.ArtistLatestRelease.value, params)
+    except requests.exceptions.ConnectionError:
+        #If there is a connection error, return a GetArtistLatestReleaseResponse with has_error set to True and error set to "Connection Error".
+        return yt_models.GetArtistLatestReleaseResponse(True, "Connection Error", "")
+    
+    try:
+        #Parses the json response into a dictionary.
+        parsed_data = json.loads(response)
+    except json.decoder.JSONDecodeError:
+        #If there is a JSON Decode Error, return a GetArtistLatestReleaseResponse with has_error set to True and error set to "JSON Decode Error".
+        return yt_models.GetArtistLatestReleaseResponse(True, "JSON Decode Error", "")
+    
+    try:
+        #Creates the GetArtistLatestReleaseResponse object from the parsed data.
+        latestRelease  = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["latestRelease"]]
+        getArtistLatestReleaseResponse = yt_models.GetArtistLatestReleaseResponse(parsed_data["hasError"], parsed_data["error"], latestRelease)
+    except KeyError:
+        #If there is a KeyError, return a GetArtistLatestReleaseResponse with has_error set to True and error set to "Key Error".
+        return yt_models.GetArtistLatestReleaseResponse(True, "Key Error", "")
+    
+    #Return the GetArtistLatestReleaseResponse object.
+    return getArtistLatestReleaseResponse
+
 if __name__ == "__main__":
-    request = yt_models.GetSuggestionsRequest(5, 5, 5)
-    search_results = getSuggestions(request)
-    print(search_results.artists)
-    print(search_results.albums)
-    print(search_results.songs)
-    print(search_results.has_error)
-    print(search_results.error)
+    res = getLatestRelease('UClQPk2WbC23z3eogxPbbOjw')
+    print(res.has_error)
+    print(res.error)
+    print(res.latestRelease[0].name)

@@ -8,6 +8,7 @@ interface) and starts the program.
 from time import sleep
 from models import *
 import ui_builder
+import api_client.Youtube.youtube as yt
 
 if __name__ == "__main__":
     # Initialise the actual audio player (in this case, one based on

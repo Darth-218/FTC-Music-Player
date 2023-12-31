@@ -149,3 +149,14 @@ class GetSuggestionsResponse:
         self.artists = artists
         self.albums = albums
         self.songs = songs
+
+#Represents a GetArtistLatestRelease response from the API.
+class GetArtistLatestReleaseResponse:
+    has_error: bool
+    error: str
+    latestRelease: list[OnlineSong]
+
+    def __init__(self, has_error: bool, error: str, latestRelease: list[OnlineSong]):
+        self.has_error = has_error
+        self.error = error
+        self.latestRelease = latestRelease

@@ -20,12 +20,13 @@ class ApiControllers(Enum):
 
 #API Request Options
 class ApiRequests(Enum):
-    Search       = "/Search"
-    AudioUrl     = "/GetAudioUrl"
-    AlbumSongs   = "/GetAlbumSongs"
-    ArtistAlbums = "/GetArtistAlbums"
-    ArtistSongs  = "/GetArtistSongs"
-    Suggestions  = "/GetSuggestions"
+    Search              = "/Search"
+    AudioUrl            = "/GetAudioUrl"
+    AlbumSongs          = "/GetAlbumSongs"
+    ArtistAlbums        = "/GetArtistAlbums"
+    ArtistSongs         = "/GetArtistSongs"
+    Suggestions         = "/GetSuggestions"
+    ArtistLatestRelease = "/GetArtistLatestRelease"
     
 
 #Sends a request to the server and returns the response (in json format).
