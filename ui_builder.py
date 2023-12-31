@@ -15,6 +15,8 @@ class UI:
         ft.app(self.open_home) # Open the home page.
 
     def open_home(self, page: ft.Page):
+        page.theme_mode = ft.ThemeMode.DARK
+        page.bgcolor = ft.colors.BLACK
         page.fonts = {"lilitaone": "./Assets/Fonts/LilitaOne-Regular.ttf"} # Add the Lilita One font to the page.
         page.add(uiWidgets.Home(self.player)) # Add the home page to the window.
         page.bottom_appbar = ft.BottomAppBar(

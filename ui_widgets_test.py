@@ -27,14 +27,19 @@ class TabView(ft.UserControl):
     def __init__(self, tabs: list[Tab]):
         self.tabs = tabs # The tabs to display
         self.selectedTabIndex = 0 # The index of the selected tab
-        self.selectedTab = ft.Container(content=tabs[0].content, expand=True) # The content of the selected tab
+        self.selectedTab = ft.Container(bgcolor = '#FFFFFF3', 
+                                        content=tabs[0].content, 
+                                        expand=True, 
+                                        border_radius= 30,
+                                        padding=ft.Padding(20, 0, 20, 0)) # The content of the selected tab
         super().__init__(expand=True)
 
     def build(self):
         return ft.Container(expand=True,
             content=ft.Row(controls=[
-                ft.Container(
-                            padding= ft.Padding(0, 20, 0, 0),
+                ft.Container(bgcolor= "#FFFFFF3",
+                            border_radius= 30,
+                            padding= ft.Padding(20, 20, 20, 0),
                             width=200,
                             content=ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
@@ -48,7 +53,7 @@ class TabView(ft.UserControl):
                                 width=150, height=50)
                             for i, tab in enumerate(self.tabs)
                         ]),),
-                ft.VerticalDivider(),
+                # ft.VerticalDivider(),
                 self.selectedTab
             ])
         )
@@ -576,7 +581,7 @@ class SearchResultsView(ft.UserControl):
     def errorRenderer(self, e):
         """Renders the content in case of an error."""
 
-        lib.logger("SuggestionsView/errorRenderer", 'Rendered a retry button')
+        lib.logger("SearchResultsView/errorRenderer", 'Rendered a retry button')
         self.content.content = ft.Container(content=ft.TextButton(text='retry', 
                                                                 on_click=lambda e: self.search()), 
                                             alignment=ft.alignment.center) # Add a retry button in the center of the screen that invokes the search method again.
@@ -690,8 +695,8 @@ class PlayerWidget(ft.Container):
 
     def __init__(self, player: models.Player, page: ft.Page):
         super().__init__()
-        self.bgcolor = "0000003"
-        self.border_radius = 20
+        self.bgcolor = "#000000"
+        # self.border_radius = 20
         self.alignment = ft.alignment.center
         self.padding = ft.Padding(0, 0, 0, 10)
         self.player = player
