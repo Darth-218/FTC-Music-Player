@@ -144,6 +144,9 @@ class Player:
         """Jump to a specific position in the current song."""
         raise NotImplementedError
 
+    def getpos(self) -> float:
+        return self.player.get_position() if self.player else lib.passive()
+
     def stop(self):
         """Stop playing the current song."""
         self.player.stop() if self.player else lib.passive()
