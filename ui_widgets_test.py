@@ -615,6 +615,7 @@ class SearchResultsView(ft.UserControl):
             while self.page is None: # Wait for the page to be initialised.
                 pass
 
+            setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
             setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
             setattr(self.page.dialog,'content', ft.Text(self.results.error)) # Set the content of the dialog.
             setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
@@ -746,3 +747,41 @@ class PlayerWidget(ft.Container):
         self.page.update()
 
 
+class AlbumView(ft.UserControl):
+    """The view for displaying an album."""
+
+    def __init__(self, album: yt_models.OnlineAlbum, player: models.Player):
+        self.album = album
+        self.player = player
+        self.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+        super().__init__()
+
+    def build(self):
+        return self.content
+        return ft.ListView(controls=ft.Container(
+            content=ft.Image(
+                src=self.album.cover_art,
+                height=500,
+                fit=ft.ImageFit.COVER,
+                ),
+            ),
+        )
+    
+    def getSongs(self):
+        """Gets the songs for the album from the API."""
+
+        self.content.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+        response = yt.getAlbumSongs(self.album.id)
+        
+        if response.has_error: # If there was an error, log it and return.
+            lib.logger("AlbumView/getSongs", response.error)
+            
+            while self.page is None: # Wait for the page to be initialised.
+                pass
+
+            setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
+            setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+            setattr(self.page.dialog,'content', ft.Text(self.results.error)) # Set the content of the dialog.
+            setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+            setattr(self.page.dialog, 'open', True) # Open the dialog.
+            self.page.update() # Update the page.
