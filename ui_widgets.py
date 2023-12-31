@@ -471,7 +471,7 @@ class PlayerWidget(ft.Container):
         self.btn_next = ft.IconButton(
             icon=ft.icons.SKIP_NEXT, on_click=self.player.next, icon_size=40
         )
-        self.btn_repeat = ft.IconButton(icon=ft.icons.REPEAT, icon_size=40)
+        self.btn_repeat = ft.IconButton(icon=ft.icons.REPEAT_ONE_ROUNDED, icon_size=40, on_click=self.Loop)
 
         self.content = ft.Column(
             controls=[
@@ -502,6 +502,12 @@ class PlayerWidget(ft.Container):
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.page.update()
+
+
+
+    def Loop(self, event) -> None:
+        if getattr(self.btn_repeat, 'icon') == 'REPEAT_ONE_ROUNDED':
+            print('Hello')
 
 
 class HorizontalListView(ft.Row):
