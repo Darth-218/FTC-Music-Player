@@ -1,6 +1,5 @@
 ﻿using FTC_MusicPlayerAPI.Models;
 using FTC_MusicPlayerAPI.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,14 +7,8 @@ namespace FTC_MusicPlayerAPI.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
-    public class YoutubeController
+    public class YoutubeController(IYoutubeService youtubeService)
     {
-        IYoutubeService _youtubeService;
-        public YoutubeController(IYoutubeService youtubeService)
-        {
-            _youtubeService = youtubeService;
-        }
-
         [HttpGet]
         [Route("/Youtube/Search")]
         public async Task<SearchResponse> Search(string query, int artCount, int albCount, int sonCount)
@@ -31,11 +24,11 @@ namespace FTC_MusicPlayerAPI.Controllers
 
             try
             {
-                return await _youtubeService.Search(request);
+                return await youtubeService.Search(request);
             }
             catch (Exception ex)
             {
-                return new() { Artists = new(), Albums = new(), Songs = new(), HasError = true, Error = ex.Message };
+                return new SearchResponse { Artists = [], Albums = [], Songs = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -45,12 +38,12 @@ namespace FTC_MusicPlayerAPI.Controllers
         {
             try
             {
-                var response = await _youtubeService.GetSongUrl(id);
+                var response = await youtubeService.GetSongUrl(id);
                 return response;
             }
             catch (Exception ex)
             {
-                return new() { HasError = true, Error = ex.Message, Url = "" };
+                return new AudioUrlResponse { HasError = true, Error = ex.Message, Url = "" };
             }
         }
 
@@ -60,11 +53,11 @@ namespace FTC_MusicPlayerAPI.Controllers
         {
             try
             {
-                return await _youtubeService.GetAlbumSongs(id);
+                return await youtubeService.GetAlbumSongs(id);
             }
             catch (Exception ex)
             {
-                return new() { AlbumSongs = new(), HasError = true, Error = ex.Message };
+                return new AlbumSongsResponse { AlbumSongs = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -74,11 +67,11 @@ namespace FTC_MusicPlayerAPI.Controllers
         {
             try
             {
-                return await _youtubeService.GetArtistAlbums(id);
+                return await youtubeService.GetArtistAlbums(id);
             }
             catch (Exception ex)
             {
-                return new() { ArtistAlbums = new(), HasError = true, Error = ex.Message };
+                return new ArtistAlbumsResponse { ArtistAlbums = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -88,11 +81,11 @@ namespace FTC_MusicPlayerAPI.Controllers
         {
             try
             {
-                return await _youtubeService.GetArtistSongs(id);
+                return await youtubeService.GetArtistSongs(id);
             }
             catch (Exception ex)
             {
-                return new() { Songs = new(), HasError = true, Error = ex.Message };
+                return new ArtistSongsResponse { Songs = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -102,7 +95,7 @@ namespace FTC_MusicPlayerAPI.Controllers
         {
             try
             {
-                return await _youtubeService.GetArtistSubscriberCount("");
+                return await youtubeService.GetArtistSubscriberCount("");
             }
             catch (Exception ex)
             {
@@ -113,7 +106,7 @@ namespace FTC_MusicPlayerAPI.Controllers
 
         [HttpGet]
         [Route("/Youtube/GetSuggestions")]
-        public async Task<SuggestionsRespose> GetSuggestions(int artCount, int albCount, int sonCount, string intrests)
+        public async Task<SuggestionsRespose> GetSuggestions(int artCount, int albCount, int sonCount, string interests)
         {
             try
             {
@@ -122,14 +115,29 @@ namespace FTC_MusicPlayerAPI.Controllers
                     ArtistsCount = artCount,
                     AlbumsCount = albCount,
                     SongsCount = sonCount,
-                    Intrests = new(),
-                    RawIntrests = intrests
+                    Interests = [],
+                    RawInterests = interests
                 };
-                return await _youtubeService.GetSuggestions(request);
+                return await youtubeService.GetSuggestions(request);
             }
             catch (Exception ex)
             {
-                return new() { Albums = new(), Artists = new(), Songs = new(), HasError = true, Error = ex.Message };
+                return new SuggestionsRespose { Albums = [], Artists = [], Songs = [], HasError = true, Error = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        [Route("/Youtube/GetArtistLatestRelease")]
+        public async Task<LatestReleaseResponse> GetArtistLatestRelease(string artistId)
+        {
+            try
+            {
+                return new LatestReleaseResponse
+                    { LatestRelease = await youtubeService.GetArtistLatestRelease(artistId) };
+            }
+            catch (Exception ex)
+            {
+                return new LatestReleaseResponse { LatestRelease = [], HasError = true, Error = ex.Message };
             }
         }
     }

@@ -73,3 +73,4 @@
 /home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/obj/Debug/net8.0/FTC-MusicPlayerAPI.pdb
 /home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/obj/Debug/net8.0/FTC-MusicPlayerAPI.genruntimeconfig.cache
 /home/ahmedafifi/Projects/Python/FTC-Music-Player/FTC-MusicPlayerAPI/obj/Debug/net8.0/ref/FTC-MusicPlayerAPI.dll
+/home/ahmedafifi/projects/python/FTC-Music-Player/FTC-MusicPlayerAPI/bin/Debug/net8.0/System.Linq.Async.dll
