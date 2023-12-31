@@ -417,8 +417,28 @@ class SuggestionsView(ft.UserControl):
         self.player = player
         super().__init__(expand=True)
 
+    def errorRenderer(self, e):
+        """Renders the content in case of an error."""
+
+        lib.logger("SuggestionsView/errorRenderer", 'Rendered a retry button')
+        self.content.content = ft.Container(content=ft.TextButton(text='retry', 
+                                                                on_click=lambda e: self.getSuggestions()), 
+                                            alignment=ft.alignment.center) # Add a retry button in the center of the screen that invokes the getSuggestions method again.
+        self.update() # Refresh the UI.
+
     def getSuggestions(self, forceRefresh=False):
         """Gets the suggestions from the API and displays them to the user."""
+
+        self.content.content = ft.Container(
+                    content=ft.ProgressRing(),
+                    alignment=ft.alignment.center,
+                    expand=True,
+                ) # Set the content of the view to a loading indicator.
+
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+
+        self.update() # Refresh the UI.
 
         lib.logger("SuggestionsView/getSuggestions", "Getting suggestions")
         if forceRefresh or self.suggestions is None or self.suggestions.has_error: # If the suggestions are not already loaded or there was an error, get the suggestions from the API.
@@ -430,6 +450,15 @@ class SuggestionsView(ft.UserControl):
 
         if self.suggestions.has_error: # If there was an error, log it and return.
             lib.logger("SuggestionsView/getSuggestions", self.suggestions.error)
+
+            while self.page is None: # Wait for the page to be initialised.
+                pass
+
+            setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+            setattr(self.page.dialog,'content', ft.Text(self.suggestions.error)) # Set the content of the dialog.
+            setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+            setattr(self.page.dialog, 'open', True) # Open the dialog.
+            self.page.update() # Update the page.
             return
         
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
@@ -544,6 +573,15 @@ class SearchResultsView(ft.UserControl):
         self.player = player # The player to play the songs.
         super().__init__(expand=True)
 
+    def errorRenderer(self, e):
+        """Renders the content in case of an error."""
+
+        lib.logger("SuggestionsView/errorRenderer", 'Rendered a retry button')
+        self.content.content = ft.Container(content=ft.TextButton(text='retry', 
+                                                                on_click=lambda e: self.search()), 
+                                            alignment=ft.alignment.center) # Add a retry button in the center of the screen that invokes the search method again.
+        self.update() # Refresh the UI.
+
     def search(self):
         """Gets the search results from the API and displays them to the user."""
         lib.logger("SearchView/search", f"Searching for {self.query}")
@@ -568,6 +606,15 @@ class SearchResultsView(ft.UserControl):
 
         if self.results.has_error: # If there was an error, log it and return.
             lib.logger("SearchView/search", self.results.error)
+
+            while self.page is None: # Wait for the page to be initialised.
+                pass
+
+            setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+            setattr(self.page.dialog,'content', ft.Text(self.results.error)) # Set the content of the dialog.
+            setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+            setattr(self.page.dialog, 'open', True) # Open the dialog.
+            self.page.update() # Update the page.
             return
         
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.

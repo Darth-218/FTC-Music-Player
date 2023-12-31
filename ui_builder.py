@@ -22,13 +22,7 @@ class UI:
             height=120,
             padding=ft.Padding(top=0, bottom=0, left=0, right=0),
         ) # Add the player widget to the bottom app bar.
+        page.dialog = ft.AlertDialog(title=ft.Text(''), content=ft.Text(''))
         page.update() # Update the page.
 
-        # page.add(uiWidgets.Home(self.player, page=page))
-        # page.bottom_appbar = ft.BottomAppBar(
-        #     uiWidgets.PlayerWidget(self.player, page),
-        #     height=120,
-        #     padding=ft.Padding(top=0, bottom=0, left=0, right=0),
-        # )
-        # page.update()
-        # page.controls[0].onContentChange(0)
+
