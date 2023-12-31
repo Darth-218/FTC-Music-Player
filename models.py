@@ -143,6 +143,12 @@ class Player:
     def seekpos(self, pos: float):
         """Jump to a specific position in the current song."""
         raise NotImplementedError
+        
+    def getpos(self) -> float:
+        return self.player.get_position() if self.player else lib.passive()
+    
+    def gettime(self) -> int:
+        return self.player.get_time() if self.player else lib.passive()
 
     def getpos(self) -> float:
         return self.player.get_position() if self.player else lib.passive()
