@@ -7,6 +7,7 @@ import data_models as dm
 import player
 import lib
 import config
+import localfiles
 from typing import Callable, Any
 from datetime import timedelta
 from threading import Timer
@@ -128,7 +129,7 @@ class Home(ft.UserControl):
                                     expand=True, 
                                     alignment=ft.alignment.center, 
                                     padding=ft.Padding(0, 20, 0, 0)) # The view for the search tab.
-        self.browseView = ft.Container(content=ft.Text("Browse"),
+        self.browseView = ft.Container(content=localfiles.LocalView(),
                                     expand=True,
                                     alignment=ft.alignment.center,) # The view for the browse tab.
         self.settingsView = ft.Container(content=SettingsView(),

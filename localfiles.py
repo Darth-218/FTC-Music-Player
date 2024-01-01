@@ -49,7 +49,7 @@ class Local:
                         # Adds all files with ".mp3" extension and their paths to a dictionary"
                         self.getdetails(os.path.join(path, fname))
 
-                        self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"]}
+                        self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
 
             self.display(self.filepaths)
 
@@ -58,17 +58,20 @@ class Local:
         for i in target:
 
             self.localsongwidget(self.songlist,
-                                    self.songmeta["coverart"],
+                                    target[i]["cover"],
                                     target[i]["name"],
                                     target[i]["artist"],
                                     target[i]["duration"],
                                     target[i]["album"])
 
-            with open(f'{target[i]["name"]}.jpg', 'wb') as image:
-                image.write(self.songmeta["coverart"])
+            outdir = "covers"
+            os.makedirs(outdir, exist_ok = True)
+
+            with open(os.path.join(outdir, target[i]["name"]), 'wb') as image:
+                image.write(target[i]["cover"])
 
             self.localalbumwidget(self.albumlist,
-                                    ft.Image(src = f'{target[i]["name"]}.jpg', width = 255, height = 255),
+                                    ft.Image(src = os.path.join(outdir, target[i]["name"]), width = 255, height = 255),
                                     target[i]["album"],
                                     target[i]["artist"])
 
@@ -145,7 +148,7 @@ class Local:
         self.songcontainer = ft.Container(content = ft.Column([
             ft.Row([ft.Text(songname.strip('.mp3'), size = 18)]),
             ft.Row([ft.Text(f"{songduration}  |  {artistname}  |  {songalbum}")])]),
-                                          on_click = lambda _: print(self.getselectedsong(songname), self.filepaths))
+                                          on_click = lambda _: print(self.getselectedsong(songname, self.filepaths)))
 
         self.songcontainer.border = ft.border.all(1, ft.colors.GREY)
         self.songcontainer.border_radius = ft.border_radius.all(7)
@@ -174,18 +177,28 @@ class Local:
 
         albumbox.update()
 
+    def uinit(self, page: ft.Page):
+
+        page.overlay.append(Localclass.pick_files_dialog)
+        page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+        page.add(ft.Column([Localclass.albumlist, Localclass.songlist, Localclass.picker], expand = 1))
+
+        page.update()
+
+
+class LocalView(ft.UserControl):
+
+    def build(self):
+
+        return ft.Column([Localclass.albumlist, Localclass.songlist, Localclass.picker, Localclass.pick_files_dialog], expand = 1)
+
 Localclass = Local()
 
 
 def main(page: ft.Page):
 
-    page.overlay.append(Localclass.pick_files_dialog)
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-
-
-    page.add(ft.Column([Localclass.albumlist, Localclass.songlist, Localclass.picker], expand = 1))
-
-    page.update()
+    page.add(LocalView())
 
 
 if __name__ == "__main__":
