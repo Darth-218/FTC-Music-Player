@@ -1,0 +1,51 @@
+#+title: Contributors
+#+author: alchemistsGestalt
+
+* TEAM LEADER: Zein Hatem
+We work with a ton of data. From the SearchRequests that get sent to YouTube and
+the SearchResults that get sent back,  the Songs, Albums, Artists, and Playlists
+that we get from  those SearchResults or from the local files in  the OS, not to
+mention  the  player  that actually  plays  the  music,  all  of that  is  data;
+therefore, all of that has to pass through Zein.
+** Classes:
+*** Data:
+**** Application
+***** Song
+A single song, whether from YouTube or the user's file system.
+***** Artist
+An artist that has made some songs.
+***** Album
+An album containing songs an artist has made.
+***** Playlist
+A playist the user has created.
+***** User
+A user of our application.
+**** Web API
+***** SearchRequest
+A request that will be sent to our API to be eventually sent to YT.
+***** SearchResult
+The response the API has given, translated from the JSON sent from YT.
+*** API
+**** Player
+The thing that actually plays the music.
+**** PlayerState
+Enumerates the possible states that the player can be in.
+**** VlcMediaPlayer
+Implementation of Player. Uses python-vlc to play the music.
+**** PlayerWidget
+Manages the Player class and provides an interface to the user so they can
+interact with it (the bit at the bottom of the screen with the buttons and the
+slider).
+* TODO Ahmed Afifi
+There aren't any good Python libraries for communicating with YouTube over
+HTTPS, so Afifi made an API in C# that lets us do just that, as well as the
+Python API client that lets us use it. He also worked on most of the GUI.
+* TODO Ahmed Abdel-maboud
+Originally was the one responsible for, and who wrote most of, the GUI as we
+went from graphics lib to another. We switched from TKInter to customTKInter to
+kivy to curses before finally settling on something that worked. That something
+was flet, and Adbel-maboud worked on most of the scratched GUI code.
+* TODO Yahia Gaber
+The swiss army knife of our group, he worked on the system for getting songs
+from the files local to the user's machine, as well as helping with some of the
+UI among other things.
