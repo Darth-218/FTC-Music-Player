@@ -2,6 +2,7 @@
 import os
 import flet as ft
 from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3, APIC
 import data_models as dm
 from data_models import *
 
@@ -46,31 +47,38 @@ class Local:
                     if fname.endswith(".mp3"):
 
                         # Adds all files with ".mp3" extension and their paths to a dictionary"
-                        self.filepaths[fname] = os.path.join(path, fname)
+                        self.getdetails(os.path.join(path, fname))
 
-            for i in self.filepaths:
+                        self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"]}
 
-                self.getdetails(self.filepaths[i])
+            self.display(self.filepaths)
 
-                self.song.name = i
+    def display(self, target):
 
-                self.localsongwidget(self.songlist,
-                                        self.song.name,
-                                        self.songmeta["artist"],
-                                        self.songmeta["duration"],
-                                        self.songmeta["album"])
+        for i in target:
 
-                self.albums.append(self.songmeta["album"])
+            self.localsongwidget(self.songlist,
+                                    self.songmeta["coverart"],
+                                    target[i]["name"],
+                                    target[i]["artist"],
+                                    target[i]["duration"],
+                                    target[i]["album"])
 
-                self.localalbumwidget(self.albumlist, self.songmeta["album"])
+            with open(f'{target[i]["name"]}.jpg', 'wb') as image:
+                image.write(self.songmeta["coverart"])
 
-        return selected_folder
+            self.localalbumwidget(self.albumlist,
+                                    ft.Image(src = f'{target[i]["name"]}.jpg', width = 255, height = 255),
+                                    target[i]["album"],
+                                    target[i]["artist"])
 
-    def songsinalbum(self, albumnames):
+    def songdisplay(self, target, songbox):
 
-        for i in albumnames:
+        songbox.clean()
 
-            self.localalbumwidget(self.albumlist, albumnames, i)
+        for i in target:
+
+            self.localsongwidget(self.songlist, self.songmeta["coverart"], target[i]["name"], target[i]["artist"], target[i]["duration"], target[i]["album"])
 
     def pick_files_result(self, e: ft.FilePickerResultEvent):
 
@@ -87,56 +95,57 @@ class Local:
         #try:
 
         audio = EasyID3(filepath)
+        imageaudio = ID3(filepath)
+
+        for key in imageaudio.keys():
+
+            if key.startswith("APIC"):
+
+                cover = imageaudio[key].data
 
         title = audio["title"][0] if "title" in audio else None
         artist = audio["artist"][0] if "artist" in audio else None
         album = audio['album'][0] if 'album' in audio else None
-        duration = audio.info.length if hasattr(audio, 'info') and hasattr(audio.info, 'length') else None
+        duration = audio.info.length if hasattr(audio, 'info') and hasattr(audio.info, 'length') else "N/A"
 
         self.songmeta["title"] = title
         self.songmeta["artist"] = artist
         self.songmeta["album"] = album
         self.songmeta["duration"] = duration
+        self.songmeta["coverart"] = cover
 
         return self.songmeta
 
-        #except Exception as e:
-
-            #print(f"Error reading metadata for the file {filepath}")
-    
     # Function used to get the name of the selected file in the listbox "musiclist"
-    def getselected(self, songname):
+    def getselectedsong(self, songname, target):
 
-        self.song._path = self.filepaths[songname]
+        self.song._path = target[songname]["path"]
 
         return self.song._path
 
-    # Function used to create queue
-    def addtoqu(self):
+    def getselectedalbum(self, albumname, target):
 
-        # Gets selected file
-        if selectedfile:
+        songsinalbum = [x for x in target if target[x]["album"] == albumname]
 
-            # Adds selected file to queue
-            qu.append(selectedfile)
+        self.albumsongs = {}
 
-            for song in qu: # Adds all songs in queue to the queue subwindow
+        for i in songsinalbum:
 
-                pass
+            self.albumsongs[i] = target[i]
+
+        self.songdisplay(self.albumsongs, self.songlist)
 
     # A function to clear the queue
     def quclear(self): # to be re-created
 
         qu.clear()
 
-    def localsongwidget(self, songbox: ft.ListView, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
+    def localsongwidget(self, songbox: ft.ListView, songart: ft.Image, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
 
         self.songcontainer = ft.Container(content = ft.Column([
-            ft.Row([ft.Text(f"{songname.strip('.mp3')}  |  "),
-                    ft.Text(songalbum)]),
-            ft.Row([ft.Text(f"{songduration}  |  "),
-                    ft.Text(artistname)])]),
-                                          on_click = lambda _: print(self.getselected(songname)))
+            ft.Row([ft.Text(songname.strip('.mp3'), size = 18)]),
+            ft.Row([ft.Text(f"{songduration}  |  {artistname}  |  {songalbum}")])]),
+                                          on_click = lambda _: print(self.getselectedsong(songname), self.filepaths))
 
         self.songcontainer.border = ft.border.all(1, ft.colors.GREY)
         self.songcontainer.border_radius = ft.border_radius.all(7)
@@ -144,21 +153,24 @@ class Local:
         self.songcontainer.margin = 2
 
         songbox.controls.append(self.songcontainer)
-        # print(f"built {songname}")
 
         songbox.update()
 
-    def localalbumwidget(self, albumbox, albumname: str = "N/A", artistname: str = "N/A"):
+    def localalbumwidget(self, albumbox, albumcover: ft.Image, albumname: str = "N/A", artistname: str = "N/A"):
 
-        self.albumcontainer = ft.Container(content = ft.Column([ft.Text(albumname), ft.Text(artistname)]))
+        self.albumcontainer = ft.Container(content = ft.Column([
+            albumcover,
+            ft.Text(albumname,
+                    size = 18),
+            ft.Text(artistname)]), width = 255, on_click = lambda _: print(self.getselectedalbum(albumname, self.filepaths)))
 
+        self.albumcontainer.height = 275
         self.albumcontainer.border = ft.border.all(1, ft.colors.GREY)
         self.albumcontainer.border_radius = ft.border_radius.all(7)
         self.albumcontainer.padding = 5
         self.albumcontainer.margin = 2
 
         albumbox.controls.append(self.albumcontainer)
-        # print(f"built {albumname}")
 
         albumbox.update()
 
