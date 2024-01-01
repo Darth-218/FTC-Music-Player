@@ -114,7 +114,7 @@ class VlcMediaPlayer(Player):
         current = self.queue.current
         try:
             current_path = current.get_path()
-        except e:
+        except Exception as e:
             raise e
         self.player = vlc.MediaPlayer(current.get_path())
         lib.logger(
@@ -222,7 +222,7 @@ class PlayerWidget(ft.UserControl):
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         try:
             self.player.play()
-        except e:
+        except Exception as e:
             setattr(self.page.dialog, 'modal', False)
             setattr(self.page.dialog, 'title', ft.Text("Error"))
             setattr(self.page.dialog, 'content', ft.Text(e))
