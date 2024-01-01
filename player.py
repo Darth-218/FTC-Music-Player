@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import flet as ft
-from data_models import Queue
 from datetime import timedelta
 from threading import Timer
 from enum import Enum, auto
@@ -113,7 +112,7 @@ class VlcMediaPlayer(Player):
     def play(self):
         self.state = PlayerState.playing
         current = self.queue.current
-        self.player = vlc.MediaPlayer(current._path)
+        self.player = vlc.MediaPlayer(current.get_path())
         lib.logger(
             "VlcMediaPlayer/play", f"Now playing {current.name}.\nFrom {current._path}."
         )
@@ -269,7 +268,11 @@ class PlayerWidget(ft.UserControl):
         match self.repeating_song:
             case None:
                 self.repeating_song = False
+                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT_ON)
             case False:
                 self.repeating_song = True
+                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT_ONE_ON)
             case True:
                 self.repeating_song = None
+                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT)
+        self.update()

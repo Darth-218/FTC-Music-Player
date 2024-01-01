@@ -53,6 +53,9 @@ class Song(Content):
         self._path = path
         self.cover_art = cover_art
 
+    def get_path(self):
+        return self._path
+
 
 class Album(Content):
     """
