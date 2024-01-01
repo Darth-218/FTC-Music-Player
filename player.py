@@ -188,7 +188,6 @@ class PlayerWidget(ft.UserControl):
             bgcolor="#000000",
             content=ft.Column(
                 controls=[
-                    ft.Text(self.player.queue.current.name),
                     ft.Container(self.slider, width=500, alignment=ft.alignment.center),
                     ft.Row(
                         controls=[
