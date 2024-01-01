@@ -92,6 +92,8 @@ class Player:
     def change_queue(self, queue: Queue):
         """Swap the current queue of songs to another one."""
         self.queue = queue
+        lib.logger("Player/change_queue", f"Selected index: {queue.curr_index}")
+        self.queue._reset()
 
     def add_to_queue(self, song: Song):
         """Add a song to the current queue."""
@@ -220,6 +222,7 @@ class PlayerWidget(ft.UserControl):
 
     def play(self):
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
+        self.player.stop()
         try:
             self.player.play()
         except Exception as e:
