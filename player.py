@@ -38,9 +38,8 @@ class Player:
     player: Any | None
     state: PlayerState
 
-    def __init__(self, handlers, queue):
+    def __init__(self, queue):
         self.queue = queue
-        self.handlers = handlers
         self.state = PlayerState.not_started
 
     def play(self):
@@ -108,7 +107,7 @@ class VlcMediaPlayer(Player):
     player: vlc.MediaPlayer | None
 
     def __init__(self, queue: Queue):
-        super().__init__(queue)
+        super().__init__(queue=queue)
         self.player = vlc.MediaPlayer(self.queue.current._path)
 
     def play(self):
