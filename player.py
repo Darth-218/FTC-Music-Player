@@ -112,6 +112,10 @@ class VlcMediaPlayer(Player):
     def play(self):
         self.state = PlayerState.playing
         current = self.queue.current
+        try:
+            current_path = current.get_path()
+        except e:
+            raise e
         self.player = vlc.MediaPlayer(current.get_path())
         lib.logger(
             "VlcMediaPlayer/play", f"Now playing {current.name}.\nFrom {current._path}."
@@ -182,6 +186,7 @@ class PlayerWidget(ft.UserControl):
             bgcolor="#000000",
             content=ft.Column(
                 controls=[
+                    ft.Text(self.player.queue.current.name),
                     ft.Container(self.slider, width=500, alignment=ft.alignment.center),
                     ft.Row(
                         controls=[
@@ -215,7 +220,14 @@ class PlayerWidget(ft.UserControl):
 
     def play(self):
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
-        self.player.play()
+        try:
+            self.player.play()
+        except e:
+            setattr(self.page.dialog, 'modal', False)
+            setattr(self.page.dialog, 'title', ft.Text("Error"))
+            setattr(self.page.dialog, 'content', ft.Text(e))
+            setattr(self.page.dialog, 'open', True)
+            self.page.update()
         if self.player.state == PlayerState.not_started:
             self.update_slider()
 
