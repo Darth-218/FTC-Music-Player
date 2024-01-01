@@ -397,6 +397,8 @@ class SquareSongWidget(ft.TextButton):
         queue = player.Queue(
             song_list=self.songList, curr_index=self.songList.index(self.song)
         ) # The queue to play the song.
+        lib.logger("SpuareSongWidget/onSongClicked", f"The first index is {self.songList[0].name}")
+        lib.logger("SquareSongWidget/onSongClicked", f"Clicked on index {self.songList.index(self.song)}")
 
         while self.page is None: # Wait for the page to be initialised.
             pass
