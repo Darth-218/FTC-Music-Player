@@ -1128,7 +1128,7 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
             [
                 ft.Row(controls=[
                     ft.Container(ft.Image('./Assets/Images/ftc.png', width=300, height=300), padding=30),
-                    ft.Container(ft.Image('./Assets/Images/ftc.png', width=300, height=300), padding=30),
+                    ft.Container(ft.Image('./Assets/Images/ComMusic.png', width=350, height=350), padding=30),
                 ], expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 ft.Text('Ahmed Afifi', size=30, text_align=ft.TextAlign.CENTER),
                     self.string_Afifi, 
