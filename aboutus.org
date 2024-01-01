@@ -1,0 +1,23 @@
+#+title: About Us
+#+author: alchemistsGestalt
+
+* Zein Hatem
+** Data Manager
+You're probably wondering what kind of glorious leader could've organised such a
+legendary project. Well, you need wonder no more! With about 50 programming
+languages under his built--and many more to come!--This fellow will surely leave
+a good impression.
+* Ahmed Afifi
+** Web-Based Backend Developer
+Meet the man that got this team together! Without him, we probably would never
+have met each other, and without his powerful C# API, you would never have met
+your favourite songs in our app! (unless, of course, you had them downloaded
+locally).
+* TODO Ahmed Abdel-maboud
+** UX Designer
+* Yahia Gaber
+** OS-Based Backend Developer
+This man has to go through a perilous adventure every single day, crossing
+oceans and fighting *at least* three dragons (not to mention the hordes of their
+minions) just to get to his morning lectures from his abode all the way in El
+Moqattam.
