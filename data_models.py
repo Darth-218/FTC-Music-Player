@@ -13,6 +13,7 @@ the C# backend to be used by the Python frontend:
 
 import lib
 from datetime import timedelta
+from random import shuffle
 
 
 class Content:
@@ -22,7 +23,7 @@ class Content:
 
     * artist -- Channel that uploaded this content.
     * _path -- Either a local path to the file or a URL generated
-    from the C# back-end.   
+    from the C# back-end.
     """
 
     name: str
@@ -35,30 +36,33 @@ class Song(Content):
     Models a single Song that can be a part of zero or more Albums or
     Playlists, as well as followed by zero or more Users.
 
-    * name -- Song's name.   
-    * artist -- Creator of the song (channel that uploaded it).   
+    * name -- Song's name.
+    * artist -- Creator of the song (channel that uploaded it).
     * _path -- Either a local path to the song file or a URL generated
-    from the C# back-end.   
+    from the C# back-end.
     """
 
     duration: timedelta
 
-    def __init__(self, name: str, artist, path: str, duration: timedelta, cover_art: str = ''):
+    def __init__(
+        self, name: str, artist, path: str, duration: timedelta, cover_art: str = ""
+    ):
         self.name = name
         self.artist = artist
         self.duration = duration
         self._path = path
         self.cover_art = cover_art
 
+
 class Album(Content):
     """
     Immutable collection of Songs made by the same Artist and grouped
     togther.
 
-    * name       -- Name of the Album.   
-    * arist      -- Name of the Artist that made the Album.   
-    * songs      -- List of Songs in the Album.   
-    * _path      -- URL of the playlist on YT.   
+    * name       -- Name of the Album.
+    * arist      -- Name of the Artist that made the Album.
+    * songs      -- List of Songs in the Album.
+    * _path      -- URL of the playlist on YT.
     """
 
     songs: list[Song]
@@ -70,36 +74,12 @@ class Album(Content):
         self._path = path
 
 
-class Playlist(Album):
-    """
-    Playlist class to be used in the interface between the back- and
-    front-ends.
-
-    * name       -- Name of the Playlist.   
-    * arist      -- Name of the Artist that made the Playlist.   
-    * songs      -- List of Songs in the Playlist.   
-    * _path      -- Local path to the playlist folder (of the form
-    "./playlist/<name>").   
-    * add_song() -- Adds a Song to the list of Songs.   
-    """
-
-    def __init__(self, name: str, path: str, songs: list[Song] = []):
-        self.name = name
-        self.songs = songs
-        self._path = path
-
-    def add_song(self, song: Song):
-        lib.logger("Playlist/add", f"Adding {song.name} to {self.name}")
-        self.songs.append(song)
-        lib.TODO("Playlist.add_song()")
-
-
 class Artist:
     """
     An Artist class to model the data for an artist (in our case, a YouTube
     channel).
 
-    * name -- Name of the artist.   
+    * name -- Name of the artist.
     * albums -- Albums (playlists) made by the artist.
     * songs -- Songs (uploads).
     * id -- Unique identifier.
@@ -110,72 +90,86 @@ class Artist:
     songs: list[Song]
     id: str
 
-    def __init__(self,
-                 name: str,
-                 id: str = "FTC",
-                 albums: list[Album] = [],
-                 songs: list[Song] = []):
+    def __init__(
+        self,
+        name: str,
+        id: str = "FTC",
+        albums: list[Album] = [],
+        songs: list[Song] = [],
+    ):
         self.name = name
         self.id = id
         self.albums = albums
         self.songs = songs
 
 
-class User:
+class Queue:
     """
-    A User class to model the data for a user of the application.
-
-    * username         -- Personal identifier   
-    * token            -- Unique identifier made by concatenating the
-    user's username with their password and computing their SHA256.   
-    * playlists        -- List of playlists/albums the user has saved.   
-    * favourites       -- Special playlist of the user’s favourite songs.   
-    * followed_artists -- List of all the artists that the user has followed.   
-    * followed_albums  -- List of all the albums that the user has followed.   
+    Class representing a song queue with methods for interacting with
+    it, for example jumping to the next song, etc.
     """
 
-    username: str
-    token: str
-    playlists: list[Playlist]
-    favourites: Playlist
-    followed_artists: list[Artist]
-    followed_albums: list[Album]
+    song_list: list[Song] = []
+    current: Song
+    curr_index: int = 0
+    elapsed: timedelta = timedelta(0)
+    position: float = 0
+    duration: timedelta = timedelta(0)
 
-    def __init__(self, username: str, token: str):
-        self.username = username
-        self.token = token
-        self.playlists = []
-        self.favourites = Playlist("Favourites", "./playlists/favourites")
-        self.followed_artists = []
-        self.followed_albums = []
+    def __init__(
+        self,
+        song_list: list[Song] = [],
+        curr_index: int = 0,
+    ):
+        self.current = (
+            song_list[curr_index]
+            if song_list
+            else Song("No Song Selected", Artist("FTC"), "./none", timedelta(seconds=0))
+        )
+        self.song_list = song_list
 
-    def change_username(self, new_username: str):
-        lib.TODO("User.change_username()")
-        self.username = new_username
+    def _reset(self):
+        self.position = 0
+        self.current = self.song_list[self.curr_index]
+        self.duration = self.current.duration
 
-    def like_song(self, song: Song):
-        lib.TODO("User.like_song()")
-        lib.logger("User/like_song", f"User {self.username} liked {song.name}")
-        self.favourites.add_song(song)
+    def next(self):
+        """Go to the next song in the queue. If we're already at the
+        last song, reset the current state but otherwise do nothing.
+        """
+        if self.curr_index == len(self.song_list) - 1:
+            self._reset()
+            return
+        self.curr_index += 1
+        self._reset()
 
-    def follow_artist(self, artist: Artist):
-        lib.TODO("User.follow_artist()")
-        lib.logger("User/follow_artist",
-                   f"User {self.username} followed {artist.name}.")
-        self.followed_artists.append(artist)
+    def prev(self):
+        """Go to the previous song in the queue. If we're already at the
+        first song, reset the current state but otherwise do nothing.
+        """
+        if self.curr_index == 0:
+            self._reset()
+            return
+        self.curr_index -= 1
+        self._reset()
 
-    def follow_album(self, album: Album):
-        lib.TODO("User.follow_album()")
-        lib.logger("User/follow_album",
-                   f"User {self.username} followed {album.name}.")
-        self.followed_albums.append(album)
+    def add_song(self, song: Song):
+        """Add a song to the queue.
 
-    def create_playlist(self, name: str):
-        lib.TODO("User.create_playlist()")
-        playlist = Playlist(name, f"./playlists/{name}")
-        lib.logger("User/create_playlist",
-                   f"User {self.username} created playlist {name}.")
-        self.playlists.append(playlist)
+        - `song` -- A `Song` object to add to the end of the queue.
+        """
+        self.song_list.append(song)
+
+    def play_next(self, song: Song):
+        """Insert a song into the queue to be played directly after
+        the current song.
+
+        - `song` -- A `Song` object to insert to the queue.
+        """
+        self.song_list.insert(self.curr_index + 1, song)
+
+    def shuffle(self):
+        shuffle(self.song_list)
 
 
 if __name__ == "__main__":
@@ -204,8 +198,10 @@ if __name__ == "__main__":
     #     print(album.name, album._path)
     me = User("alchemistsGestalt", "34pgjtlojtnsj598ih/nhdtsprh54plej")
     asgard = Artist("Old Gods of Asgard")
-    control = Song("Take Contol",
-                   asgard,
-                   "https://rr2---sn-hpa7znzr.googlevideo.com/videoplayback?expire=1701013521&ei=sRNjZYfyOZ286dsP18edsAM&ip=41.33.235.98&id=o-AG_nX7L9YL3uqo6GFsKzpKugwRCu15V6zdK68U3Lb0gS&itag=139&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&mh=TF&mm=31%2C29&mn=sn-hpa7znzr%2Csn-hgn7rnee&ms=au%2Crdu&mv=m&mvi=2&pl=24&initcwndbps=163750&vprv=1&mime=audio%2Fmp4&gir=yes&clen=1430102&dur=234.335&lmt=1663977939377942&mt=1700991652&fvip=3&keepalive=yes&fexp=24007246&c=ANDROID_TESTSUITE&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=ANLwegAwRQIhANzPKsbvVxAhSlPF2vdrNLhlZmupVIjN57hzYB7VHAOzAiAcFeVsnKTst971e7hmhViUX4SgWeXlFl6mcXC9OHvpuA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AM8Gb2swRgIhAJr7rPIMM8Q7ql2sucDEphMjxo61Ab8gWi6I_Y4gPCkxAiEA1qCIf9v2-sZui-aZ3XkW-Xwwq-N-Rt6MaaGOzVSaEAs%3D",
-                   timedelta(minutes=3, seconds=19))
+    control = Song(
+        "Take Contol",
+        asgard,
+        "https://rr2---sn-hpa7znzr.googlevideo.com/videoplayback?expire=1701013521&ei=sRNjZYfyOZ286dsP18edsAM&ip=41.33.235.98&id=o-AG_nX7L9YL3uqo6GFsKzpKugwRCu15V6zdK68U3Lb0gS&itag=139&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&mh=TF&mm=31%2C29&mn=sn-hpa7znzr%2Csn-hgn7rnee&ms=au%2Crdu&mv=m&mvi=2&pl=24&initcwndbps=163750&vprv=1&mime=audio%2Fmp4&gir=yes&clen=1430102&dur=234.335&lmt=1663977939377942&mt=1700991652&fvip=3&keepalive=yes&fexp=24007246&c=ANDROID_TESTSUITE&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=ANLwegAwRQIhANzPKsbvVxAhSlPF2vdrNLhlZmupVIjN57hzYB7VHAOzAiAcFeVsnKTst971e7hmhViUX4SgWeXlFl6mcXC9OHvpuA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AM8Gb2swRgIhAJr7rPIMM8Q7ql2sucDEphMjxo61Ab8gWi6I_Y4gPCkxAiEA1qCIf9v2-sZui-aZ3XkW-Xwwq-N-Rt6MaaGOzVSaEAs%3D",
+        timedelta(minutes=3, seconds=19),
+    )
     control.play()
