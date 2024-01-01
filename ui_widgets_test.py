@@ -20,6 +20,50 @@ class Tab():
         self.name = name # The name of the tab
         self.content = content # The content of the tab
 
+class Navigator(ft.UserControl):
+    """A navigator for navigating between different views."""
+
+    def __init__(self, player: models.Player):
+        self.player = player # The player to play the songs.
+        self.content = ft.Container(expand=True) # The content of the navigator.
+        self.navigator = ft.Column(controls=[
+                        ft.Container(content=ft.IconButton(icon=ft.icons.ARROW_BACK_ROUNDED, 
+                            on_click=lambda e: self.back()
+                        ), 
+                        alignment=ft.alignment.top_left, 
+                        padding=ft.Padding(20, 20, 0, 0), 
+                        ), # The back button.
+                    self.content]) # The navigator.
+
+        self.history = [] # The history of the navigator.
+        super().__init__(expand=True)
+
+    def build(self):
+        return self.navigator # Return the navigator.
+
+    def open(self, view: Any):
+        """Opens a view in the navigator."""
+        lib.logger("Navigator/open", f"Opened {view}")
+
+        self.navigator.controls[1] = view # Set the content of the navigator to the view.
+        self.history.append(view)
+
+        while self.page is None:
+            pass
+
+        self.update() # Refresh the UI.
+
+    def back(self):
+        """Goes back to the previous view in the navigator."""
+        if len(self.history) <= 1:
+            lib.logger("Navigator/back", "Cannot go back any further")
+            return
+        
+        lib.logger("Navigator/back", f"Going back from {self.navigator.controls[1]} to {self.history[-2]}")
+
+        self.history.pop() # Remove the current view from the history.
+        self.navigator.controls[1] = self.history[-1] # Set the content of the navigator to the previous view.
+        self.update() # Refresh the UI.
 
 class TabView(ft.UserControl):
     """The view for the tab bar. It is responsible for displaying the
@@ -55,7 +99,6 @@ class TabView(ft.UserControl):
                                 width=150, height=50)
                             for i, tab in enumerate(self.tabs)
                         ]),),
-                # ft.VerticalDivider(),
                 self.selectedTab
             ])
         )
@@ -88,7 +131,7 @@ class Home(ft.UserControl):
         self.browseView = ft.Container(content=ft.Text("Browse"),
                                     expand=True,
                                     alignment=ft.alignment.center,) # The view for the browse tab.
-        self.settingsView = ft.Container(content=ft.Text("Settings"),
+        self.settingsView = ft.Container(content=SettingsView(),
                                     expand=True,
                                     alignment=ft.alignment.center,) # The view for the settings tab.
         super().__init__(expand=True)
@@ -192,7 +235,10 @@ class AlbumWidget(ft.TextButton):
 class SquareAlbumWidget(ft.TextButton):
     """A widget for displaying an album."""
 
-    def __init__(self, album: yt_models.OnlineAlbum):
+    def __init__(self, album: yt_models.OnlineAlbum, player, onClick: Callable[[Any], None] = None):
+        self.onClick = onClick
+        self.player = player
+        self.album = album
         super().__init__(
             content=ft.Container(
                 content=ft.Column(
@@ -221,7 +267,13 @@ class SquareAlbumWidget(ft.TextButton):
                 shape=ft.RoundedRectangleBorder(radius=25),
             ),
             width=170,
+            on_click=self.onAlbumClick,
         )
+
+    def onAlbumClick(self, e):
+        lib.logger("SquareAlbumWidget/on_click", f"Clicked on {self.content.content.controls[1].value}")
+        if self.onClick is not None:
+            self.onClick(AlbumView(album=self.album, player=self.player))
 
 
 class SongWidget(ft.TextButton):
@@ -419,6 +471,7 @@ class SuggestionsView(ft.UserControl):
                     alignment=ft.alignment.center,
                     expand=True,
                 ) # The content of the view.
+    navigator: Navigator = None # The navigator for navigating between different views.
 
     def __init__ (self, player: models.Player):
         self.player = player
@@ -435,6 +488,15 @@ class SuggestionsView(ft.UserControl):
 
     def getSuggestions(self, forceRefresh=False):
         """Gets the suggestions from the API and displays them to the user."""
+
+        if self.navigator is not None:
+            self.content.content = self.navigator # Set the content of the view to the navigator.
+
+            while self.page is None:
+                pass
+
+            self.update() # Refresh the UI.
+            return
 
         self.content.content = ft.Container(
                     content=ft.ProgressRing(),
@@ -468,6 +530,7 @@ class SuggestionsView(ft.UserControl):
             self.page.update() # Update the page.
             return
         
+        self.navigator = Navigator(player=self.player) # The navigator for navigating between different views.
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
 
         artists = HorizontalListView() # The horizontal list view for the artists.
@@ -509,7 +572,7 @@ class SuggestionsView(ft.UserControl):
             ) # Add the title to the final widget.
 
             for album in self.suggestions.albums: # For each album, add it to the albums list view.
-                albums.append(SquareAlbumWidget(album=album))
+                albums.append(SquareAlbumWidget(album=album, player=self.player, onClick=self.navigator.open))
             
             finalWidget.controls.append(
                 ft.Container(
@@ -542,12 +605,20 @@ class SuggestionsView(ft.UserControl):
                 )
             ) # Add the artists list view to the final widget.
         
-        self.content.content = finalWidget # Set the content of the view to the final widget.
+
+        self.content.content = self.navigator # Set the content of the view to the navigator.
+        # navigator.open(finalWidget) # Open the final widget in the navigator.
+        thread = threading.Thread(target=self.navigator.open, args=(finalWidget,))
+        thread.start()
+        # self.content.content = finalWidget
 
         while self.page is None: # Wait for the page to be initialised.
             pass
 
         self.update() # Refresh the UI.
+
+        lib.logger("SuggestionsView/getSuggestions", "Got suggestions")
+
 
     def refresh(self):
         self.content.content = ft.Container(
@@ -719,7 +790,7 @@ class PlayerWidget(ft.UserControl):
         )
         self.btn_repeat = ft.IconButton(icon=ft.icons.REPEAT, icon_size=40)
         self.slider = ft.Slider(min=0.0, max=1.0, on_change=self.slider_seek, value=0.0)
-        return ft.Column(
+        return ft.Container(bgcolor="#000000", content=ft.Column(
             controls=[
                 ft.Container(self.slider, width=500, alignment=ft.alignment.center),
                 ft.Row(
@@ -738,7 +809,7 @@ class PlayerWidget(ft.UserControl):
             expand=True,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.alignment.center,
-        )
+        ))
     def play_pause(self, event=None) -> None:
         """Toggles the player's currently paused/resumed state."""
         match self.player.state:
@@ -780,26 +851,40 @@ class AlbumView(ft.UserControl):
     """The view for displaying an album."""
 
     def __init__(self, album: yt_models.OnlineAlbum, player: models.Player):
-        self.album = album
-        self.player = player
+        self.album = album # The album to display.
+        self.player = player # The player to play the songs.
         self.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
-        super().__init__()
+        super().__init__(expand=True)
 
     def build(self):
-        return self.content
-        return ft.ListView(controls=ft.Container(
-            content=ft.Image(
-                src=self.album.cover_art,
-                height=500,
-                fit=ft.ImageFit.COVER,
-                ),
-            ),
-        )
+        thread = threading.Thread(target=self.getSongs) # Create a thread to get the songs for the album.
+        thread.start() # Start the thread.
+        return self.content # Return the content of the view.
     
+    def errorRenderer(self, e):
+        """Renders the content in case of an error."""
+
+        lib.logger("AlbumView/errorRenderer", 'Rendered a retry button')
+        self.content.content = ft.Container(content=ft.TextButton(text='retry', 
+                                                                on_click=lambda e: self.getSongs()), 
+                                            alignment=ft.alignment.center)
+        
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+
+        self.update() # Refresh the UI.
+
     def getSongs(self):
         """Gets the songs for the album from the API."""
 
+        lib.logger("AlbumView/getSongs", f"Getting songs for {self.album.id}")
         self.content.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+
+        self.update() # Refresh the UI.
+
         response = yt.getAlbumSongs(self.album.id)
         
         if response.has_error: # If there was an error, log it and return.
@@ -810,14 +895,289 @@ class AlbumView(ft.UserControl):
 
             setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
             setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
-            setattr(self.page.dialog,'content', ft.Text(self.results.error)) # Set the content of the dialog.
+            setattr(self.page.dialog,'content', ft.Text(response.error)) # Set the content of the dialog.
             setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
             setattr(self.page.dialog, 'open', True) # Open the dialog.
             self.page.update() # Update the page.
             return
+        
+        self.album.songs = response.songs # Set the songs of the album to the songs from the API.
 
-        finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
+        finalWidget = ft.ListView(
+            controls=[
+                ft.Container(
+                    content=
+                        ft.Row(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Image(
+                                        src=self.album.cover_art,
+                                        height=250,
+                                        width=250,
+                                        border_radius=25,
+                                        fit=ft.ImageFit.COVER,
+                                        ),
+                                    border_radius=25,
+                                ),
+                                ft.Container(
+                                    content=
+                                        ft.Column(
+                                            controls=[
+                                                ft.Text(self.album.name, font_family="lilitaone", size=50),
+                                                ft.Row(
+                                                    controls=[
+                                                        ft.Text(self.album.artist, size=20),
+                                                        ft.Text(f" ● ", size=20),
+                                                        ft.Text(f"{len(self.album.songs)} songs", size=20),
+                                                    ]
+                                                ),
+                                            ],
+                                            alignment=ft.alignment.center, 
+                                            horizontal_alignment=ft.CrossAxisAlignment.START
+                                        ),
+                                        padding=ft.Padding(top=20, bottom=20, left=20, right=20),
+                                )
+                            ]
+                        ),
+                    padding=ft.Padding(top=0, bottom=20, left=0, right=0),
+                ),
+            ]
+        ) # The final widget to display to the user.
 
         for song in response.songs: # For each song, add it to the final widget.
             finalWidget.controls.append(SongWidget(song=song, songList=response.songs, player=self.player))
+
+        self.content.content = finalWidget # Set the content of the view to the final widget.
+
+        while self.page is None:
+            pass
+
+        self.update() # Refresh the UI.
+
+
+class SettingsView(ft.UserControl):
+
+    string_Afifi = ft.Text("""\tMeet the former leader of the team while we were making the best
+presentation the university has ever seen (and will ever see, unless we
+decide to make another one in the future)! This guy has made his very own
+music streaming mobile application in dart, not to mention countless
+arduino projects in the microprocessor's modified C++; from an AC remote
+controllable from your laptop to hacking the Pentagon (one of these is
+true, not sure which one), this dude's got you covered.""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_zein = ft.Text("""\tIt is never very hard to find this guy, all you have to do is look for
+someone with impeccable fashion sense and a great hat. From Magic: the
+Gathering to YuGiOh! to Flesh and Blood to any
+variant of  he'll dominate you in any card game you
+challenge him at. He's also proficient in many languages, including
+Python, C#, C++, Rust, Haskell, and Uiua; not to mention human languages.""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_yahia = ft.Text("""\tComing all the way from the most expensive city in (the Egyptian version
+of) Monopoly, el-Moqattam, our team leader has absolutely no fear. Either that
+or he's suicidal. I'm not sure which. What I do know, however,
+is that he's made multiple projects in Python before.""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_AbdElmaboud = ft.Text("""\tHe's completely unbeatable in League of Legends and Elden Ring, and he's
+won a free ticket to Sa'yet el Sāwi by just being so damn awesome.
+Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", size=15, text_align=ft.TextAlign.CENTER)
+
+    def __init__(self):
+        super().__init__()
+        self.numberOfArtistsPerInterest = ft.TextField(width=120, border_color='grey94')
+
+        self.numberOfAlbumsPerInterest = ft.TextField(width=120, border_color='grey94')
+
+        self.numberOfSongsPerInterest = ft.TextField(width=120, border_color='grey94')
+
+        self.numberOfSearchArtists = ft.TextField(width=120, border_color='grey94')
+
+        self.numberOfSearchAlbums = ft.TextField(width=120, border_color='grey94')
+
+        self.numberOfSearchSongs = ft.TextField(width=120, border_color='grey94')
+
+        self.interest = ft.TextField()
+
+    def build(self):
+        return ft.Container(ft.Column(
+            [
+                ft.Row([
+                    ft.Text("Appearance", size=20),
+                    ft.Dropdown(
+                        width=125,
+                        border_color='grey94',
+                        options=[
+                            ft.dropdown.Option('Light mode'),
+                            ft.dropdown.Option('Dark mode'),
+                ],
+                ),
+        ],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        ),
+
             
+            ft.Row(
+                [
+                    ft.Text('number Of Artists Per Interest', size=20),
+                    self.numberOfArtistsPerInterest,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.Text('number Of Albums Per Interest', size=20),
+                    self.numberOfAlbumsPerInterest,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.Text('number Of Songs Per Interest', size=20),
+                    self.numberOfSongsPerInterest,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.Text('number Of Search Artists', size=20),
+                    self.numberOfSearchArtists,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.Text('number Of Search Albums', size=20),
+                    self.numberOfSearchAlbums,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.Text('number Of Search Songs', size=20),
+                    self.numberOfSearchSongs,
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.OutlinedButton('Save', width=120, on_click=self.on_save),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.OutlinedButton("Add interest", on_click=self.open_dialouge),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.OutlinedButton('About Us', on_click=self.Open_About_us_popup),
+                    
+                    
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            )
+
+
+        ],
+        spacing=40,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.CENTER,
+        width=800,
+        ),
+        expand=1,
+        alignment=ft.alignment.center,
+        )
+    
+    def on_save(self, e):
+
+        if self.numberOfArtistsPerInterest.value:
+            config.numberOfArtistsPerInterest = self.numberOfArtistsPerInterest.value
+
+        if self.numberOfAlbumsPerInterest.value:
+            config.numberOfAlbumsPerInterest = self.numberOfAlbumsPerInterest.value
+
+        if self.numberOfSongsPerInterest.value:
+            config.numberOfSongsPerInterest = self.numberOfSongsPerInterest.value
+
+        if self.numberOfSearchArtists.value:
+            config.numberOfSearchArtists = self.numberOfSearchArtists.value
+
+        if self.numberOfSearchAlbums.value:
+            config.numberOfSearchAlbums = self.numberOfSearchAlbums.value
+
+        if self.numberOfSearchSongs.value:
+            config.numberOfSearchSongs = self.numberOfSearchSongs.value
+
+
+    def Open_About_us_popup(self, e):
+        while self.page is None:
+            pass
+
+        setattr(self.page.dialog, 'modal', False)
+        setattr(self.page.dialog, 'title', ft.Text('About Us'))
+        setattr(self.page.dialog, 'content', ft.ListView(
+            [
+                ft.Row(controls=[
+                    ft.Container(ft.Image('./Assets/Images/ftc.png', width=300, height=300), padding=30),
+                    ft.Container(ft.Image('./Assets/Images/ftc.png', width=300, height=300), padding=30),
+                ], expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                ft.Text('Ahmed Afifi', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_Afifi, 
+                ft.Text('Zein Hatem Hafez', size=30, text_align=ft.TextAlign.CENTER), 
+                    self.string_zein,
+                ft.Text('Yahia Hany Gaber', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_yahia,
+                ft.Text('Ahmed Abdelmaboud', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_AbdElmaboud,], width=800,))
+        # setattr(self.page.dialog, 'actions', [ft.ElevatedButton('Close', on_click=self.Close_About_us_popup)])
+        setattr(self.page.dialog, 'open', True)
+
+        self.page.update()
+
+
+    def Close_About_us_popup(self, e):
+        while self.page is None:
+            pass
+
+        setattr(self.page.dialog, 'open', False)
+        self.page.update()
+
+
+    def add_interest(self, e):
+        if self.interest.value:
+            if config.interests2 == '':
+                config.interests2 += f'{self.interest.value}--)0'
+            else:
+                config.interests2 += f'|*|{self.interest.value}--)0'
+            while self.page is None:
+                pass
+            setattr(self.page.dialog, 'open', False)
+            self.page.update()
+            print(config.interests2)
+
+
+    def close_popup(self, e):
+            setattr(self.page.dialog, 'open', False)
+            self.page.update()
+
+
+    def open_dialouge(self, e):
+        while self.page is None:
+            pass
+
+        setattr(self.page.dialog, 'modal', True)
+        setattr(self.page.dialog, 'title', ft.Text('Add Interest'))
+        setattr(self.page.dialog, 'content', self.interest)
+        setattr(self.page.dialog, 'actions', [ft.ElevatedButton('Add', on_click=self.add_interest), ft.ElevatedButton('Close', on_click=self.close_popup)])
+        setattr(self.page.dialog, 'open', True)
+
+        self.page.update()

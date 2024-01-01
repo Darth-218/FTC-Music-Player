@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "tBP9K+1ywPw/Ywz+BbdvA6B9b+R4YsroD+kMHjyxr+310IB83xUtigfubDu6xG45xM4VkymwnhWM30/hfgKG/g==",
+  "dgSpecHash": "8y8N9zqocbfpKC0ZZmviSWrrJ0bfH/pEF2xMv1RGwsxjk2QEraASQmeT3d3H3WkcRnCr/EtRnVw6QeHWWrbp7w==",
   "success": true,
   "projectFilePath": "/home/ahmedafifi/projects/python/FTC-Music-Player/FTC-MusicPlayerAPI/FTC-MusicPlayerAPI.csproj",
   "expectedPackageFiles": [
@@ -67,7 +67,10 @@
     "/home/ahmedafifi/.nuget/packages/system.text.json/4.7.2/system.text.json.4.7.2.nupkg.sha512",
     "/home/ahmedafifi/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "/home/ahmedafifi/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
-    "/home/ahmedafifi/.nuget/packages/youtubeexplode/6.3.9/youtubeexplode.6.3.9.nupkg.sha512"
+    "/home/ahmedafifi/.nuget/packages/youtubeexplode/6.3.9/youtubeexplode.6.3.9.nupkg.sha512",
+    "/home/ahmedafifi/.nuget/packages/microsoft.netcore.app.ref/7.0.14/microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
+    "/home/ahmedafifi/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.14/microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512",
+    "/home/ahmedafifi/.nuget/packages/microsoft.netcore.app.host.linux-x64/7.0.14/microsoft.netcore.app.host.linux-x64.7.0.14.nupkg.sha512"
   ],
   "logs": []
 }
