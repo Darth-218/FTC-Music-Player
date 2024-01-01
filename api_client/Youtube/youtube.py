@@ -11,6 +11,7 @@ import requests
 import json
 import api_client.Youtube.api_models as yt_models
 
+
 def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
     """
     Invokes a Search Request via api_client.

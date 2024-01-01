@@ -3,6 +3,7 @@ sys.path.append("../FTC-Music-Player")
 
 from datetime import timedelta
 import data_models
+import lib
 
 #Represents a Song object that is obtained from the API.
 class OnlineSong(data_models.Song):
@@ -19,6 +20,19 @@ class OnlineSong(data_models.Song):
         self.artist = 'artist'
         self._path = ''
 
+    def get_path(self):
+        if self._path == '':
+            from api_client.Youtube.youtube import getSongUrl
+            response = getSongUrl(self.id)
+
+            if response.has_error:
+                lib.logger("OnlineSong/get_path", f"Error: {response.error}")
+                raise Exception(response.error)
+            else:
+                lib.logger("OnlineSong/get_path", f"Got path: {response.url}")
+                self._path = response.url
+
+        return self._path
 #Represents an Album object that is obtained from the API.
 class OnlineAlbum(data_models.Album):
     id: str

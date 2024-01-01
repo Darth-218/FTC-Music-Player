@@ -312,16 +312,16 @@ class SongWidget(ft.TextButton):
     def onSongClicked(self, e):
         """Called when the song is clicked. It plays the song."""
 
-        if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
-            lib.logger(
-                "SquareSongWidget/onSongClicked",
-                f"Clicked on {self.song.id} by {self.song.artist_id}",
-            )
+        # if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
+        #     lib.logger(
+        #         "SquareSongWidget/onSongClicked",
+        #         f"Clicked on {self.song.id} by {self.song.artist_id}",
+        #     )
 
-            response = yt.getSongUrl(self.song.id) # The response from the API.
+        #     response = yt.getSongUrl(self.song.id) # The response from the API.
             
-            if not response.has_error: # If there was no error, set the path of the song to the URL.
-                self.song._path = response.url
+        #     if not response.has_error: # If there was no error, set the path of the song to the URL.
+        #         self.song._path = response.url
             
         queue = player.Queue(
             song_list=self.songList, curr_index=self.songList.index(self.song)
@@ -382,16 +382,16 @@ class SquareSongWidget(ft.TextButton):
     def onSongClicked(self, e):
         """Called when the song is clicked. It plays the song."""
 
-        if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
-            lib.logger(
-                "SquareSongWidget/onSongClicked",
-                f"Clicked on {self.song.id} by {self.song.artist_id}",
-            )
+        # if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
+        #     lib.logger(
+        #         "SquareSongWidget/onSongClicked",
+        #         f"Clicked on {self.song.id} by {self.song.artist_id}",
+        #     )
 
-            response = yt.getSongUrl(self.song.id) # The response from the API.
+        #     response = yt.getSongUrl(self.song.id) # The response from the API.
 
-            if not response.has_error: # If there was no error, set the path of the song to the URL.
-                self.song._path = response.url
+        #     if not response.has_error: # If there was no error, set the path of the song to the URL.
+        #         self.song._path = response.url
             
         queue = player.Queue(
             song_list=self.songList, curr_index=self.songList.index(self.song)
@@ -711,7 +711,7 @@ class SearchResultsView(ft.UserControl):
             artists.append(SquareArtistWidget(artist=artist))
         
         for album in self.results.albums: # For each album, add it to the albums list view.
-            albums.append(SquareAlbumWidget(album=album))
+            albums.append(SquareAlbumWidget(album=album, player=self.player))
         
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
         
