@@ -3,14 +3,14 @@
 import flet as ft
 # import ui_widgets as uiWidgets
 import ui_widgets_test as uiWidgets
-import models
+import player
 
 
 class UI:
     """Initialise the GUI window.
     """
 
-    def __init__(self, player: models.Player) -> None:
+    def __init__(self, player: player.Player) -> None:
         self.player = player # The player that will play all audio.
         ft.app(self.open_home) # Open the home page.
 

@@ -4,7 +4,7 @@ import flet as ft
 import api_client.Youtube.api_models as yt_models
 import api_client.Youtube.youtube as yt
 import data_models as dm
-import models
+import player
 import lib
 import config
 from typing import Callable, Any
@@ -23,7 +23,7 @@ class Tab():
 class Navigator(ft.UserControl):
     """A navigator for navigating between different views."""
 
-    def __init__(self, player: models.Player):
+    def __init__(self, player: player.Player):
         self.player = player # The player to play the songs.
         self.content = ft.Container(expand=True) # The content of the navigator.
         self.navigator = ft.Column(controls=[
@@ -119,7 +119,7 @@ class Home(ft.UserControl):
     different views to the user.
     """
 
-    def __init__(self, player: models.Player):
+    def __init__(self, player: player.Player):
         self.player = player
         self.suggestionsView = ft.Container(content=SuggestionsView(player=player),
                                         expand=True,
@@ -323,7 +323,7 @@ class SongWidget(ft.TextButton):
             if not response.has_error: # If there was no error, set the path of the song to the URL.
                 self.song._path = response.url
             
-        queue = models.Queue(
+        queue = player.Queue(
             song_list=self.songList, curr_index=self.songList.index(self.song)
         ) # The queue to play the song.
 
@@ -393,7 +393,7 @@ class SquareSongWidget(ft.TextButton):
             if not response.has_error: # If there was no error, set the path of the song to the URL.
                 self.song._path = response.url
             
-        queue = models.Queue(
+        queue = player.Queue(
             song_list=self.songList, curr_index=self.songList.index(self.song)
         ) # The queue to play the song.
 
@@ -479,7 +479,7 @@ class SuggestionsView(ft.UserControl):
                 ) # The content of the view.
     navigator: Navigator = None # The navigator for navigating between different views.
 
-    def __init__ (self, player: models.Player):
+    def __init__ (self, player: player.Player):
         self.player = player
         super().__init__(expand=True)
 
@@ -652,7 +652,7 @@ class SearchResultsView(ft.UserControl):
                 ), expand=True) # The content of the view.
     results: yt_models.SearchResponse = None # The search API response.
 
-    def __init__(self, player: models.Player, query: str):
+    def __init__(self, player: player.Player, query: str):
         self.query = query # The query to search for.
         self.player = player # The player to play the songs.
         super().__init__(expand=True)
@@ -739,7 +739,7 @@ class SearchView(ft.UserControl):
     search results to the user.
     """
 
-    def __init__(self, player: models.Player):
+    def __init__(self, player: player.Player):
         super().__init__(expand=True)
         self.player = player # The player to play the songs.
         self.searchField: Search_bar_widget = Search_bar_widget(onSubmit=self.onSearch) # The search bar widget.
@@ -774,7 +774,7 @@ class PlayerWidget(ft.UserControl):
     btn_repeat: ft.IconButton
     slider: ft.Slider
 
-    def __init__(self, player: models.Player):
+    def __init__(self, player: player.Player):
         super().__init__()
         self.player = player
 
@@ -819,10 +819,10 @@ class PlayerWidget(ft.UserControl):
     def play_pause(self, event=None) -> None:
         """Toggles the player's currently paused/resumed state."""
         match self.player.state:
-            case models.PlayerState.playing:
+            case player.PlayerState.playing:
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PLAY_CIRCLE)
-            case models.PlayerState.paused:
+            case player.PlayerState.paused:
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.update()
@@ -856,7 +856,7 @@ class PlayerWidget(ft.UserControl):
 class AlbumView(ft.UserControl):
     """The view for displaying an album."""
 
-    def __init__(self, album: yt_models.OnlineAlbum, player: models.Player):
+    def __init__(self, album: yt_models.OnlineAlbum, player: player.Player):
         self.album = album # The album to display.
         self.player = player # The player to play the songs.
         self.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)

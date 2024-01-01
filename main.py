@@ -6,7 +6,7 @@ interface) and starts the program.
 """
 
 from time import sleep
-from models import *
+from player import *
 import ui_builder
 import api_client.Youtube.youtube as yt
 

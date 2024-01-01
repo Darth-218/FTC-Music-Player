@@ -5,6 +5,8 @@ from datetime import timedelta
 from threading import Timer
 from enum import Enum, auto
 from typing import Callable, Any
+from data_models import *
+import lib
 import vlc
 
 
@@ -32,7 +34,7 @@ class Player:
     """
 
     queue: Queue
-    handlers: dict[HandlerType, Callable[[], None]]
+    # handlers: dict[HandlerType, Callable[[], None]]
     player: Any | None
     state: PlayerState
 
@@ -105,8 +107,8 @@ class VlcMediaPlayer(Player):
 
     player: vlc.MediaPlayer | None
 
-    def __init__(self, handlers: dict[HandlerType, Callable[[], None]], queue: Queue):
-        super().__init__(handlers, queue)
+    def __init__(self, queue: Queue):
+        super().__init__(queue)
         self.player = vlc.MediaPlayer(self.queue.current._path)
 
     def play(self):
@@ -139,11 +141,6 @@ class VlcMediaPlayer(Player):
         self.player.stop() if self.player else lib.passive()
         self.queue = queue
         self.play()
-        self.handlers.get(HandlerType.on_source_changed, lib.passive)
-
-    def _add_handler(self, handler: Callable[[], None], type: HandlerType):
-        self.handlers[type] = handler
-
 
 class PlayerWidget(ft.UserControl):
     """A Player widget at the bottom of the screen having buttons
@@ -210,10 +207,10 @@ class PlayerWidget(ft.UserControl):
     def play_pause(self, event=None) -> None:
         """Toggles the player's currently paused/resumed state."""
         match self.player.state:
-            case models.PlayerState.playing:
+            case PlayerState.playing:
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PLAY_CIRCLE)
-            case models.PlayerState.paused:
+            case PlayerState.paused:
                 self.player.pause()
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.update()
