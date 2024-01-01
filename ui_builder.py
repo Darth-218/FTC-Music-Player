@@ -24,7 +24,7 @@ class UI:
             height=120,
             padding=ft.Padding(top=0, bottom=0, left=0, right=0),
         ) # Add the player widget to the bottom app bar.
-        page.dialog = ft.AlertDialog(title=ft.Text(''), content=ft.Text(''))
+        page.dialog = ft.AlertDialog(title=ft.Text(''), content=ft.Text('')) # Add the alert dialog to the page.
         page.update() # Update the page.
 
 

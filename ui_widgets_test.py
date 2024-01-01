@@ -279,7 +279,7 @@ class SquareAlbumWidget(ft.TextButton):
 class SongWidget(ft.TextButton):
     """A widget for displaying a song."""
 
-    def __init__(self, song: dm.Song, songList: list[dm.Song], player: models.Player):
+    def __init__(self, song: dm.Song, songList: list[dm.Song]):
         self.songList: list[dm.Song] = songList
         self.song: yt_models.OnlineSong = song
         super().__init__(
@@ -306,10 +306,10 @@ class SongWidget(ft.TextButton):
             style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=25),
             ),
-            on_click=lambda e: self.onSongClicked(e, player=player), # Call onSongClicked when the song is clicked.
+            on_click=lambda e: self.onSongClicked(e), # Call onSongClicked when the song is clicked.
         )
 
-    def onSongClicked(self, e, player: models.Player):
+    def onSongClicked(self, e):
         """Called when the song is clicked. It plays the song."""
 
         if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
@@ -327,16 +327,19 @@ class SongWidget(ft.TextButton):
             song_list=self.songList, curr_index=self.songList.index(self.song)
         ) # The queue to play the song.
 
-        player.stop() # Stop the player.
-        player.change_queue(queue=queue) # Change the queue of the player.
-        player.play() # Play the song.
+        while self.page is None:
+            pass
+        while self.page.bottom_appbar is None:
+            pass
+        self.page.bottom_appbar.content.player.change_queue(queue=queue) # Change the queue of the player.
+        self.page.bottom_appbar.content.play() # Play the song in the player widget.
 
 
 class SquareSongWidget(ft.TextButton):
     """A widget for displaying a song."""
 
     def __init__(
-        self, song: yt_models.OnlineSong, songList: list[dm.Song], player: models.Player
+        self, song: yt_models.OnlineSong, songList: list[dm.Song]
     ):
         self.song: yt_models.OnlineSong = song
         self.songList: list[dm.Song] = songList
@@ -373,10 +376,10 @@ class SquareSongWidget(ft.TextButton):
                 shape=ft.RoundedRectangleBorder(radius=25),
             ),
             width=170,
-            on_click=lambda e: self.onSongClicked(e, player=player),
+            on_click=lambda e: self.onSongClicked(e), # Call onSongClicked when the song is clicked.
         )
 
-    def onSongClicked(self, e, player: models.Player):
+    def onSongClicked(self, e):
         """Called when the song is clicked. It plays the song."""
 
         if type(self.song) is yt_models.OnlineSong: # If the song is an online song, get the URL for the song.
@@ -394,9 +397,12 @@ class SquareSongWidget(ft.TextButton):
             song_list=self.songList, curr_index=self.songList.index(self.song)
         ) # The queue to play the song.
 
-        player.stop() # Stop the player.
-        player.change_queue(queue=queue) # Change the queue of the player.
-        player.play() # Play the song.
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+        while self.page.bottom_appbar is None: # Wait for the bottom app bar to be initialised.
+            pass
+        self.page.bottom_appbar.content.player.change_queue(queue=queue) # Change the queue of the player.
+        self.page.bottom_appbar.content.play() # Play the song in the player widget.
 
 
 class HorizontalListView(ft.Row):
@@ -550,7 +556,7 @@ class SuggestionsView(ft.UserControl):
             for song in self.suggestions.songs: # For each song, add it to the songs list view.
                 songs.append(
                     SquareSongWidget(
-                        song=song, songList=self.suggestions.songs, player=self.player
+                        song=song, songList=self.suggestions.songs
                     )
                 )
             
@@ -710,7 +716,7 @@ class SearchResultsView(ft.UserControl):
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
         
         for song in self.results.songs: # For each song, add it to the final widget.
-            finalWidget.controls.append(SongWidget(song=song, songList=self.results.songs, player=self.player))
+            finalWidget.controls.append(SongWidget(song=song, songList=self.results.songs))
         
         finalWidget.controls.append(artists) # Add the artists list view to the final widget.
         
@@ -945,7 +951,7 @@ class AlbumView(ft.UserControl):
         ) # The final widget to display to the user.
 
         for song in response.songs: # For each song, add it to the final widget.
-            finalWidget.controls.append(SongWidget(song=song, songList=response.songs, player=self.player))
+            finalWidget.controls.append(SongWidget(song=song, songList=response.songs))
 
         self.content.content = finalWidget # Set the content of the view to the final widget.
 
