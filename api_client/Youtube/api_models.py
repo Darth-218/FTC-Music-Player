@@ -59,6 +59,7 @@ class OnlineArtist(data_models.Artist):
         self.cover_art = cover_art
         self.albums = albums
         self.songs = songs
+        self.latestRelease = None
         self._path = ''
         self._url = ''
 

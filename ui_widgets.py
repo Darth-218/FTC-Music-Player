@@ -184,10 +184,11 @@ class ArtistWidget(ft.TextButton):
 class SquareArtistWidget(ft.TextButton):
     """A widget for displaying an artist."""
 
-    def __init__(self, artist: yt_models.OnlineArtist, onClick: Callable[[Any], None] = None, albumClick: Callable[[Any], None] = None):
+    def __init__(self, artist: yt_models.OnlineArtist, onClick: Callable[[Any], None] = None, albumClick: Callable[[Any], None] = None, viewAllClick: Callable[[Any], None] = None):
         self.artist = artist
         self.onClick = onClick
         self.albumClick = albumClick
+        self.viewAllClick = viewAllClick
         super().__init__(
             content=ft.Container(
                 content=ft.Column(
@@ -223,7 +224,7 @@ class SquareArtistWidget(ft.TextButton):
         lib.logger("SquareArtistWidget/on_click", f"Clicked on {self.content.content.controls[1].value}") # Log the click.
 
         if self.onClick is not None: # If the onClick callback is provided, call it.
-            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick)) # Open the artist view.
+            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick, viewAllClick=self.viewAllClick)) # Open the artist view.
 
 
 class AlbumWidget(ft.TextButton):
@@ -970,12 +971,14 @@ class AlbumView(ft.UserControl):
 class ArtistView(ft.UserControl):
     """The view for displaying an artist."""
 
-    def __init__(self, artist: yt_models.OnlineArtist, albumClick: Callable[[Any], None]):
+    def __init__(self, artist: yt_models.OnlineArtist, albumClick: Callable[[Any], None], viewAllClick: Callable[[Any], None]):
         self.albumClick = albumClick
+        self.viewAllClick = viewAllClick
         self.artist = artist
         self.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
         super().__init__(expand=True)
-        self.response = None
+        self.albumsResponse = None
+        self.latestReleaseResponse = None
 
     def errorRenderer(self, e):
         """Renders the content in case of an error."""
@@ -990,10 +993,10 @@ class ArtistView(ft.UserControl):
 
         self.update() # Refresh the UI.
 
-    def getAlbums(self):
+    def getArtist(self):
         """Gets the albums for the artist from the API."""
 
-        lib.logger("ArtistView/getAlbums", f"Getting albums for {self.artist.id}")
+        lib.logger("ArtistView/getArtist", f"Getting artist {self.artist.id}")
         self.content.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True) # Set the content of the view to a loading indicator.
 
         while self.page is None: # Wait for the page to be initialised.
@@ -1001,24 +1004,43 @@ class ArtistView(ft.UserControl):
 
         self.update() # Refresh the UI.
 
-        if self.response is None or self.response.has_error: # If the albums are not already loaded or there was an error, get the albums from the API.
-            self.response = yt.getArtistAlbums(self.artist.id) # The API response.
+        if self.albumsResponse is None or self.albumsResponse.has_error: # If the albums are not already loaded or there was an error, get the albums from the API.
+            self.albumsResponse = yt.getArtistAlbums(self.artist.id) # The API response.
 
-        if self.response.has_error: # If there was an error, log it and return.
-            lib.logger("ArtistView/getAlbums", self.response.error)
+        if self.albumsResponse.has_error: # If there was an error, log it and return.
+            lib.logger("ArtistView/getArtist", "error getting albums: " + self.albumsResponse.error)
 
             while self.page is None: # Wait for the page to be initialised.
                 pass
 
             setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
             setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
-            setattr(self.page.dialog,'content', ft.Text(self.response.error)) # Set the content of the dialog.
+            setattr(self.page.dialog,'content', ft.Text(self.albumsResponse.error)) # Set the content of the dialog.
             setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
             setattr(self.page.dialog, 'open', True) # Open the dialog.
             self.page.update() # Update the page.
             return
         
-        self.artist.albums = self.response.albums # Set the albums of the artist to the albums from the API.
+        self.artist.albums = self.albumsResponse.albums # Set the albums of the artist to the albums from the API.
+
+        if self.latestReleaseResponse is None or self.latestReleaseResponse.has_error:
+            self.latestReleaseResponse = yt.getLatestRelease(self.artist.id)
+
+            if self.latestReleaseResponse.has_error:
+                lib.logger("ArtistView/getArtist", "error getting latestRelease: " + self.latestReleaseResponse.error)
+
+                while self.page is None: # Wait for the page to be initialised.
+                    pass
+
+                setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
+                setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+                setattr(self.page.dialog,'content', ft.Text(self.albumsResponse.error)) # Set the content of the dialog.
+                setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+                setattr(self.page.dialog, 'open', True) # Open the dialog.
+                self.page.update() # Update the page.
+                return
+            
+            self.artist.latestRelease = self.latestReleaseResponse.latestRelease
 
         finalWidget = ft.ListView(
             controls=[
@@ -1061,15 +1083,28 @@ class ArtistView(ft.UserControl):
             ]
         ) # The final widget to display to the user.
 
-        if len(self.response.albums) > 0: # If there are albums to display, display them.
+        if len(self.albumsResponse.albums) > 0: # If there are albums to display, display them.
             finalWidget.controls.append(ft.Text("Albums", font_family="lilitaone", size=40)) # Add the title to the final widget.
 
         albums = HorizontalListView() # The horizontal list view for the albums.
 
-        for album in self.response.albums: # For each album, add it to the final widget.
+        for album in self.albumsResponse.albums: # For each album, add it to the final widget.
             albums.append(SquareAlbumWidget(album=album, onClick=self.albumClick))
 
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
+
+        if len(self.latestReleaseResponse.latestRelease) > 0:
+            finalWidget.controls.append(ft.Row(
+                controls=[
+                    ft.Text("Songs", font_family="lilitaone", size=40),
+                    ft.TextButton(text="View all", on_click= lambda e: self.viewAllClick())
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            )) # Add the title to the final widget.
+
+        for song in self.latestReleaseResponse.latestRelease:
+            finalWidget.controls.append(SongWidget(song, self.latestReleaseResponse.latestRelease))
+
         self.content.content = finalWidget # Set the content of the view to the final widget.
 
         while self.page is None: # Wait for the page to be initialised.
@@ -1078,7 +1113,74 @@ class ArtistView(ft.UserControl):
         self.update() # Refresh the UI.
 
     def build(self):
-        thread = threading.Thread(target=self.getAlbums)
+        thread = threading.Thread(target=self.getArtist)
+        thread.start()
+        return self.content
+    
+
+class SongsView(ft.UserControl):
+    def __init__(self, artist: yt_models.OnlineArtist):
+        self.artist = artist
+        self.songsResponse: yt_models.GetArtistSongsResponse = None
+        self.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True)
+        super().__init__(expand=True)
+
+    def errorRenderer(self, e):
+        """Renders the content in case of an error."""
+
+        lib.logger("SongsView/errorRenderer", 'Rendered a retry button')
+        self.content.content = ft.Container(content=ft.TextButton(text='retry', 
+                                                                on_click=lambda e: self.getSongs()), 
+                                            alignment=ft.alignment.center)
+        
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+
+        self.update() # Refresh the UI.
+
+    def getSongs(self):
+        lib.logger("SongView/getSongs", f"Getting Songs for the artist: {self.artist.name} with id: {self.artist.id}")
+
+        self.content.content = ft.Container(content=ft.ProgressRing(), alignment=ft.alignment.center, expand=True) # Set the content of the view to a loading indicator.
+
+        while self.page is None: # Wait for the page to be initialised.
+            pass
+
+        self.update() # Refresh the UI.
+
+        if self.songsResponse is None or self.songsResponse.has_error:
+            self.songsResponse = yt.getArtistSongs(self.artist.id)
+
+            if self.songsResponse.has_error:
+                lib.logger("SongsView/getSongs", f"error getting songs: {self.songsResponse.error}")
+
+                while self.page is None: # Wait for the page to be initialised.
+                    pass
+
+                setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
+                setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+                setattr(self.page.dialog,'content', ft.Text(self.songsResponse.error)) # Set the content of the dialog.
+                setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+                setattr(self.page.dialog, 'open', True) # Open the dialog.
+                self.page.update() # Update the page.
+                return
+            
+            finalWidget = ft.ListView(controls=[
+                ft.Row(controls=[ft.Text("Songs", font_family="lilitaone", size=40)], alignment=ft.MainAxisAlignment.CENTER)
+            ])
+
+            for song in self.songsResponse.songs:
+                finalWidget.controls.append(SongWidget(song, self.songsResponse.songs))
+
+            self.content.content = finalWidget
+
+            while self.page is None:
+                pass
+
+            self.update()
+
+    def build(self):
+        thread = threading.Thread(target=self.getSongs)
         thread.start()
         return self.content
 

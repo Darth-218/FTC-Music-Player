@@ -92,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/ahmedafifi/development/.dotnet/sdk/8.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/ahmedafifi/.dotnet/sdk/8.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -11,6 +11,7 @@ import requests
 import json
 import api_client.Youtube.api_models as yt_models
 import lib
+from datetime import timedelta
 
 
 def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
@@ -45,7 +46,7 @@ def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
 
     try:
         #Creates the SearchResponse object from the parsed data.
-        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["songs"]]
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song['duration']) for song in parsed_data["songs"]]
         albums = [yt_models.OnlineAlbum(album["id"], album["artistId"], album["name"], album["coverArt"], []) for album in parsed_data["albums"]]
         artists = [yt_models.OnlineArtist(artist["id"], artist["name"], artist["coverArt"], [], []) for artist in parsed_data["artists"]]
         searchResponse = yt_models.SearchResponse(parsed_data["hasError"], parsed_data["error"], artists, albums, songs)
