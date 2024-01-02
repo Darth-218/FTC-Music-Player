@@ -138,6 +138,12 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
                     
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+
+            ft.Row(
+                [
+                    ft.OutlinedButton('contributors')
+                ]
             )
 
 

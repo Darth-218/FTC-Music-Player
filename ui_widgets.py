@@ -1193,29 +1193,77 @@ class SongsView(ft.UserControl):
 
 class SettingsView(ft.UserControl):
 
-    string_Afifi = ft.Text("""\tMeet the former leader of the team while we were making the best
-presentation the university has ever seen (and will ever see, unless we
-decide to make another one in the future)! This guy has made his very own
-music streaming mobile application in dart, not to mention countless
-arduino projects in the microprocessor's modified C++; from an AC remote
-controllable from your laptop to hacking the Pentagon (one of these is
-true, not sure which one), this dude's got you covered.""", size=15, text_align=ft.TextAlign.CENTER)
+    string_Afifi = ft.Text("""\tWeb-Based Backend Developer
+Meet the man that got this team together! Without him, we probably would never
+have met each other, and without his powerful C# API, you would never have met
+your favourite songs in our app! (unless, of course, you had them downloaded
+locally).""", size=15, text_align=ft.TextAlign.CENTER)
 
-    string_zein = ft.Text("""\tIt is never very hard to find this guy, all you have to do is look for
-someone with impeccable fashion sense and a great hat. From Magic: the
-Gathering to YuGiOh! to Flesh and Blood to any
-variant of  he'll dominate you in any card game you
-challenge him at. He's also proficient in many languages, including
-Python, C#, C++, Rust, Haskell, and Uiua; not to mention human languages.""", size=15, text_align=ft.TextAlign.CENTER)
+    string_zein = ft.Text("""\tData Manager
+You're probably wondering what kind of glorious leader could've organised such a
+legendary project. Well, you need wonder no more! With about 50 programming
+languages under his built--and many more to come!--This fellow will surely leave
+a good impression.""", size=15, text_align=ft.TextAlign.CENTER)
 
-    string_yahia = ft.Text("""\tComing all the way from the most expensive city in (the Egyptian version
-of) Monopoly, el-Moqattam, our team leader has absolutely no fear. Either that
-or he's suicidal. I'm not sure which. What I do know, however,
-is that he's made multiple projects in Python before.""", size=15, text_align=ft.TextAlign.CENTER)
+    string_yahia = ft.Text("""\t
+This man has to go through a perilous adventure every single day, crossing
+oceans and fighting *at least* three dragons (not to mention the hordes of their
+minions) just to get to his morning lectures from his abode all the way in El
+Moqattam.""", size=15, text_align=ft.TextAlign.CENTER)
 
-    string_AbdElmaboud = ft.Text("""\tHe's completely unbeatable in League of Legends and Elden Ring, and he's
-won a free ticket to Sa'yet el Sāwi by just being so damn awesome.
-Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", size=15, text_align=ft.TextAlign.CENTER)
+    string_AbdElmaboud = ft.Text("""\tUX Designer
+I'll be honest, I have no idea what a "UX" person does. What I *do* know,
+however, is that this guy can and *will* absolutely destroy you if you ever meet
+him in the middle lane of a League of Legends match while he's playing Katarina.""", size=15, text_align=ft.TextAlign.CENTER)
+    
+    string_zein_contributors = ft.Text("""\tTEAM LEADER
+We work with a ton of data. From the SearchRequests that get sent to YouTube and
+the SearchResults that get sent back,  the Songs, Albums, Artists, and Playlists
+that we get from  those SearchResults or from the local files in  the OS, not to
+mention  the  player  that actually  plays  the  music,  all  of that  is  data;
+therefore, all of that has to pass through Zein.
+** Classes:
+*** Data:
+**** Application
+***** Song
+A single song, whether from YouTube or the user's file system.
+***** Artist
+An artist that has made some songs.
+***** Album
+An album containing songs an artist has made.
+***** Playlist
+A playist the user has created.
+***** User
+A user of our application.
+**** Web API
+***** SearchRequest
+A request that will be sent to our API to be eventually sent to YT.
+***** SearchResult
+The response the API has given, translated from the JSON sent from YT.
+*** API
+**** Player
+The thing that actually plays the music.
+**** PlayerState
+Enumerates the possible states that the player can be in.
+**** VlcMediaPlayer
+Implementation of Player. Uses python-vlc to play the music.
+**** PlayerWidget
+Manages the Player class and provides an interface to the user so they can
+interact with it (the bit at the bottom of the screen with the buttons and the
+slider).""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_Afifi_contributors = ft.Text("""There aren't any good Python libraries for communicating with YouTube over
+HTTPS, so Afifi made an API in C# that lets us do just that, as well as the
+Python API client that lets us use it. He also worked on most of the GUI.""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_AbdElmaboud_contributors = ft.Text("""Originally was the one responsible for, and who wrote most of, the GUI as we
+went from graphics lib to another. We switched from TKInter to customTKInter to
+kivy to curses before finally settling on something that worked. That something
+was flet, and Adbel-maboud worked on most of the scratched GUI code.""", size=15, text_align=ft.TextAlign.CENTER)
+
+    string_yahia_contributors = ft.Text("""The swiss army knife of our group, he worked on the system for getting songs
+from the files local to the user's machine, as well as helping with some of the
+UI among other things.""", size=15, text_align=ft.TextAlign.CENTER)
 
     def __init__(self):
         super().__init__()
@@ -1321,7 +1369,14 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
                     
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            )
+            ),
+
+            ft.Row(
+                [
+                    ft.OutlinedButton('contributors', on_click=self.open_contributors_popup),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
 
 
         ],
@@ -1359,6 +1414,33 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
             config.numberOfSearchSongs = self.numberOfSearchSongs.value
 
 
+    def open_contributors_popup(self, e):
+        while self.page is None:
+            pass
+
+        setattr(self.page.dialog, 'modal', False)
+        setattr(self.page.dialog, 'title', ft.Text('contributors'))
+        setattr(self.page.dialog, 'content', ft.ListView(
+            [
+                ft.Row(controls=[
+                    ft.Container(ft.Image('./Assets/Images/ftc.png', width=300, height=300), padding=30),
+                    ft.Container(ft.Image('./Assets/Images/ComMusic.png', width=350, height=350), padding=30),
+                ], expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                ft.Text('Ahmed Afifi', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_Afifi_contributors, 
+                ft.Text('Zein Hatem Hafez', size=30, text_align=ft.TextAlign.CENTER), 
+                    self.string_zein_contributors,
+                ft.Text('Yahia Hany Gaber', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_yahia_contributors,
+                ft.Text('Ahmed Abdelmaboud', size=30, text_align=ft.TextAlign.CENTER),
+                    self.string_AbdElmaboud_contributors,], width=800,))
+
+        setattr(self.page.dialog, 'open', True)
+
+        self.page.update()
+        
+
+
     def Open_About_us_popup(self, e):
         while self.page is None:
             pass
@@ -1379,7 +1461,7 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
                     self.string_yahia,
                 ft.Text('Ahmed Abdelmaboud', size=30, text_align=ft.TextAlign.CENTER),
                     self.string_AbdElmaboud,], width=800,))
-        # setattr(self.page.dialog, 'actions', [ft.ElevatedButton('Close', on_click=self.Close_About_us_popup)])
+
         setattr(self.page.dialog, 'open', True)
 
         self.page.update()
