@@ -59,7 +59,9 @@ def timelambda(delta: timedelta) -> tuple:
     return hours, minutes, seconds
 
 
-def str_to_delta(simga: str) -> timedelta:
+def str_to_delta(simga: str | None) -> timedelta:
+    if not str:
+        return timedelta()
     h, m, s = simga.split(":")
     return timedelta(hours=int(h), minutes=int(m), seconds=float(s))
 
