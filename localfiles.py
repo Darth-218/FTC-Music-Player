@@ -22,7 +22,7 @@ class Local:
         self.albumlistcontainer = ft.Container(content = self.albumlist)
 
         # An ElevatedButton that returns to view the songs in the main selected directory
-        self.albumreset = ft.ElevatedButton("All songs", icon=ft.icons.MUSIC_NOTE, tooltip="Return to the main directory", on_click = lambda _: self.songdisplay(self.filepaths, self.songlist))
+        self.albumreset = ft.ElevatedButton("All songs", icon=ft.icons.MUSIC_NOTE, tooltip="Return to the main directory", on_click = lambda _: self.songdisplay(self.songs, self.songlist))
 
 
         self.pick_files_dialog = ft.FilePicker(on_result=lambda e: Localclass.pick_files_result(e))
@@ -88,28 +88,28 @@ class Local:
 
         for i in target:
 
-            self.localsongwidget(target, c,
+            self.localsongwidget(target, target.index(i),
                                  self.songlist,
                                     i.cover_art,
                                     i.name,
                                     i.artist,
                                     i.duration,
-                                    target[i]["album"])
-            self.albums.append(target[i]["album"])
+                                    i.album)
+            self.albums.append(i.album)
 
             c += 1
 
             # Opens a file with the song name and writes the cover data
-            with open(os.path.join(outdir, f'{i.name}.jpg'), 'wb') as image:
-                image.write(target[i]["cover"])
+            with open(os.path.join(outdir, f'{c}.jpg'), 'wb') as image:
+                image.write(i.cover_art)
 
             self.localalbumwidget(self.albumlist,
-                                    ft.Image(src = os.path.join(outdir, f'{i.name}.jpg'), width = 255, height = 255),
-                                    target[i]["album"],
-                                    target[i]["artist"])
+                                    ft.Image(src = os.path.join(outdir, f'{c}.jpg'), width = 255, height = 255),
+                                    i.album,
+                                    i.artist)
 
     # A function that displays the songs in a given dictionary "target" and views it in the "songbox" ListView
-    def songdisplay(self, target: dict, songbox: ft.ListView):
+    def songdisplay(self, target: list, songbox: ft.ListView):
 
         songbox.clean()
 
@@ -117,7 +117,7 @@ class Local:
 
         for i in target:
 
-            self.localsongwidget(target, c,self.songlist, self.songmeta["coverart"], target[i]["name"], target[i]["artist"], target[i]["duration"], target[i]["album"])
+            self.localsongwidget(target, c,self.songlist, i.cover_art, i.name, i.artist, i.duration, i.album)
 
             c += 1
 
@@ -163,7 +163,7 @@ class Local:
         self.songmeta["duration"] = duration
         self.songmeta["coverart"] = cover
 
-        self.song = dm.Song(self.songmeta["title"], self.songmeta["artist"], filepath, self.songmeta["duration"], self.songmeta["coverart"])
+        self.song = dm.Song(self.songmeta["title"], self.songmeta["artist"], filepath, self.songmeta["duration"], self.songmeta["coverart"], self.songmeta["album"])
 
         return self.songmeta, self.song
 
@@ -176,13 +176,9 @@ class Local:
 
     def getselectedalbum(self, albumname, target, songdict):
 
-        songsinalbum = [x for x in target if target[x]["album"] == albumname]
+        songsinalbum = [x for x in target if x.album == albumname]
 
-        self.albumsongs = {}
-
-        for i in songsinalbum:
-
-            self.albumsongs[i] = target[i]
+        self.albumsongs = [i for i in songsinalbum]
 
         self.songdisplay(self.albumsongs, self.songlist)
 
@@ -213,7 +209,7 @@ class Local:
             albumcover,
             ft.Text(albumname,
                     size = 18),
-            ft.Text(artistname)]), width = 255, on_click = lambda _: self.getselectedalbum(albumname, self.filepaths, self.albumlist))
+            ft.Text(artistname)]), width = 255, on_click = lambda _: self.getselectedalbum(albumname, self.songs, self.albumlist))
 
         self.albumcontainer.height = 275
         self.albumcontainer.border = ft.border.all(1, ft.colors.GREY)
@@ -224,7 +220,6 @@ class Local:
         albumbox.controls.append(self.albumcontainer)
 
         albumbox.update()
-
 
     def uinit(self, page: ft.Page):
 
@@ -242,17 +237,25 @@ class LocalView(ft.UserControl):
 
         return ft.Column([Localclass.albumlist, Localclass.songlist, ft.Row([Localclass.picker, Localclass.pick_files_dialog, Localclass.albumreset])], expand = 1)
 
-    def playlocal(self, queuetarget: dict, selected_song: int):
+    def playlocal(self, queuetarget: list, selected_song: int):
 
-        song_list = [queuetarget[i]["path"] for i in queuetarget]
+        song_list = [i for i in queuetarget]
         queue = Queue(song_list, selected_song)
 
-        lib.logger("The queue list is: ", "\n".join(song_list))
+        lib.logger("The queue list is: ", "\n".join(i.name  + str(selected_song) for i in song_list))
 
         while self.page is None:
+
             pass
+
+        lib.logger("Loop 1", "done")
+
         while self.page.bottom_appbar is None:
+
             pass
+
+        lib.logger("Loop 2", "done")
+
         self.page.bottom_appbar.content.player.change_queue(queue=queue) # Change the queue of the player.
         self.page.bottom_appbar.content.play() # Play the song in the player widget.
 
