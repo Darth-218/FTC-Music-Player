@@ -16,14 +16,14 @@ if __name__ == "__main__":
     # VLC) that will play all audio throughout the program process.
     player = VlcMediaPlayer(queue=Queue([]))
 
-    config.interests2 = ''
+    config.interests = ''
     with open('interest.txt', 'r') as file:
         a = file.readlines()
         for i in range (len(a)):
             if i == 0:
-                config.interests2 += a[i].strip('\n') + '--)0'
+                config.interests += a[i].strip('\n') + '--)0'
             else:
-                config.interests2 += '|*|' + a[i].strip('\n') + '--)0'
+                config.interests += '|*|' + a[i].strip('\n') + '--)0'
 
     print(config.interests2)
     # Initialise the GUI and start the window.  
