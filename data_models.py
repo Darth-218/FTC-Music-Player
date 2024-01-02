@@ -52,6 +52,7 @@ class Song(Content):
         self.duration = duration
         self._path = path
         self.cover_art = cover_art
+        self.album = album
 
     def get_path(self):
         return self._path
