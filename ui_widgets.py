@@ -1514,15 +1514,8 @@ UI among other things.""", size=15, text_align=ft.TextAlign.CENTER)
 
     def add_interest(self, e):
         if self.interest.value:
-            if config.interests2 == '':
-                config.interests2 += f'{self.interest.value}--)0'
-            else:
-                config.interests2 += f'|*|{self.interest.value}--)0'
-            while self.page is None:
-                pass
-            setattr(self.page.dialog, 'open', False)
-            self.page.update()
-            print(config.interests2)
+            with open('interest.txt', 'a') as file:
+                file.write(self.interest.value + '\n')
 
 
     def close_popup(self, e):
