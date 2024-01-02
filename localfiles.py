@@ -38,6 +38,8 @@ class Local:
         # a dictionary that stores a song's data: path, artist name, album name, duration
         self.songmeta = {}
 
+        self.songs = []
+
         # A list with all albums in the chosen directory
         self.albums = list()
         # A directory with all songs in a selected album
@@ -68,12 +70,15 @@ class Local:
                         self.getdetails(os.path.join(path, fname))
 
                         self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
+                        self.songs.append(self.song)
 
-            self.display(self.filepaths)
+            self.songs
+
+            self.display(self.songs)
 
 
     # A function that takes a parameter "target" and gets metadata for all paths in it
-    def display(self, target: dict):
+    def display(self, target: list):
 
         # Creates a directory to store album covers
         outdir = "covers"
@@ -85,21 +90,21 @@ class Local:
 
             self.localsongwidget(target, c,
                                  self.songlist,
-                                    target[i]["cover"],
-                                    target[i]["name"],
-                                    target[i]["artist"],
-                                    target[i]["duration"],
+                                    i.cover_art,
+                                    i.name,
+                                    i.artist,
+                                    i.duration,
                                     target[i]["album"])
             self.albums.append(target[i]["album"])
 
             c += 1
 
             # Opens a file with the song name and writes the cover data
-            with open(os.path.join(outdir, f'{target[i]["name"]}.jpg'), 'wb') as image:
+            with open(os.path.join(outdir, f'{i.name}.jpg'), 'wb') as image:
                 image.write(target[i]["cover"])
 
             self.localalbumwidget(self.albumlist,
-                                    ft.Image(src = os.path.join(outdir, f'{target[i]["name"]}.jpg'), width = 255, height = 255),
+                                    ft.Image(src = os.path.join(outdir, f'{i.name}.jpg'), width = 255, height = 255),
                                     target[i]["album"],
                                     target[i]["artist"])
 
@@ -158,7 +163,9 @@ class Local:
         self.songmeta["duration"] = duration
         self.songmeta["coverart"] = cover
 
-        return self.songmeta
+        self.song = dm.Song(self.songmeta["title"], self.songmeta["artist"], filepath, self.songmeta["duration"], self.songmeta["coverart"])
+
+        return self.songmeta, self.song
 
     # Function used to get the name of the selected file in the listbox "musiclist"
     def getselectedsong(self, songname, target):
@@ -184,7 +191,7 @@ class Local:
 
         qu.clear()
 
-    def localsongwidget(self, songdict: dict, data: int, songbox: ft.ListView, songart: ft.Image, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
+    def localsongwidget(self, songdict: list, data: int, songbox: ft.ListView, songart: ft.Image, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
 
         self.songcontainer = ft.Container(content = ft.Column([
             ft.Row([ft.Text(songname.strip('.mp3'), size = 18)]),
