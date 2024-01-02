@@ -130,7 +130,7 @@ class Home(ft.UserControl):
                                     expand=True, 
                                     alignment=ft.alignment.center, 
                                     padding=ft.Padding(0, 20, 0, 0)) # The view for the search tab.
-        self.browseView = ft.Container(content=localfiles.LocalView(),
+        self.browseView = ft.Container(content=localfiles.Localclassview,
                                     expand=True,
                                     alignment=ft.alignment.center,) # The view for the browse tab.
         self.settingsView = ft.Container(content=SettingsView(),
