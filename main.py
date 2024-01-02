@@ -16,4 +16,5 @@ if __name__ == "__main__":
     player = VlcMediaPlayer(queue=Queue([]))
 
     # Initialise the GUI and start the window.
+
     interface = ui_builder.UI(player=player)

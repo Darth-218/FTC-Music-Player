@@ -10,16 +10,8 @@ therefore, all of that has to pass through Zein.
 ** Classes:
 *** Data:
 **** Application
-***** Song
-A single song, whether from YouTube or the user's file system.
-***** Artist
-An artist that has made some songs.
-***** Album
-An album containing songs an artist has made.
-***** Playlist
-A playist the user has created.
-***** User
-A user of our application.
+***** Song, Artist, etc.
+Some classes to model data the application commonly works with.
 **** Web API
 ***** SearchRequest
 A request that will be sent to our API to be eventually sent to YT.
@@ -36,16 +28,18 @@ Implementation of Player. Uses python-vlc to play the music.
 Manages the Player class and provides an interface to the user so they can
 interact with it (the bit at the bottom of the screen with the buttons and the
 slider).
-* TODO Ahmed Afifi
+* Ahmed Afifi
 There aren't any good Python libraries for communicating with YouTube over
 HTTPS, so Afifi made an API in C# that lets us do just that, as well as the
 Python API client that lets us use it. He also worked on most of the GUI.
-* TODO Ahmed Abdel-maboud
+* Ahmed Abdel-maboud
 Originally was the one responsible for, and who wrote most of, the GUI as we
 went from graphics lib to another. We switched from TKInter to customTKInter to
 kivy to curses before finally settling on something that worked. That something
-was flet, and Adbel-maboud worked on most of the scratched GUI code.
-* TODO Yahia Gaber
+was flet, and Adbel-maboud worked on most of the scratched GUI code. He worked
+on the settings page, which also includes about us information in addition to
+changing a user's preferences.
+* Yahia Gaber
 The swiss army knife of our group, he worked on the system for getting songs
 from the files local to the user's machine, as well as helping with some of the
 UI among other things.

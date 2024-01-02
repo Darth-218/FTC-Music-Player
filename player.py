@@ -192,11 +192,12 @@ class PlayerWidget(ft.UserControl):
             icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40
         )
         self.repeating_song = None
-        self.elapsed = ft.Text("0:0:0", size=18)
+        text_width = 70
+        self.elapsed = ft.Text("0:0:0", size=18, width=text_width, text_align=ft.TextAlign.RIGHT)
         self.label = ft.Text("Song Title | Artist Name", size=26)
-        self.duration = ft.Text("0:0:0", size=18)
+        self.duration = ft.Text("0:0:0", size=18, width=text_width, text_align=ft.TextAlign.LEFT)
         self.slider = ft.Slider(min=0.0, max=1.0, on_change=self.slider_seek, value=0.0)
-        self.cover_art = ft.Image(src="./Assets/Images/ftc.png", fit=ft.ImageFit.FIT_HEIGHT, height=60, border_radius=15)
+        self.cover_art = ft.Image(src="./Assets/Images/ComMusic.png", fit=ft.ImageFit.FIT_HEIGHT, height=60, border_radius=15)
         return ft.Container(
             bgcolor="#000000",
             content=ft.Column(
@@ -246,8 +247,8 @@ class PlayerWidget(ft.UserControl):
         # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
         setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist}")
         setattr(self.cover_art, "src", current.cover_art)
-        # hours, minutes, seconds = lib.timelambda(current.duration)
-        # setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
+        hours, minutes, seconds = lib.timelambda(current.duration)
+        setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         if self.player.state == PlayerState.not_started:
             # lib.logger("PlayerWidget/play", f"Started updating slider")
