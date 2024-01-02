@@ -55,8 +55,7 @@ def passive():
 def timelambda(delta: timedelta) -> tuple:
     hours = delta // timedelta(hours=1)
     minutes = delta // timedelta(minutes=1) - hours * 60
-    seconds = delta // timedelta(seconds=1) - (minutes * 60 + hours * 60)
-    seconds = seconds % 60
+    seconds = delta // timedelta(seconds=1) - (minutes * 60 + hours * 60 * 60)
     return hours, minutes, seconds
 
 
