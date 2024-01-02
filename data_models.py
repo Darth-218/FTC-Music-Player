@@ -130,6 +130,7 @@ class Queue:
             if song_list
             else Song("No Song Selected", Artist("FTC"), "./none", timedelta(seconds=0))
         )
+        self.curr_index = curr_index
         self.song_list = song_list
 
     def _reset(self):
