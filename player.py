@@ -266,12 +266,12 @@ class PlayerWidget(ft.UserControl):
             self.page.update()
         self.update()
 
-    def next(self):
+    def next(self, e):
         self.player.next()
         self.init_song()
         self.update()
 
-    def prev(self):
+    def prev(self, e):
         self.player.prev()
         self.init_song()
         self.update()
