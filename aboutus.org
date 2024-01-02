@@ -13,8 +13,11 @@ Meet the man that got this team together! Without him, we probably would never
 have met each other, and without his powerful C# API, you would never have met
 your favourite songs in our app! (unless, of course, you had them downloaded
 locally).
-* TODO Ahmed Abdel-maboud
+* Ahmed Abdel-maboud
 ** UX Designer
+I'll be honest, I have no idea what a "UX" person does. What I *do* know,
+however, is that this guy can and *will* absolutely destroy you if you ever meet
+him in the middle lane of a League of Legends match while he's playing Katarina.
 * Yahia Gaber
 ** OS-Based Backend Developer
 This man has to go through a perilous adventure every single day, crossing
