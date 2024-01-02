@@ -46,7 +46,7 @@ def search(request: yt_models.SearchRequest) -> yt_models.SearchResponse:
 
     try:
         #Creates the SearchResponse object from the parsed data.
-        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song['duration']) for song in parsed_data["songs"]]
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], lib.str_to_delta(song['duration'])) for song in parsed_data["songs"]]
         albums = [yt_models.OnlineAlbum(album["id"], album["artistId"], album["name"], album["coverArt"], []) for album in parsed_data["albums"]]
         artists = [yt_models.OnlineArtist(artist["id"], artist["name"], artist["coverArt"], [], []) for artist in parsed_data["artists"]]
         searchResponse = yt_models.SearchResponse(parsed_data["hasError"], parsed_data["error"], artists, albums, songs)
@@ -133,7 +133,7 @@ def getAlbumSongs(album_id: str) -> yt_models.GetAlbumSongsResponse:
     
     try:
         #Creates the GetAlbumSongsResponse object from the parsed data.
-        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["albumSongs"]]
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], lib.str_to_delta(song['duration'])) for song in parsed_data["albumSongs"]]
         getAlbumSongsResponse = yt_models.GetAlbumSongsResponse(parsed_data["hasError"], parsed_data["error"], songs)
     except KeyError:
         #If there is a KeyError, return a GetAlbumSongsResponse with has_error set to True and error set to "Key Error".
@@ -219,7 +219,7 @@ def getArtistSongs(artist_id: str) -> yt_models.GetArtistSongsResponse:
     
     try:
         #Creates the GetArtistSongsResponse object from the parsed data.
-        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["songs"]]
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], lib.str_to_delta(song['duration'])) for song in parsed_data["songs"]]
         getArtistSongsResponse = yt_models.GetArtistSongsResponse(parsed_data["hasError"], parsed_data["error"], songs)
     except KeyError:
         #If there is a KeyError, return a GetArtistSongsResponse with has_error set to True and error set to "Key Error".
@@ -261,7 +261,7 @@ def getSuggestions(request: yt_models.GetSuggestionsRequest) -> yt_models.GetSug
     
     try:
         #Creates the GetSuggestionsResponse object from the parsed data.
-        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["songs"]]
+        songs = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], lib.str_to_delta(song['duration'])) for song in parsed_data["songs"]]
         albums = [yt_models.OnlineAlbum(album["id"], album["artistId"], album["name"], album["coverArt"], []) for album in parsed_data["albums"]]
         artists = [yt_models.OnlineArtist(artist["id"], artist["name"], artist["coverArt"], [], []) for artist in parsed_data["artists"]]
         getSuggestionsResponse = yt_models.GetSuggestionsResponse(parsed_data["hasError"], parsed_data["error"], artists, albums, songs)
@@ -305,7 +305,7 @@ def getLatestRelease(artistId: str):
     
     try:
         #Creates the GetArtistLatestReleaseResponse object from the parsed data.
-        latestRelease  = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], song["duration"]) for song in parsed_data["latestRelease"]]
+        latestRelease  = [yt_models.OnlineSong(song["id"], song["artistId"], song["name"], song["url"], song["coverArt"], lib.str_to_delta(song['duration'])) for song in parsed_data["latestRelease"]]
         getArtistLatestReleaseResponse = yt_models.GetArtistLatestReleaseResponse(parsed_data["hasError"], parsed_data["error"], latestRelease)
     except KeyError:
         #If there is a KeyError, return a GetArtistLatestReleaseResponse with has_error set to True and error set to "Key Error".

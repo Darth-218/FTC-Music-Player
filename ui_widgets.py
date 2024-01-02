@@ -150,9 +150,10 @@ class Home(ft.UserControl):
 class ArtistWidget(ft.TextButton):
     """A widget for displaying an artist."""
 
-    def __init__(self, artist: yt_models.OnlineArtist, onClick: Callable[[Any], None] = None, albumClick: Callable[[Any], None] = None):
+    def __init__(self, artist: yt_models.OnlineArtist, onClick: Callable[[Any], None] = None, albumClick: Callable[[Any], None] = None, viewAllClick: Callable[[Any], None] = None):
         self.onClick = onClick
         self.albumClick = albumClick
+        self.viewAllClick = viewAllClick
         super().__init__(
             content=ft.Container(
                 content=ft.Row(
@@ -179,7 +180,7 @@ class ArtistWidget(ft.TextButton):
         lib.logger("ArtistWidget/on_click", f"Clicked on {self.content.content.controls[1].value}") # Log the click.
 
         if self.onClick is not None: # If the onClick callback is provided, call it.
-            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick)) # Open the artist view.
+            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick, viewAllClick=self.viewAllClick)) # Open the artist view.
 
 
 class SquareArtistWidget(ft.TextButton):
@@ -609,7 +610,7 @@ class SuggestionsView(ft.UserControl):
             ) # Add the title to the final widget.
 
             for artist in self.suggestions.artists: # For each artist, add it to the artists list view.
-                artists.append(SquareArtistWidget(artist=artist, onClick=self.navigator.open, albumClick=self.navigator.open))
+                artists.append(SquareArtistWidget(artist=artist, onClick=self.navigator.open, albumClick=self.navigator.open, viewAllClick=self.navigator.open))
             
             finalWidget.controls.append(
                 ft.Container(
@@ -1098,7 +1099,7 @@ class ArtistView(ft.UserControl):
             finalWidget.controls.append(ft.Row(
                 controls=[
                     ft.Text("Songs", font_family="lilitaone", size=40),
-                    ft.TextButton(text="View all", on_click= lambda e: self.viewAllClick())
+                    ft.TextButton(text="View all", on_click= lambda e: self.viewAllClick(SongsView(self.artist)))
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             )) # Add the title to the final widget.
@@ -1112,6 +1113,10 @@ class ArtistView(ft.UserControl):
             pass
 
         self.update() # Refresh the UI.
+
+    def viewAll_Click(self):
+        if self.viewAllClick is not None:
+            self.viewAllClick(SongsView(self.artist))
 
     def build(self):
         thread = threading.Thread(target=self.getArtist)
