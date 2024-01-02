@@ -68,10 +68,15 @@ class Local:
 
                     if fname.endswith(".mp3"):
 
-                        self.getdetails(os.path.join(path, fname))
+                        try:
+                            self.getdetails(os.path.join(path, fname))
 
-                        self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
-                        self.songs.append(self.song)
+                            self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
+                            self.songs.append(self.song)
+
+                        except:
+
+                            continue
 
             self.songs
 
