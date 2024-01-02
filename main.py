@@ -9,12 +9,22 @@ from time import sleep
 from player import *
 import ui_builder
 import api_client.Youtube.youtube as yt
+import config
 
 if __name__ == "__main__":
     # Initialise the actual audio player (in this case, one based on
     # VLC) that will play all audio throughout the program process.
     player = VlcMediaPlayer(queue=Queue([]))
 
-    # Initialise the GUI and start the window.
+    config.interests2 = ''
+    with open('interest.txt', 'r') as file:
+        a = file.readlines()
+        for i in range (len(a)):
+            if i == 0:
+                config.interests2 += a[i].strip('\n') + '--)0'
+            else:
+                config.interests2 += '|*|' + a[i].strip('\n') + '--)0'
 
+    print(config.interests2)
+    # Initialise the GUI and start the window.  
     interface = ui_builder.UI(player=player)
