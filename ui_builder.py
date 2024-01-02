@@ -1,8 +1,7 @@
 """Initialise the GUI window.
 """
 import flet as ft
-# import ui_widgets as uiWidgets
-import ui_widgets_test as uiWidgets
+import ui_widgets as uiWidgets
 import player
 
 
