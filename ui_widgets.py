@@ -717,16 +717,17 @@ class SearchResultsView(ft.UserControl):
             self.page.update() # Update the page.
             return
         
+        self.navigator = Navigator(player=self.player) # The navigator for navigating between different views.
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
         
         artists = HorizontalListView() # The horizontal list view for the artists.
         albums = HorizontalListView() # The horizontal list view for the albums.
         
         for artist in self.results.artists: # For each artist, add it to the artists list view.
-            artists.append(SquareArtistWidget(artist=artist))
+            artists.append(SquareArtistWidget(artist=artist, onClick=self.navigator.open, albumClick=self.navigator.open, viewAllClick=self.navigator.open))
         
         for album in self.results.albums: # For each album, add it to the albums list view.
-            albums.append(SquareAlbumWidget(album=album))
+            albums.append(SquareAlbumWidget(album=album, onClick=self.navigator.open))
         
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
         
@@ -735,7 +736,9 @@ class SearchResultsView(ft.UserControl):
         
         finalWidget.controls.append(artists) # Add the artists list view to the final widget.
         
-        self.content.content = finalWidget # Set the content of the view to the final widget.
+        self.content.content = self.navigator # Set the content of the view to the navigator.
+        thread = threading.Thread(target=self.navigator.open, args=(finalWidget,)) # Create a thread to open the final widget in the navigator.
+        thread.start() # Start the thread.
 
         while self.page is None: # Wait for the page to be initialised.
             pass
