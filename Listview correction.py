@@ -1,6 +1,5 @@
 import flet as ft 
 import config
-import ui_builder
 
 
 
@@ -52,7 +51,7 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
         self.interest = ft.TextField()
 
     def build(self):
-        return ft.Container(ft.Column(
+        return ft.ListView(ft.Container(ft.Column(
             [
                 ft.Row([
                     ft.Text("Appearance", size=20),
@@ -150,6 +149,7 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
         expand=1,
         alignment=ft.alignment.center,
         )
+        )
     
     def on_save(self, e):
 
@@ -235,6 +235,12 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
         setattr(self.page.dialog, 'open', True)
 
         self.page.update()
+
+def main(page):
+    page.add(system_widget())
+             
+             
+ft.app(main)
 
 
     

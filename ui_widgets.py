@@ -12,6 +12,7 @@ from typing import Callable, Any
 from datetime import timedelta
 from threading import Timer
 import threading
+import ui_builder
 
 class Tab():
     """A tab that can be displayed in the tab bar.
@@ -1228,13 +1229,14 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
         self.interest = ft.TextField()
 
     def build(self):
-        return ft.Container(ft.Column(
+        return ft.ListView(controls=[ft.Container(ft.Column(
             [
                 ft.Row([
                     ft.Text("Appearance", size=20),
                     ft.Dropdown(
-                        width=125,
+                        width=240,
                         border_color='grey94',
+                        hint_text='Choose Your Apperance!',
                         options=[
                             ft.dropdown.Option('Light mode'),
                             ft.dropdown.Option('Dark mode'),
@@ -1326,6 +1328,10 @@ Fun fact: he went to the same school as our very own Ahmed Mohamed Afifi!""", si
         expand=1,
         alignment=ft.alignment.center,
         )
+        ]    
+        )
+        
+        
     
     def on_save(self, e):
 
