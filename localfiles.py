@@ -215,7 +215,7 @@ class Local:
             albumcover,
             ft.Text(albumname,
                     size = 18),
-            ft.Text(artistname)]), width = 255, on_click = lambda _: self.getselectedalbum(albumname, self.songs, self.albumlist))
+            ft.Text(artistname.name)]), width = 255, on_click = lambda _: self.getselectedalbum(albumname, self.songs, self.albumlist))
 
         self.albumcontainer.height = 275
         self.albumcontainer.border = ft.border.all(1, ft.colors.GREY)
