@@ -129,7 +129,7 @@ class Home(ft.UserControl):
                                     expand=True, 
                                     alignment=ft.alignment.center, 
                                     padding=ft.Padding(0, 20, 0, 0)) # The view for the search tab.
-        self.browseView = ft.Container(content=localfiles.LocalView(),
+        self.browseView = ft.Container(content=localfiles.Localclassview,
                                     expand=True,
                                     alignment=ft.alignment.center,) # The view for the browse tab.
         self.settingsView = ft.Container(content=SettingsView(),
@@ -220,6 +220,13 @@ class SquareArtistWidget(ft.TextButton):
             width=170,
             on_click=self.onArtistClick,
         )
+
+    def onArtistClick(self, e):
+        lib.logger("SquareArtistWidget/on_click", f"Clicked on {self.content.content.controls[1].value}") # Log the click.
+
+        if self.onClick is not None: # If the onClick callback is provided, call it.
+            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick, viewAllClick=self.viewAllClick)) # Open the artist view.
+
 
     def onArtistClick(self, e):
         lib.logger("SquareArtistWidget/on_click", f"Clicked on {self.content.content.controls[1].value}") # Log the click.
@@ -503,7 +510,7 @@ class SuggestionsView(ft.UserControl):
 
     def getSuggestions(self, forceRefresh=False):
         """Gets the suggestions from the API and displays them to the user."""
-
+        lib.logger("SuggestionsView/getSuggestions", "Getting suggestions")
         if self.navigator is not None:
             self.content.content = self.navigator # Set the content of the view to the navigator.
 
@@ -524,7 +531,6 @@ class SuggestionsView(ft.UserControl):
 
         self.update() # Refresh the UI.
 
-        lib.logger("SuggestionsView/getSuggestions", "Getting suggestions")
         if forceRefresh or self.suggestions is None or self.suggestions.has_error: # If the suggestions are not already loaded or there was an error, get the suggestions from the API.
             request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, 
                                                     config.numberOfAlbumsPerInterest, 
@@ -709,16 +715,17 @@ class SearchResultsView(ft.UserControl):
             self.page.update() # Update the page.
             return
         
+        self.navigator = Navigator(player=self.player) # The navigator for navigating between different views.
         finalWidget = ft.ListView(expand=1) # The final widget to display to the user.
         
         artists = HorizontalListView() # The horizontal list view for the artists.
         albums = HorizontalListView() # The horizontal list view for the albums.
         
         for artist in self.results.artists: # For each artist, add it to the artists list view.
-            artists.append(SquareArtistWidget(artist=artist))
+            artists.append(SquareArtistWidget(artist=artist, onClick=self.navigator.open, albumClick=self.navigator.open, viewAllClick=self.navigator.open))
         
         for album in self.results.albums: # For each album, add it to the albums list view.
-            albums.append(SquareAlbumWidget(album=album))
+            albums.append(SquareAlbumWidget(album=album, onClick=self.navigator.open))
         
         finalWidget.controls.append(albums) # Add the albums list view to the final widget.
         
@@ -727,7 +734,9 @@ class SearchResultsView(ft.UserControl):
         
         finalWidget.controls.append(artists) # Add the artists list view to the final widget.
         
-        self.content.content = finalWidget # Set the content of the view to the final widget.
+        self.content.content = self.navigator # Set the content of the view to the navigator.
+        thread = threading.Thread(target=self.navigator.open, args=(finalWidget,)) # Create a thread to open the final widget in the navigator.
+        thread.start() # Start the thread.
 
         while self.page is None: # Wait for the page to be initialised.
             pass

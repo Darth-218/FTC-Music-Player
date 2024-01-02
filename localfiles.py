@@ -3,6 +3,7 @@ import os
 import flet as ft
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
+from mutagen.mp3 import MP3
 import data_models as dm
 from data_models import *
 import lib
@@ -67,10 +68,15 @@ class Local:
 
                     if fname.endswith(".mp3"):
 
-                        self.getdetails(os.path.join(path, fname))
+                        try:
+                            self.getdetails(os.path.join(path, fname))
 
-                        self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
-                        self.songs.append(self.song)
+                            self.filepaths[fname] = {"name": fname, "path": os.path.join(path, fname), "album": self.songmeta["album"], "artist": self.songmeta["artist"], "duration": self.songmeta["duration"], "cover": self.songmeta["coverart"]}
+                            self.songs.append(self.song)
+
+                        except:
+
+                            continue
 
             self.songs
 
@@ -137,6 +143,11 @@ class Local:
     def getdetails(self, filepath):
 
         audio = EasyID3(filepath)
+        length = MP3(filepath)
+        durationinseconds = length.info.length
+
+        hours, remainder = divmod(durationinseconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
 
         try:
 
@@ -160,10 +171,10 @@ class Local:
         self.songmeta["title"] = title
         self.songmeta["artist"] = artist
         self.songmeta["album"] = album
-        self.songmeta["duration"] = duration
+        self.songmeta["duration"] = lib.str_to_delta(":".join([str(hours if hours > 10 else "0" + str(hours)).split(".")[0], str(minutes if minutes > 10 else "0" + str(minutes)).split(".")[0], str(seconds if seconds > 10 else "0" + str(seconds)).split(".")[0]]))
         self.songmeta["coverart"] = cover
 
-        self.song = dm.Song(self.songmeta["title"], self.songmeta["artist"], filepath, self.songmeta["duration"], self.songmeta["coverart"], self.songmeta["album"])
+        self.song = dm.Song(self.songmeta["title"], Artist(self.songmeta["artist"]), filepath, self.songmeta["duration"], self.songmeta["coverart"], self.songmeta["album"])
 
         return self.songmeta, self.song
 
@@ -182,16 +193,11 @@ class Local:
 
         self.songdisplay(self.albumsongs, self.songlist)
 
-    # A function to clear the queue
-    def quclear(self): # to be re-created
-
-        qu.clear()
-
     def localsongwidget(self, songdict: list, data: int, songbox: ft.ListView, songart: ft.Image, songname: str, artistname: str = "N/A", songduration: str = "N/A", songalbum: str = "N/A"):
 
         self.songcontainer = ft.Container(content = ft.Column([
             ft.Row([ft.Text(songname.strip('.mp3'), size = 18)]),
-            ft.Row([ft.Text(f"{songduration}  |  {artistname}  |  {songalbum}")])]),
+            ft.Row([ft.Text(f"{songduration}  |  {artistname.name}  |  {songalbum}")])]),
                                           on_click = lambda _: Localclassview.playlocal(songdict, data))
 
         self.songcontainer.border = ft.border.all(1, ft.colors.GREY)

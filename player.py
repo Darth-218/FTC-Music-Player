@@ -179,14 +179,14 @@ class PlayerWidget(ft.UserControl):
         )
         self.btn_prev = ft.IconButton(
             icon=ft.icons.SKIP_PREVIOUS,
-            on_click=lambda e: self.player.prev(),
+            on_click=self.prev,
             icon_size=40,
         )
         self.btn_play_pause = ft.IconButton(
             icon=ft.icons.PLAY_CIRCLE, on_click=self.play_pause, icon_size=40
         )
         self.btn_next = ft.IconButton(
-            icon=ft.icons.SKIP_NEXT, on_click=lambda e: self.player.next(), icon_size=40
+            icon=ft.icons.SKIP_NEXT, on_click=self.next, icon_size=40
         )
         self.btn_repeat = ft.IconButton(
             icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40
@@ -243,13 +243,16 @@ class PlayerWidget(ft.UserControl):
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.update()
 
-    def play(self):
-        # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
+    def init_song(self):
         setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist.name}")
         setattr(self.cover_art, "src", current.cover_art)
         hours, minutes, seconds = lib.timelambda(current.duration)
         setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
+
+    def play(self):
+        # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
+        self.init_song()
         if self.player.state == PlayerState.not_started:
             # lib.logger("PlayerWidget/play", f"Started updating slider")
             self.update_slider()
@@ -261,6 +264,16 @@ class PlayerWidget(ft.UserControl):
             setattr(self.page.dialog, "content", ft.Text(e))
             setattr(self.page.dialog, "open", True)
             self.page.update()
+        self.update()
+
+    def next(self):
+        self.player.next()
+        self.init_song()
+        self.update()
+
+    def prev(self):
+        self.player.prev()
+        self.init_song()
         self.update()
 
     def pause(self):
