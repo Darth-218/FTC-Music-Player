@@ -245,7 +245,7 @@ class PlayerWidget(ft.UserControl):
 
     def play(self):
         # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
-        setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist}")
+        setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist.name}")
         setattr(self.cover_art, "src", current.cover_art)
         hours, minutes, seconds = lib.timelambda(current.duration)
         setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
