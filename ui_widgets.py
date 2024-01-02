@@ -12,6 +12,7 @@ from typing import Callable, Any
 from datetime import timedelta
 from threading import Timer
 import threading
+import ui_builder
 
 class Tab():
     """A tab that can be displayed in the tab bar.
@@ -292,6 +293,12 @@ class SquareAlbumWidget(ft.TextButton):
                             no_wrap=True,
                             overflow=ft.TextOverflow.FADE,
                         ),
+                        ft.Text(
+                            album.artist.name,
+                            text_align=ft.TextAlign.CENTER,
+                            no_wrap=True,
+                            overflow=ft.TextOverflow.FADE,
+                        ),
                     ],
                     alignment=ft.alignment.center,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -387,7 +394,8 @@ class SquareSongWidget(ft.TextButton):
                                     no_wrap=True,
                                     overflow=ft.TextOverflow.FADE,
                                 ),
-                                ft.Text(song.duration),
+                                ft.Text(song.artist.name, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE),
+                                ft.Text(song.duration, text_align=ft.TextAlign.CENTER, no_wrap=True, overflow=ft.TextOverflow.FADE),
                             ]
                         ),
                     ],
@@ -949,7 +957,7 @@ class AlbumView(ft.UserControl):
                                                 ft.Text(self.album.name, font_family="lilitaone", size=50),
                                                 ft.Row(
                                                     controls=[
-                                                        ft.Text(self.album.artist, size=20),
+                                                        ft.Text(self.album.artist.name, size=20),
                                                         ft.Text(f" ● ", size=20),
                                                         ft.Text(f"{len(self.album.songs)} songs", size=20),
                                                     ]
@@ -989,13 +997,14 @@ class ArtistView(ft.UserControl):
         super().__init__(expand=True)
         self.albumsResponse = None
         self.latestReleaseResponse = None
+        self.artistResponse = None
 
     def errorRenderer(self, e):
         """Renders the content in case of an error."""
 
         lib.logger("AlbumView/errorRenderer", 'Rendered a retry button')
         self.content.content = ft.Container(content=ft.TextButton(text='retry', 
-                                                                on_click=lambda e: self.getAlbums()), 
+                                                                on_click=lambda e: self.getArtist()), 
                                             alignment=ft.alignment.center)
         
         while self.page is None: # Wait for the page to be initialised.
@@ -1031,7 +1040,7 @@ class ArtistView(ft.UserControl):
             self.page.update() # Update the page.
             return
         
-        self.artist.albums = self.albumsResponse.albums # Set the albums of the artist to the albums from the API.
+        
 
         if self.latestReleaseResponse is None or self.latestReleaseResponse.has_error:
             self.latestReleaseResponse = yt.getLatestRelease(self.artist.id)
@@ -1050,7 +1059,27 @@ class ArtistView(ft.UserControl):
                 self.page.update() # Update the page.
                 return
             
-            self.artist.latestRelease = self.latestReleaseResponse.latestRelease
+            if self.artistResponse is None or self.artistResponse.has_error:
+                self.artistResponse = yt.getArtistData(self.artist.id)
+
+                if self.artistResponse.has_error:
+                    lib.logger("ArtistView/getArtist", "error getting artistData: " + self.artistResponse.error)
+
+                    while self.page is None: # Wait for the page to be initialised.
+                        pass
+
+                    setattr(self.page.dialog, 'modal', False) # Set the dialog to not be modal.
+                    setattr(self.page.dialog, 'title', ft.Text('Error!')) # Set the title of the dialog.
+                    setattr(self.page.dialog,'content', ft.Text(self.artistResponse.error)) # Set the content of the dialog.
+                    setattr(self.page.dialog, 'on_dismiss', self.errorRenderer) # Set the behaviour of the dialog when it is dismissed.
+                    setattr(self.page.dialog, 'open', True) # Open the dialog.
+                    self.page.update() # Update the page.
+                    return
+
+                self.artist = self.artistResponse.artist # Set the artist to the artist from the API.
+            
+            self.artist.albums = self.albumsResponse.albums # Set the albums of the artist to the albums from the API.
+            self.artist.latestRelease = self.latestReleaseResponse.latestRelease # Set the latest release of the artist to the latest release from the API.
 
         finalWidget = ft.ListView(
             controls=[
@@ -1075,7 +1104,7 @@ class ArtistView(ft.UserControl):
                                                 ft.Text(self.artist.name, font_family="lilitaone", size=50),
                                                 ft.Row(
                                                     controls=[
-                                                        ft.Text('Subscribers Count', size=20),
+                                                        ft.Text(self.artist.subscriberCount, size=20),
                                                         ft.Text(f" ● ", size=20),
                                                         ft.Text(f"{len(self.artist.albums)} albums", size=20),
                                                     ]
@@ -1485,9 +1514,15 @@ UI among other things.""", size=15, text_align=ft.TextAlign.CENTER)
 
     def add_interest(self, e):
         if self.interest.value:
-            with open('interest.txt', 'a') as file:
-                file.write(self.interest.value + '\n')
-                
+            if config.interests2 == '':
+                config.interests2 += f'{self.interest.value}--)0'
+            else:
+                config.interests2 += f'|*|{self.interest.value}--)0'
+            while self.page is None:
+                pass
+            setattr(self.page.dialog, 'open', False)
+            self.page.update()
+            print(config.interests2)
 
 
     def close_popup(self, e):
