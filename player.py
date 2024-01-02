@@ -179,14 +179,14 @@ class PlayerWidget(ft.UserControl):
         )
         self.btn_prev = ft.IconButton(
             icon=ft.icons.SKIP_PREVIOUS,
-            on_click=lambda e: self.player.prev(),
+            on_click=self.prev,
             icon_size=40,
         )
         self.btn_play_pause = ft.IconButton(
             icon=ft.icons.PLAY_CIRCLE, on_click=self.play_pause, icon_size=40
         )
         self.btn_next = ft.IconButton(
-            icon=ft.icons.SKIP_NEXT, on_click=lambda e: self.player.next(), icon_size=40
+            icon=ft.icons.SKIP_NEXT, on_click=self.next, icon_size=40
         )
         self.btn_repeat = ft.IconButton(
             icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40
@@ -261,6 +261,14 @@ class PlayerWidget(ft.UserControl):
             setattr(self.page.dialog, "content", ft.Text(e))
             setattr(self.page.dialog, "open", True)
             self.page.update()
+        self.update()
+
+    def next(self):
+        self.player.next()
+        self.update()
+
+    def prev(self):
+        self.player.prev()
         self.update()
 
     def pause(self):
