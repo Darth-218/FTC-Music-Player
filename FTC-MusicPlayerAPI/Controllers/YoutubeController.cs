@@ -28,7 +28,8 @@ namespace FTC_MusicPlayerAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new SearchResponse { Artists = [], Albums = [], Songs = [], HasError = true, Error = ex.Message };
+                return new SearchResponse
+                    { Artists = [], Albums = [], Songs = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -122,7 +123,8 @@ namespace FTC_MusicPlayerAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new SuggestionsRespose { Albums = [], Artists = [], Songs = [], HasError = true, Error = ex.Message };
+                return new SuggestionsRespose
+                    { Albums = [], Artists = [], Songs = [], HasError = true, Error = ex.Message };
             }
         }
 
@@ -138,6 +140,21 @@ namespace FTC_MusicPlayerAPI.Controllers
             catch (Exception ex)
             {
                 return new LatestReleaseResponse { LatestRelease = [], HasError = true, Error = ex.Message };
+            }
+        }
+        
+        [HttpGet]
+        [Route("/Youtube/GetArtistData")]
+        public async Task<ArtistResponse> GetArtistData(string artistId)
+        {
+            try
+            {
+                return new ArtistResponse
+                    { Artist = await youtubeService.GetArtist(artistId) };
+            }
+            catch (Exception ex)
+            {
+                return new ArtistResponse { Artist = null, HasError = true, Error = ex.Message };
             }
         }
     }

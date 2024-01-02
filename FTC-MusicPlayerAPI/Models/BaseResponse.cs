@@ -2,7 +2,7 @@
 {
     public class BaseResponse
     {
-        public bool HasError { get; set; }
-        public string? Error { get; set; }
+        public bool HasError { get; set; } = false;
+        public string? Error { get; set; } = "";
     }
 }

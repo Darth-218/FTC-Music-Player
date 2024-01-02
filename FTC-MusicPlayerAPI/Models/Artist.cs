@@ -22,6 +22,8 @@
             }
         }
 
+        public string? SubscriberCount { get; set; }
+
         public IEnumerable<Album>? Albums { get; set; }
         public IEnumerable<Song>? Songs { get; set; }
     }

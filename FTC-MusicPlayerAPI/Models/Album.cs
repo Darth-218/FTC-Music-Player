@@ -4,6 +4,7 @@
     {
         public required string Id { get; set; }
         public required string? ArtistId { get; set; }
+        public required Artist Artist { get; set; }
         public required string Name { get; set; }
 
         private string? coverArt;

@@ -4,6 +4,7 @@
     {
         public required string Id { get; set; }
         public string? ArtistId { get; set; }
+        public Artist? Artist { get; set; }
         public required string Name { get; set; }
         public required string Url { get; set; }
 

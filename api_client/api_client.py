@@ -13,7 +13,7 @@ import lib
 
 #Server IP Address
 serverIp = "ahmedafifi.bsite.net" #Please update this to the IP Address of the server.
-#serverIp = "localhost:5239" #Please update this to the IP Address of the server.
+# serverIp = "localhost:5239" #Please update this to the IP Address of the server.
 
 #API Controller Options
 class ApiControllers(Enum):
@@ -28,11 +28,12 @@ class ApiRequests(Enum):
     ArtistSongs         = "/GetArtistSongs"
     Suggestions         = "/GetSuggestions"
     ArtistLatestRelease = "/GetArtistLatestRelease"
+    ArtistData          = "/GetArtistData"
     
 
 #Sends a request to the server and returns the response (in json format).
 #Takes in the controller, request, and params as strings.
 def sendApiRequest(controller: str, request: str, params: str) -> str:
-    lib.logger("api_client/sendApiRequest", "Sending request to server: " + "https://" + serverIp + controller + request + params)
-    response = requests.get("https://" + serverIp + controller + request + params)
+    lib.logger("api_client/sendApiRequest", "Sending request to server: " + "http://" + serverIp + controller + request + params)
+    response = requests.get("http://" + serverIp + controller + request + params)
     return response.text

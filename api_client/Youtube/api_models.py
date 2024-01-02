@@ -10,14 +10,14 @@ class OnlineSong(data_models.Song):
     id: str
     artist_id: str
 
-    def __init__(self, id: str, artist_id: str, name: str, url: str, cover_art: str, duration: timedelta):
+    def __init__(self, id: str, artist_id: str, artist, name: str, url: str, cover_art: str, duration: timedelta):
         self.id = id
         self.artist_id = artist_id
         self.name = name
         self._url = url
         self.cover_art = cover_art
         self.duration = duration
-        self.artist = 'artist'
+        self.artist = artist
         self._path = ''
 
     def get_path(self):
@@ -39,12 +39,12 @@ class OnlineAlbum(data_models.Album):
     artist_id: str
     cover_art: str
 
-    def __init__(self, id: str, artist_id: str, name: str, cover_art: str, songs: list[OnlineSong]):
+    def __init__(self, id: str, artist_id: str, artist, name: str, cover_art: str, songs: list[OnlineSong]):
         self.id = id
         self.artist_id = artist_id
         self.name = name
         self.cover_art = cover_art
-        self.artist = "artist"
+        self.artist = artist
         self.songs = songs
         self._path = ''
 
@@ -52,8 +52,9 @@ class OnlineAlbum(data_models.Album):
 class OnlineArtist(data_models.Artist):
     id: str
     cover_art: str
+    subscriberCount: str
 
-    def __init__(self, id: str, name: str, cover_art: str, albums: list[OnlineAlbum], songs: list[OnlineSong]):
+    def __init__(self, id: str, name: str, cover_art: str, albums: list[OnlineAlbum], songs: list[OnlineSong], subscriberCount: str = ''):
         self.id = id
         self.name = name
         self.cover_art = cover_art
@@ -62,6 +63,7 @@ class OnlineArtist(data_models.Artist):
         self.latestRelease = None
         self._path = ''
         self._url = ''
+        self.subscriberCount = subscriberCount
 
 #Represents a search request to the API.
 class SearchRequest():
@@ -175,3 +177,14 @@ class GetArtistLatestReleaseResponse:
         self.has_error = has_error
         self.error = error
         self.latestRelease = latestRelease
+
+#Represents a GetArtistData response from the API.
+class GetArtistDataResponse:
+    has_error: bool
+    error: str
+    artist: OnlineArtist
+
+    def __init__(self, has_error: bool, error: str, artist: OnlineArtist):
+        self.has_error = has_error
+        self.error = error
+        self.artist = artist

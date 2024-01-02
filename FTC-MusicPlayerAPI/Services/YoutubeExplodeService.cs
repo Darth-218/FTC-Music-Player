@@ -4,6 +4,7 @@ using YoutubeExplode.Common;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Playlists;
 using System.Diagnostics;
+using YoutubeExplode.Channels;
 
 namespace FTC_MusicPlayerAPI.Services
 {
@@ -23,11 +24,12 @@ namespace FTC_MusicPlayerAPI.Services
             var artistsTask = Task.Run(async () =>
             {
                 var rawArtists = Client.Search.GetChannelsAsync(request.Query);
-                response.Artists = await rawArtists.Take(request.ArtistsCount).Select(rawArtist => new Artist(){
-                    Id = rawArtist.Id.ToString(),
-                    Name = rawArtist.Title,
-                    CoverArt = rawArtist.Thumbnails.GetWithHighestResolution().Url,
-                })
+                response.Artists = await rawArtists.Take(request.ArtistsCount).Select(rawArtist => new Artist()
+                    {
+                        Id = rawArtist.Id.ToString(),
+                        Name = rawArtist.Title,
+                        CoverArt = rawArtist.Thumbnails.GetWithHighestResolution().Url,
+                    })
                     .ToListAsync();
             });
 
@@ -38,6 +40,7 @@ namespace FTC_MusicPlayerAPI.Services
                 {
                     Id = rawAlbum.Id.ToString(),
                     ArtistId = rawAlbum.Author == null ? null : rawAlbum.Author!.ChannelId.ToString(),
+                    Artist = new Artist() {Id = rawAlbum.Author!.ChannelId.ToString(), Name = rawAlbum.Author!.ChannelTitle},
                     Name = rawAlbum.Title,
                     CoverArt = rawAlbum.Thumbnails.GetWithHighestResolution().Url,
                 }).ToListAsync();
@@ -47,14 +50,24 @@ namespace FTC_MusicPlayerAPI.Services
             var songsTask = Task.Run(async () =>
             {
                 var rawSongs = Client.Search.GetVideosAsync(request.Query);
-                response.Songs = await rawSongs.Take(request.SongsCount).Select(rawSong => new Song()
+                response.Songs = await rawSongs.Take(request.SongsCount).Select((rawSong) =>
                 {
-                    Id = rawSong.Id.ToString(),
-                    ArtistId = rawSong.Author.ChannelId.ToString(),
-                    Name = rawSong.Title,
-                    CoverArt = rawSong.Thumbnails.GetWithHighestResolution().Url,
-                    Duration = rawSong.Duration,
-                    Url = rawSong.Url
+                    var song = new Song()
+                    {
+                        Id = rawSong.Id.ToString(),
+                        ArtistId = rawSong.Author.ChannelId.ToString(),
+                        Name = rawSong.Title,
+                        CoverArt = rawSong.Thumbnails.GetWithHighestResolution().Url,
+                        Duration = rawSong.Duration,
+                        Url = rawSong.Url,
+                        Artist = new Artist()
+                        {
+                            Id = rawSong.Author.ChannelId.ToString(),
+                            Name = rawSong.Author.ChannelTitle,
+                        }
+                    };
+
+                    return song;
                 }).ToListAsync();
             });
 
@@ -82,12 +95,13 @@ namespace FTC_MusicPlayerAPI.Services
             {
                 Id = song.Id,
                 ArtistId = song.Author.ChannelId.ToString(),
+                Artist = new Artist() { Id = song.Author.ChannelId.ToString(), Name = song.Author.ChannelTitle },
                 Name = song.Title,
                 CoverArt = song.Thumbnails.GetWithHighestResolution().Url,
                 Duration = song.Duration,
                 Url = song.Url,
             }).ToListAsync();
-            
+
             AlbumSongsResponse response = new() { AlbumSongs = songs, Error = "", HasError = false };
             return response;
         }
@@ -114,6 +128,7 @@ namespace FTC_MusicPlayerAPI.Services
                 {
                     Id = playlist.Id.ToString(),
                     ArtistId = playlist.Author!.ChannelId.ToString(),
+                    Artist = new Artist() {Id = playlist.Author!.ChannelId.ToString(), Name = playlist.Author!.ChannelTitle},
                     Name = playlist.Title,
                     CoverArt = playlist.Thumbnails[^1].Url,
                 };
@@ -176,6 +191,7 @@ namespace FTC_MusicPlayerAPI.Services
                 {
                     Id = song.Id,
                     ArtistId = song.Author.ChannelId.ToString(),
+                    Artist = new Artist() { Id = song.Author.ChannelId.ToString(), Name = song.Author.ChannelTitle },
                     Name = song.Title,
                     CoverArt = song.Thumbnails.GetWithHighestResolution().Url,
                     Duration = song.Duration,
@@ -244,14 +260,15 @@ namespace FTC_MusicPlayerAPI.Services
             };
         }
 
-        public async Task<string> GetArtistSubscriberCount(string youtubeResponse)
+        public async Task<string> GetArtistSubscriberCount(string artistId)
         {
+            var youtubeResponse = "";
             return await Task.Run(async () =>
             {
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Add("Accept-Language", "en-US");
                 var res =
-                    await client.GetAsync("https://www.youtube.com/channel/UClQPk2WbC23z3eogxPbbOjw");
+                    await client.GetAsync($"https://www.youtube.com/channel/{artistId}");
                 youtubeResponse = await res.Content.ReadAsStringAsync();
 
                 Regex regex =
@@ -272,12 +289,26 @@ namespace FTC_MusicPlayerAPI.Services
                 {
                     Id = raw.Id,
                     ArtistId = raw.Author.ChannelId.ToString(),
+                    Artist = new Artist() { Id = raw.Author.ChannelId.ToString(), Name = raw.Author.ChannelTitle },
                     Name = raw.Title,
                     CoverArt = raw.Thumbnails.GetWithHighestResolution().Url,
                     Duration = raw.Duration,
                     Url = raw.Url,
                 })
                 .ToList();
+        }
+
+        public async Task<Artist> GetArtist(string artistId)
+        {
+            var rawArtist = await Client.Channels.GetAsync(ChannelId.Parse(artistId));
+            var subscribers = await GetArtistSubscriberCount(artistId);
+            return new Artist()
+            {
+                Id = rawArtist.Id.ToString(),
+                Name = rawArtist.Title,
+                CoverArt = rawArtist.Thumbnails.GetWithHighestResolution().Url,
+                SubscriberCount = subscribers
+            };
         }
     }
 }
