@@ -166,7 +166,7 @@ class Local:
         self.songmeta["title"] = title
         self.songmeta["artist"] = artist
         self.songmeta["album"] = album
-        self.songmeta["duration"] = ":".join([str(hours if hours > 10 else "0" + str(hours)).split(".")[0], str(minutes if minutes > 10 else "0" + str(minutes)).split(".")[0], str(seconds if seconds > 10 else "0" + str(seconds)).split(".")[0]])
+        self.songmeta["duration"] = lib.str_to_delta(":".join([str(hours if hours > 10 else "0" + str(hours)).split(".")[0], str(minutes if minutes > 10 else "0" + str(minutes)).split(".")[0], str(seconds if seconds > 10 else "0" + str(seconds)).split(".")[0]]))
         self.songmeta["coverart"] = cover
 
         self.song = dm.Song(self.songmeta["title"], Artist(self.songmeta["artist"]), filepath, self.songmeta["duration"], self.songmeta["coverart"], self.songmeta["album"])
