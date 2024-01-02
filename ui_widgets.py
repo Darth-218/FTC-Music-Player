@@ -229,6 +229,13 @@ class SquareArtistWidget(ft.TextButton):
             self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick, viewAllClick=self.viewAllClick)) # Open the artist view.
 
 
+    def onArtistClick(self, e):
+        lib.logger("SquareArtistWidget/on_click", f"Clicked on {self.content.content.controls[1].value}") # Log the click.
+
+        if self.onClick is not None: # If the onClick callback is provided, call it.
+            self.onClick(ArtistView(artist=self.artist, albumClick=self.albumClick, viewAllClick=self.viewAllClick)) # Open the artist view.
+
+
 class AlbumWidget(ft.TextButton):
     """A widget for displaying an album."""
 
@@ -511,7 +518,7 @@ class SuggestionsView(ft.UserControl):
 
     def getSuggestions(self, forceRefresh=False):
         """Gets the suggestions from the API and displays them to the user."""
-
+        lib.logger("SuggestionsView/getSuggestions", "Getting suggestions")
         if self.navigator is not None:
             self.content.content = self.navigator # Set the content of the view to the navigator.
 
@@ -532,7 +539,6 @@ class SuggestionsView(ft.UserControl):
 
         self.update() # Refresh the UI.
 
-        lib.logger("SuggestionsView/getSuggestions", "Getting suggestions")
         if forceRefresh or self.suggestions is None or self.suggestions.has_error: # If the suggestions are not already loaded or there was an error, get the suggestions from the API.
             request = yt_models.GetSuggestionsRequest(config.numberOfArtistsPerInterest, 
                                                     config.numberOfAlbumsPerInterest, 
