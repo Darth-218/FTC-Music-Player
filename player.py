@@ -243,13 +243,16 @@ class PlayerWidget(ft.UserControl):
                 setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         self.update()
 
-    def play(self):
-        # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
+    def init_song(self):
         setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist.name}")
         setattr(self.cover_art, "src", current.cover_art)
         hours, minutes, seconds = lib.timelambda(current.duration)
         setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
+
+    def play(self):
+        # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
+        self.init_song()
         if self.player.state == PlayerState.not_started:
             # lib.logger("PlayerWidget/play", f"Started updating slider")
             self.update_slider()
@@ -265,10 +268,12 @@ class PlayerWidget(ft.UserControl):
 
     def next(self):
         self.player.next()
+        self.init_song()
         self.update()
 
     def prev(self):
         self.player.prev()
+        self.init_song()
         self.update()
 
     def pause(self):
