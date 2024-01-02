@@ -112,6 +112,7 @@ class VlcMediaPlayer(Player):
         self.player = vlc.MediaPlayer(self.queue.current._path)
 
     def play(self):
+        self.stop()
         self.state = PlayerState.playing
         current = self.queue.current
         try:
@@ -146,6 +147,7 @@ class VlcMediaPlayer(Player):
         self.queue = queue
         self.play()
 
+
 class PlayerWidget(ft.UserControl):
     """A Player widget at the bottom of the screen having buttons
     for playing/pausing, skipping forwards and backwards, shuffling etc.
@@ -158,6 +160,10 @@ class PlayerWidget(ft.UserControl):
     btn_next: ft.IconButton
     btn_repeat: ft.IconButton
     slider: ft.Slider
+    elapsed: ft.Text
+    label: ft.Text
+    duration: ft.Text
+    cover_art: ft.Image
     repeating_song: bool | None
 
     def __init__(self, player: Player):
@@ -182,20 +188,37 @@ class PlayerWidget(ft.UserControl):
         self.btn_next = ft.IconButton(
             icon=ft.icons.SKIP_NEXT, on_click=lambda e: self.player.next(), icon_size=40
         )
-        self.btn_repeat = ft.IconButton(icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40)
+        self.btn_repeat = ft.IconButton(
+            icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40
+        )
+        self.repeating_song = None
+        self.elapsed = ft.Text("0:0:0", size=18)
+        self.label = ft.Text("Song Title | Artist Name", size=26)
+        self.duration = ft.Text("0:0:0", size=18)
         self.slider = ft.Slider(min=0.0, max=1.0, on_change=self.slider_seek, value=0.0)
+        self.cover_art = ft.Image(src="./Assets/Images/ftc.png", fit=ft.ImageFit.FIT_HEIGHT, height=60, border_radius=15)
         return ft.Container(
             bgcolor="#000000",
             content=ft.Column(
                 controls=[
-                    ft.Container(self.slider, width=500, alignment=ft.alignment.center),
+                    self.label,
                     ft.Row(
                         controls=[
+                            self.cover_art,
                             self.btn_shuffle,
                             self.btn_prev,
                             self.btn_play_pause,
                             self.btn_next,
                             self.btn_repeat,
+                            ft.Container(
+                                # expand=True,
+                                width=3,
+                                height=50,
+                                bgcolor="#FFFFFF",
+                            ),
+                            self.elapsed,
+                            ft.Container(self.slider, width=500, alignment=ft.alignment.center),
+                            self.duration,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         vertical_alignment=ft.alignment.center,
@@ -220,32 +243,45 @@ class PlayerWidget(ft.UserControl):
         self.update()
 
     def play(self):
+        # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
+        setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist}")
+        setattr(self.cover_art, "src", current.cover_art)
+        # hours, minutes, seconds = lib.timelambda(current.duration)
+        # setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
-        self.player.stop()
+        if self.player.state == PlayerState.not_started:
+            # lib.logger("PlayerWidget/play", f"Started updating slider")
+            self.update_slider()
         try:
             self.player.play()
         except Exception as e:
-            setattr(self.page.dialog, 'modal', False)
-            setattr(self.page.dialog, 'title', ft.Text("Error"))
-            setattr(self.page.dialog, 'content', ft.Text(e))
-            setattr(self.page.dialog, 'open', True)
+            setattr(self.page.dialog, "modal", False)
+            setattr(self.page.dialog, "title", ft.Text("Error"))
+            setattr(self.page.dialog, "content", ft.Text(e))
+            setattr(self.page.dialog, "open", True)
             self.page.update()
-        if self.player.state == PlayerState.not_started:
-            self.update_slider()
+        self.update()
 
     def pause(self):
         self.play_pause()
 
     def update_slider(self):
+        """Updates the slider every 1/5th of a second (200ms) to the current
+        position in the song.
+        """
         Timer(0.2, self.update_slider).start()
         current_position = self.player.getpos()
-        if current_position == self.slider.value:
-            return
+        # if current_position == self.slider.value:
+        #     return
         setattr(self.slider, "value", current_position)
-        # current_time_in_ms = self.player.gettime()
-        # current_time = timedelta(milliseconds=current_time_in_ms)
+        self.update()
+        current_time_in_ms = self.player.gettime()
+        current_time = timedelta(milliseconds=current_time_in_ms)
+        hours, minutes, seconds = lib.timelambda(current_time)
+        setattr(self.elapsed, "value", f"{hours}:{minutes}:{seconds}")
         # lib.logger("PlayerWidget/update_slider", f"Updating to {current_time}")
         if self.slider.value == 1:
+            lib.logger("PlayerWidget/update_slider", "Song ended")
             match self.repeating_song:
                 case None:
                     if (
@@ -269,24 +305,42 @@ class PlayerWidget(ft.UserControl):
         self.update()
 
     def slider_seek(self, e=None, val=None):
+        """Accepts either a button click event or a direct value to seek to.
+        """
         new_val = e.control.value if e else val
         self.player.seekpos(new_val)
+        # For logging:
         current_time_in_ms = self.player.gettime()
         current_time = timedelta(milliseconds=current_time_in_ms)
         lib.logger("PlayerWidget/slider_seek", f"Moved to {current_time}")
 
     def shuffle(self, e=None):
+        """Shuffles the current queue.
+        """
         self.player.queue.shuffle()
 
     def toggle_repeat(self, e=None):
-        match self.repeating_song:
-            case None:
-                self.repeating_song = False
-                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT_ON)
-            case False:
-                self.repeating_song = True
-                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT_ONE_ON)
-            case True:
-                self.repeating_song = None
-                setattr(self.btn_repeat, 'icon', ft.icons.REPEAT)
+        """Toggles repeating between:
+
+        - None  ==> Don't repeat.
+
+        - False ==> Repeat the whole queue.
+
+        - True  ==> Repeat the current song.
+        """
+        # FUCK IT, WE BALL
+        possibilities = [None, False, True]
+        icons = [ft.icons.REPEAT, ft.icons.REPEAT_ON, ft.icons.REPEAT_ONE_ON_ROUNDED]
+        self.repeating_song = possibilities[(possibilities.index(self.repeating_song) + 1) % 3]
+        setattr(self.btn_repeat, 'icon', icons[possibilities.index(self.repeating_song)])
         self.update()
+        # match self.repeating_song:
+        #     case None:
+        #         self.repeating_song = False
+        #         setattr(self.btn_repeat, "icon", ft.icons.REPEAT_ON)
+        #     case False:
+        #         self.repeating_song = True
+        #         setattr(self.btn_repeat, "icon", ft.icons.REPEAT_ONE_ON)
+        #     case True:
+        #         self.repeating_song = None
+        #         setattr(self.btn_repeat, "icon", ft.icons.REPEAT)
