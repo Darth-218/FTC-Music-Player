@@ -163,6 +163,7 @@ class PlayerWidget(ft.UserControl):
     elapsed: ft.Text
     label: ft.Text
     duration: ft.Text
+    cover_art: ft.Image
     repeating_song: bool | None
 
     def __init__(self, player: Player):
@@ -191,29 +192,33 @@ class PlayerWidget(ft.UserControl):
             icon=ft.icons.REPEAT, on_click=self.toggle_repeat, icon_size=40
         )
         self.repeating_song = None
-        self.elapsed = ft.Text("00:00", size=18)
+        self.elapsed = ft.Text("0:0:0", size=18)
         self.label = ft.Text("Song Title | Artist Name", size=26)
-        self.duration = ft.Text("00:00", size=18)
+        self.duration = ft.Text("0:0:0", size=18)
         self.slider = ft.Slider(min=0.0, max=1.0, on_change=self.slider_seek, value=0.0)
+        self.cover_art = ft.Image(src="./Assets/Images/ftc.png", fit=ft.ImageFit.FIT_HEIGHT, height=60, border_radius=15)
         return ft.Container(
             bgcolor="#000000",
             content=ft.Column(
                 controls=[
+                    self.label,
                     ft.Row(
                         controls=[
-                            self.elapsed,
-                            self.label,
-                            self.duration,
-                        ],
-                    ),
-                    ft.Row(
-                        controls=[
+                            self.cover_art,
                             self.btn_shuffle,
                             self.btn_prev,
                             self.btn_play_pause,
                             self.btn_next,
                             self.btn_repeat,
+                            ft.Container(
+                                # expand=True,
+                                width=3,
+                                height=50,
+                                bgcolor="#FFFFFF",
+                            ),
+                            self.elapsed,
                             ft.Container(self.slider, width=500, alignment=ft.alignment.center),
+                            self.duration,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         vertical_alignment=ft.alignment.center,
@@ -240,8 +245,9 @@ class PlayerWidget(ft.UserControl):
     def play(self):
         # lib.logger("PlayerWidget/play", f"Started playing, player is {self.player.state}")
         setattr(self.label, "value", f"{(current := self.player.queue.current).name} | {current.artist}")
-        hours, minutes, seconds = lib.timelambda(current.duration)
-        setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
+        setattr(self.cover_art, "src", current.cover_art)
+        # hours, minutes, seconds = lib.timelambda(current.duration)
+        # setattr(self.duration, "value", f"{hours}:{minutes}:{seconds}")
         setattr(self.btn_play_pause, "icon", ft.icons.PAUSE_CIRCLE)
         if self.player.state == PlayerState.not_started:
             # lib.logger("PlayerWidget/play", f"Started updating slider")
