@@ -14,6 +14,8 @@ class Local:
         self.songlist = ft.ListView(expand=1, spacing=10, padding=20)
         self.albumlist = ft.ListView(expand=1, spacing=12, padding=20, horizontal = True)
 
+        self.albumreset = ft.ElevatedButton("All songs", icon=ft.icons.MUSIC_NOTE, tooltip="Return to the main directory", on_click = lambda _: self.songdisplay(self.filepaths, self.songlist))
+
         self.pick_files_dialog = ft.FilePicker(on_result=lambda e: Localclass.pick_files_result(e))
         self.picker = ft.ElevatedButton("Pick Directory", icon=ft.icons.UPLOAD_FILE_ROUNDED, tooltip="Click here to choose a song directory",  on_click=lambda _: self.pick_files_dialog.get_directory_path())
 
@@ -53,6 +55,7 @@ class Local:
 
             self.display(self.filepaths)
 
+
     def display(self, target):
 
         for i in target:
@@ -67,15 +70,15 @@ class Local:
             outdir = "covers"
             os.makedirs(outdir, exist_ok = True)
 
-            with open(os.path.join(outdir, target[i]["name"]), 'wb') as image:
+            with open(os.path.join(outdir, f'{target[i]["name"]}.jpg'), 'wb') as image:
                 image.write(target[i]["cover"])
 
             self.localalbumwidget(self.albumlist,
-                                    ft.Image(src = os.path.join(outdir, target[i]["name"]), width = 255, height = 255),
+                                    ft.Image(src = os.path.join(outdir, f'{target[i]["name"]}.jpg'), width = 255, height = 255),
                                     target[i]["album"],
                                     target[i]["artist"])
 
-    def songdisplay(self, target, songbox):
+    def songdisplay(self, target, songbox: ft.ListView):
 
         songbox.clean()
 
@@ -98,17 +101,24 @@ class Local:
         #try:
 
         audio = EasyID3(filepath)
-        imageaudio = ID3(filepath)
 
-        for key in imageaudio.keys():
+        try:
 
-            if key.startswith("APIC"):
+            imageaudio = ID3(filepath)
 
-                cover = imageaudio[key].data
+            for key in imageaudio.keys():
 
-        title = audio["title"][0] if "title" in audio else None
-        artist = audio["artist"][0] if "artist" in audio else None
-        album = audio['album'][0] if 'album' in audio else None
+                if key.startswith("APIC"):
+
+                    cover = imageaudio[key].data
+
+        except:
+
+            self.songmeta["coverart"] = "N/A"
+
+        title = audio["title"][0] if "title" in audio else "N/A"
+        artist = audio["artist"][0] if "artist" in audio else "N/A"
+        album = audio['album'][0] if 'album' in audio else "N/A"
         duration = audio.info.length if hasattr(audio, 'info') and hasattr(audio.info, 'length') else "N/A"
 
         self.songmeta["title"] = title
@@ -191,7 +201,7 @@ class LocalView(ft.UserControl):
 
     def build(self):
 
-        return ft.Column([Localclass.albumlist, Localclass.songlist, Localclass.picker, Localclass.pick_files_dialog], expand = 1)
+        return ft.Column([Localclass.albumlist, Localclass.songlist, ft.Row([Localclass.picker, Localclass.pick_files_dialog, Localclass.albumreset])], expand = 1)
 
 Localclass = Local()
 
